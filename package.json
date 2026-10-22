@@ -1,0 +1,44 @@
+{
+  "name": "nidan-mother-child-care",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nidan Mother & Child Care - public website and clinic CRM (Express + MySQL + React)",
+  "main": "server/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c blue,green \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "nodemon --watch server server/server.js",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm install --prefix client --include=dev && npm run build --prefix client",
+    "start": "node server/server.js",
+    "db:create": "node server/utils/dbTasks.js create",
+    "db:migrate": "node server/utils/dbTasks.js migrate",
+    "db:seed": "node server/utils/dbTasks.js seed",
+    "db:reset": "node server/utils/dbTasks.js reset"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dayjs": "^1.11.23",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.24.6",
+    "nodemailer": "^10.2.0",
+    "sanitize-html": "^2.18.1",
+    "sequelize": "^6.37.8",
+    "umzug": "^3.8.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6",
+    "nodemon": "^3.1.14"
+  }
+}
