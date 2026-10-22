@@ -44,6 +44,15 @@ export function formatDateOnly(value, { short = false } = {}) {
   return new Intl.DateTimeFormat('en-IN', { ...options, timeZone: 'UTC' }).format(new Date(`${value}T00:00:00Z`));
 }
 
+const DAY_NAMES = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat', Sunday: 'Sun' };
+
+/** "Monday – Friday" -> "Mon–Fri", "7:00 am – 10:00 pm" -> "7 am – 10 pm" (for tight spaces such as the top bar). */
+export const compactHours = (text = '') =>
+  text
+    .replace(/Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/g, (day) => DAY_NAMES[day])
+    .replace(/(\d{1,2}):00/g, '$1')
+    .replace(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s*[–-]\s*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/g, '$1–$2');
+
 /** "Dr. Manisha Ranjan" -> "MR" */
 export function initials(name = '') {
   return name

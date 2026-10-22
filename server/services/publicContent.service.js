@@ -105,13 +105,16 @@ const serializePost = (post, { withContent = false } = {}) => {
 const activeLocations = () => Location.findAll({ where: { isActive: true }, order: [['sortOrder', 'ASC'], ['id', 'ASC']] });
 
 const getSite = async () => {
-  const [settingRows, locations] = await Promise.all([
+  const [settingRows, locations, services] = await Promise.all([
     Setting.findAll({ where: { settingKey: PUBLIC_SETTING_KEYS } }),
     activeLocations(),
+    // names and addresses only: the footer links to each service page
+    Service.findAll({ where: { isActive: true }, attributes: ['name', 'slug'], order: [['sortOrder', 'ASC'], ['id', 'ASC']] }),
   ]);
   return {
     settings: Object.fromEntries(settingRows.map((row) => [row.settingKey, row.settingValue])),
     locations: locations.map(serializeLocation),
+    services: services.map((service) => ({ name: service.name, slug: service.slug })),
   };
 };
 

@@ -17,6 +17,7 @@ export function SiteProvider({ children }) {
       social: settings.social || {},
       locations,
       ownClinics: locations.filter((location) => location.isOwnClinic),
+      serviceLinks: data?.services || [],
       ready: Boolean(data),
     };
   }, [data]);

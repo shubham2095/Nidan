@@ -20,4 +20,6 @@ export const siteDefaults = {
     seo: {},
   },
   locations: [],
+  ownClinics: [],
+  serviceLinks: [],
 };

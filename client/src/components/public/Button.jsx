@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 const VARIANTS = {
   primary: 'bg-brand-700 text-white shadow-sm hover:bg-brand-800',
+  gradient: 'bg-gradient-to-r from-brand-700 to-brand-500 text-white shadow-md shadow-brand-700/25 hover:from-brand-800 hover:to-brand-600 hover:shadow-lg',
   secondary: 'bg-blush-100 text-blush-700 hover:bg-blush-200',
   outline: 'border border-brand-700 bg-white text-brand-700 hover:bg-brand-50',
   light: 'bg-white text-brand-800 shadow-sm hover:bg-brand-50',
