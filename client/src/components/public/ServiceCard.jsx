@@ -8,9 +8,13 @@ export default function ServiceCard({ service }) {
       to={`/services/${service.slug}`}
       className="group flex h-full flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg"
     >
-      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-700 transition group-hover:bg-brand-700 group-hover:text-white">
-        <Icon name={service.icon} className="h-6 w-6" />
-      </span>
+      {service.imageUrl ? (
+        <img src={service.imageUrl} alt="" loading="lazy" width="64" height="64" className="h-16 w-16 rounded-full object-cover ring-4 ring-brand-50 transition group-hover:ring-brand-200" />
+      ) : (
+        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-700 transition group-hover:bg-brand-700 group-hover:text-white">
+          <Icon name={service.icon} className="h-6 w-6" />
+        </span>
+      )}
       <h3 className="mt-4 text-xl font-bold">{service.name}</h3>
       <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{service.shortDescription}</p>
       <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-700">

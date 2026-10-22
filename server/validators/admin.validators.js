@@ -10,7 +10,8 @@ const { emptyToUndefined, optionalId, optionalDate, optionalText, clearable, pag
 const text = (max, min = 0) => z.string().trim().min(min).max(max, `Please use ${max} characters or fewer`);
 const required = (max, message = 'This is required') => z.string().trim().min(1, message).max(max, `Please use ${max} characters or fewer`);
 const icon = z.preprocess(emptyToUndefined, z.enum(ICON_NAMES).optional());
-const imageUrl = z.string().trim().regex(/^(\/uploads\/|https:\/\/)/, 'Use an uploaded image or an https link');
+// Uploaded pictures (/uploads), pictures shipped with the website (/images) or an https link.
+const imageUrl = z.string().trim().regex(/^(\/uploads\/|\/images\/|https:\/\/)/, 'Use an uploaded image or an https link');
 const stringList = (maxItems, maxLength) => z.array(z.string().trim().min(1).max(maxLength)).max(maxItems);
 const reorder = z.object({ ids: z.array(id).min(1).max(200) });
 const idParam = crm.idParam;

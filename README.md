@@ -101,8 +101,9 @@ exists. Change the password from the admin panel (or with the forgot-password fl
 ```
 .
 ├── client/                  React app (Vite)
-│   ├── public/              Static files: favicon.png, apple-touch-icon.png, images/ (the logo and the two doctor
-│   │                        photos; replace the files, keeping their names, to change them)
+│   ├── public/              Static files: favicon.png, apple-touch-icon.png, images/ (the logo, the two doctor
+│   │                        photos, gallery/ and services/ pictures from the old website; replace a file, keeping its
+│   │                        name, to change it)
 │   ├── src/
 │   │   ├── components/      Shared UI (public/ for the website, admin/ for the CRM)
 │   │   ├── context/         SiteContext (public site data); AuthContext + ToastContext (CRM)
@@ -507,6 +508,8 @@ minute.
 - [ ] Dr. Rajeev Ranjan reviewed the vaccination schedule (**Vaccinations → Schedule**).
 - [ ] Privacy policy reviewed (it has a `TODO` for the record-retention period).
 - [ ] Home page FAQ answers read and adjusted to the clinic's real practice (**Site settings → Frequently asked questions**).
+- [ ] Gallery reviewed (**Gallery**): consent confirmed for the photos of patients and babies, and the 15 switched-off
+      photos either shown or deleted (assumptions 30 and 31).
 - [ ] Sent a test booking and a test contact message; both emails arrived; reception can confirm the booking.
 - [ ] `/robots.txt` and `/sitemap.xml` show the live domain; sitemap submitted in Google Search Console.
 - [ ] Shared a page on WhatsApp and checked the preview.
@@ -583,3 +586,12 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     `vite build` produce a slower development bundle on a developer machine. `client/vite.config.js` now reads only
     `PORT` from that file. (On a server where the variables are set in a control panel there is no `.env`, so it was
     most likely unaffected, but the fix removes the risk.)
+30. **Pictures from the old website.** The gallery photos, the twelve round service pictures and the home banner photo
+    were copied from nidanmotherandchildcare.com (the clinic's own site), resized to WebP and stored in
+    `client/public/images` (so they deploy with the code, unlike admin uploads). Theme placeholders, stock banners,
+    icons and the old logo were left out. Fifteen of the 49 gallery photos are added **switched off**: eight with
+    graphic surgical views or very personal newborn photos, and five 3D design renders that carry an interior
+    designer's watermark (plus two more theatre photos that show a surgical field). Turn any of them on in
+    **Gallery** if the clinic wants them public. Alt text for each picture was written from the picture itself.
+31. **Patient consent for photos.** Many photos show mothers, babies and families. Confirm that the clinic has
+    consent for every one it publishes (DPDP Act), and delete the ones it does not.

@@ -41,18 +41,18 @@ export default function ServiceDetailPage() {
       <Section>
         <div className="grid gap-10 lg:grid-cols-3">
           <article className="lg:col-span-2">
-            <span className="mb-6 grid h-16 w-16 place-items-center rounded-3xl bg-brand-50 text-brand-700">
-              <Icon name={service.icon} className="h-8 w-8" />
-            </span>
-            {service.imageUrl && (
+            {service.imageUrl ? (
               <img
                 src={service.imageUrl}
                 alt={service.name}
-                loading="lazy"
-                width="800"
-                height="450"
-                className="mb-8 aspect-video w-full rounded-3xl object-cover"
+                width="320"
+                height="320"
+                className="mb-8 max-h-72 w-auto max-w-full rounded-3xl object-contain"
               />
+            ) : (
+              <span className="mb-6 grid h-16 w-16 place-items-center rounded-3xl bg-brand-50 text-brand-700">
+                <Icon name={service.icon} className="h-8 w-8" />
+              </span>
             )}
             <div className="rich-text" dangerouslySetInnerHTML={{ __html: service.description }} />
           </article>
