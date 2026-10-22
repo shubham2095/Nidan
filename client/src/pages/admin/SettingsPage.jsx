@@ -7,7 +7,7 @@ import { FormMessage } from '../../components/public/FormField.jsx';
 import { ErrorState, LoadingState } from '../../components/public/States.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 import useFetch from '../../hooks/useFetch.js';
-import { getSettings, saveSetting } from '../../services/adminService.js';
+import { getSettings, saveSetting, uploadImage } from '../../services/adminService.js';
 import { serverFieldErrors } from '../../utils/crm.js';
 
 const MAX_REASONS = 8;
@@ -45,6 +45,8 @@ const SECTIONS = [
       { name: 'subheading', label: 'Short text under the heading', type: 'textarea', rows: 2 },
       { name: 'primaryCta', label: 'Main button text', required: true },
       { name: 'secondaryCta', label: 'Second button text', required: true },
+      { name: 'imageUrl', label: 'Banner picture (optional)', type: 'image', upload: (file) => uploadImage(file, 'content'), hint: 'A warm photo of the clinic, a doctor or a family works best (portrait or square). Without one, an illustration is shown. It is also the picture used when the site is shared on WhatsApp.' },
+      { name: 'imageAlt', label: 'Describe the picture', wide: true, hint: 'For people using screen readers, e.g. "Dr. Manisha Ranjan with a young mother at our Sector 51 clinic"' },
     ],
   },
   {

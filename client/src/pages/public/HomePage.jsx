@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Baby, CalendarCheck, CheckCircle2, Heart, Phone, Stethoscope, Syringe } from 'lucide-react';
+import { ArrowRight, Baby, CalendarCheck, CheckCircle2, Heart, MapPin, MessageCircle, Phone, Stethoscope, Syringe } from 'lucide-react';
 import Button from '../../components/public/Button.jsx';
 import Container from '../../components/public/Container.jsx';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
@@ -15,11 +15,74 @@ import TestimonialSlider from '../../components/public/TestimonialSlider.jsx';
 import { useSite } from '../../context/SiteContext.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getHome } from '../../services/publicService.js';
-import { telHref } from '../../utils/format.js';
+import { telHref, whatsappHref } from '../../utils/format.js';
 import { clinicJsonLd } from '../../utils/jsonLd.js';
 
+/** The two facts floating on the hero picture; real counts from the database, never invented numbers. */
+function HeroBadges({ doctorCount }) {
+  const { ownClinics } = useSite();
+  return (
+    <>
+      {doctorCount > 0 && (
+        <span className="absolute bottom-6 left-0 flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg">
+          <CheckCircle2 className="h-5 w-5 text-brand-600" aria-hidden="true" />
+          {doctorCount} specialist doctors
+        </span>
+      )}
+      {ownClinics.length > 0 && (
+        <span className="absolute top-1/2 -left-3 hidden items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg sm:flex">
+          <CheckCircle2 className="h-5 w-5 text-brand-600" aria-hidden="true" />
+          {ownClinics.length} clinics in Noida
+        </span>
+      )}
+    </>
+  );
+}
+
+/** Banner picture chosen in Site settings, or the illustration until one is uploaded. */
+function HeroVisual({ doctorCount }) {
+  const { settings } = useSite();
+  const { imageUrl, imageAlt } = settings.hero || {};
+
+  if (imageUrl) {
+    return (
+      <div className="relative mx-auto w-full max-w-xs sm:max-w-sm">
+        <div aria-hidden="true" className="absolute -inset-3 rounded-[3rem] bg-gradient-to-br from-blush-200 via-blush-100 to-brand-100" />
+        <img
+          src={imageUrl}
+          alt={imageAlt || ''}
+          width="640"
+          height="800"
+          fetchPriority="high"
+          className="relative aspect-[4/3] w-full rounded-[2rem] object-cover shadow-xl sm:aspect-[4/5] sm:rounded-[2.5rem]"
+        />
+        <HeroBadges doctorCount={doctorCount} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative mx-auto aspect-square w-full max-w-md" aria-hidden="true">
+      <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-blush-200 via-blush-100 to-brand-100" />
+      <div className="absolute inset-6 grid place-items-center rounded-[2.5rem] bg-white/70 backdrop-blur">
+        <Heart className="h-32 w-32 fill-blush-300 text-blush-400" />
+      </div>
+      <span className="absolute top-8 left-2 grid h-16 w-16 place-items-center rounded-full bg-white text-blush-500 shadow-lg">
+        <Baby className="h-8 w-8" />
+      </span>
+      <span className="absolute top-14 -right-2 grid h-14 w-14 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
+        <Syringe className="h-7 w-7" />
+      </span>
+      <span className="absolute right-10 bottom-10 grid h-16 w-16 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
+        <Stethoscope className="h-8 w-8" />
+      </span>
+      <HeroBadges doctorCount={doctorCount} />
+    </div>
+  );
+}
+
 function Hero({ doctorCount }) {
-  const { clinic, settings, ownClinics } = useSite();
+  const { clinic, settings } = useSite();
   const hero = settings.hero || {};
 
   return (
@@ -27,7 +90,7 @@ function Hero({ doctorCount }) {
       <div aria-hidden="true" className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-blush-100 blur-3xl" />
       <div aria-hidden="true" className="absolute top-20 -right-24 h-96 w-96 rounded-full bg-brand-100/70 blur-3xl" />
 
-      <Container className="relative grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-2 lg:py-24">
+      <Container className="relative grid items-center gap-12 pt-14 pb-20 sm:pt-20 sm:pb-24 lg:grid-cols-2 lg:pt-24 lg:pb-28">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-brand-800 shadow-sm ring-1 ring-brand-100">
             <Heart className="h-4 w-4 fill-blush-400 text-blush-400" aria-hidden="true" />
@@ -47,45 +110,69 @@ function Hero({ doctorCount }) {
               {hero.secondaryCta || 'Meet Our Doctors'}
             </Button>
           </div>
-
-          <p className="mt-6 flex items-center gap-2 text-slate-600">
-            <Phone className="h-4 w-4 text-brand-700" aria-hidden="true" />
-            Prefer to talk?
-            <a href={telHref(clinic.phonePrimary)} className="font-semibold text-brand-800 hover:underline">
-              {clinic.phonePrimary}
-            </a>
-          </p>
         </div>
 
-        <div className="relative mx-auto aspect-square w-full max-w-md" aria-hidden="true">
-          <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-blush-200 via-blush-100 to-brand-100" />
-          <div className="absolute inset-6 grid place-items-center rounded-[2.5rem] bg-white/70 backdrop-blur">
-            <Heart className="h-32 w-32 fill-blush-300 text-blush-400" />
-          </div>
-          <span className="absolute top-8 left-2 grid h-16 w-16 place-items-center rounded-full bg-white text-blush-500 shadow-lg">
-            <Baby className="h-8 w-8" />
-          </span>
-          <span className="absolute top-14 -right-2 grid h-14 w-14 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
-            <Syringe className="h-7 w-7" />
-          </span>
-          <span className="absolute right-10 bottom-10 grid h-16 w-16 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
-            <Stethoscope className="h-8 w-8" />
-          </span>
-          {doctorCount > 0 && (
-            <span className="absolute bottom-6 left-0 flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg">
-              <CheckCircle2 className="h-5 w-5 text-brand-600" />
-              {doctorCount} specialist doctors
-            </span>
-          )}
-          {ownClinics.length > 0 && (
-            <span className="absolute top-1/2 -left-3 hidden items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg sm:flex">
-              <CheckCircle2 className="h-5 w-5 text-brand-600" />
-              {ownClinics.length} clinics in Noida
-            </span>
-          )}
-        </div>
+        <HeroVisual doctorCount={doctorCount} />
       </Container>
     </section>
+  );
+}
+
+/** Four ways to reach the clinic, floating over the bottom edge of the hero so they are always in sight. */
+function QuickActions() {
+  const { clinic, ownClinics } = useSite();
+  const actions = [
+    { key: 'book', to: '/book-appointment', Icon: CalendarCheck, title: 'Book online', text: 'Pick a doctor and a time', accent: 'bg-brand-700 text-white' },
+    { key: 'call', href: telHref(clinic.phonePrimary), Icon: Phone, title: 'Call us', text: clinic.phonePrimary, accent: 'bg-brand-50 text-brand-700' },
+    {
+      key: 'whatsapp',
+      href: whatsappHref(clinic.whatsappNumber, `Hello ${clinic.name}, I would like to book an appointment.`),
+      external: true,
+      Icon: MessageCircle,
+      title: 'WhatsApp',
+      text: 'Chat with our team',
+      accent: 'bg-emerald-50 text-emerald-700',
+    },
+    {
+      key: 'clinics',
+      to: '/contact-us',
+      Icon: MapPin,
+      title: 'Find a clinic',
+      text: ownClinics.length ? `${ownClinics.length} clinics in Noida` : 'Addresses and timings',
+      accent: 'bg-blush-100 text-blush-700',
+    },
+  ];
+
+  return (
+    <div className="relative z-10 -mt-10 sm:-mt-14">
+      <Container>
+        <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {actions.map(({ key, to, href, external, Icon, title, text, accent }) => {
+            const classes = 'group flex h-full flex-col items-start gap-3 rounded-3xl border border-slate-100 bg-white p-4 shadow-lg shadow-slate-900/5 transition hover:-translate-y-0.5 hover:shadow-xl sm:flex-row sm:items-center sm:gap-4 sm:p-5';
+            const body = (
+              <>
+                <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl ${accent}`}>
+                  <Icon className="h-6 w-6" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-heading text-base font-extrabold text-slate-900">{title}</span>
+                  <span className="block truncate text-sm text-slate-600">{text}</span>
+                </span>
+              </>
+            );
+            return (
+              <li key={key}>
+                {to ? (
+                  <Link to={to} className={classes}>{body}</Link>
+                ) : (
+                  <a href={href} className={classes} {...(external && { target: '_blank', rel: 'noopener noreferrer' })}>{body}</a>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </Container>
+    </div>
   );
 }
 
@@ -96,8 +183,9 @@ export default function HomePage() {
 
   return (
     <>
-      <Seo jsonLd={clinicJsonLd(site, window.location.origin)} />
+      <Seo image={site.settings.hero?.imageUrl} jsonLd={clinicJsonLd(site, window.location.origin)} />
       <Hero doctorCount={data?.doctors.length || 0} />
+      <QuickActions />
 
       {loading && <LoadingState className="py-24" />}
       {error && <ErrorState message={error} onRetry={reload} />}

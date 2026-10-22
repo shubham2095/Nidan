@@ -481,6 +481,8 @@ minute.
 
 **Other common jobs**
 - *Change phone numbers, WhatsApp, email, banner text or the announcement bar:* **Site settings**.
+- *Put a real photo on the home page banner:* **Site settings → Home page banner → Banner picture**. Portrait or square
+  works best. It is also the picture shown when the site is shared on WhatsApp. Remove it to go back to the illustration.
 - *Approve a visitor's testimonial:* **Testimonials → To review → Approve**.
 - *Block a doctor's leave dates:* **Doctors →** the doctor **→ Leave and blocked dates**.
 - *Reset a staff member's password:* **Users → Password** (or **Email link**).

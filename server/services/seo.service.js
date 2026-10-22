@@ -13,9 +13,9 @@ let settingsCache = null;
 /** Clinic name, tagline and default search text. Cached briefly so every page view does not re-read settings. */
 const siteSettings = async () => {
   if (settingsCache && Date.now() - settingsCache.at < SETTINGS_TTL_MS) return settingsCache.value;
-  const rows = await Setting.findAll({ where: { settingKey: ['clinic', 'seo'] } });
+  const rows = await Setting.findAll({ where: { settingKey: ['clinic', 'seo', 'hero'] } });
   const byKey = Object.fromEntries(rows.map((row) => [row.settingKey, row.settingValue]));
-  settingsCache = { at: Date.now(), value: { clinic: byKey.clinic || {}, seo: byKey.seo || {} } };
+  settingsCache = { at: Date.now(), value: { clinic: byKey.clinic || {}, seo: byKey.seo || {}, hero: byKey.hero || {} } };
   return settingsCache.value;
 };
 
@@ -83,7 +83,7 @@ const isAdminPath = (pathname) => pathname === '/admin' || pathname.startsWith('
 const metaFor = async (pathname) => {
   if (isAdminPath(pathname)) return { status: 200, title: 'Nidan CRM', noindex: true };
 
-  const { clinic, seo } = await siteSettings();
+  const { clinic, seo, hero } = await siteSettings();
   const siteName = clinic.name || 'Nidan Mother & Child Care';
   const fallbackText = seo.siteDescription || clinic.tagline || '';
 
@@ -99,7 +99,7 @@ const metaFor = async (pathname) => {
   });
   const missing = () => page({ title: 'Page not found', status: 404, noindex: true });
 
-  if (pathname === '/') return page({});
+  if (pathname === '/') return page({ image: hero.imageUrl }); // the banner picture doubles as the link-preview picture
   if (STATIC_PAGES[pathname]) return page(STATIC_PAGES[pathname](clinic));
 
   const detail = pathname.match(/^\/(doctors|services|blog)\/([^/]+)$/);
