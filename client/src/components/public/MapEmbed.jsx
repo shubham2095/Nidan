@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { ExternalLink, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
+
+const FRAME = 'relative overflow-hidden rounded-3xl bg-brand-50 shadow-lg shadow-brand-900/10 ring-1 ring-slate-200';
 
 /**
  * Google Map for a location. With `instant` the (lazy-loaded) iframe is rendered right away;
  * otherwise a lightweight placeholder is shown and the map loads on click, which keeps
  * the footer from adding third-party weight to every page.
+ * The frame fills whatever height `className` gives it.
  */
 export default function MapEmbed({ location, instant = false, className = 'h-56' }) {
   const [loaded, setLoaded] = useState(instant);
@@ -15,7 +18,7 @@ export default function MapEmbed({ location, instant = false, className = 'h-56'
       <button
         type="button"
         onClick={() => setLoaded(true)}
-        className={`flex w-full flex-col items-center justify-center gap-2 rounded-2xl bg-slate-800 text-sm text-slate-200 transition hover:bg-slate-700 ${className}`}
+        className={`flex w-full flex-col items-center justify-center gap-2 rounded-3xl bg-slate-800 text-sm text-slate-200 transition hover:bg-slate-700 ${className}`}
       >
         <MapPin className="h-6 w-6" aria-hidden="true" />
         <span>Show map: {location.name}</span>
@@ -24,24 +27,18 @@ export default function MapEmbed({ location, instant = false, className = 'h-56'
   }
 
   return (
-    <div className="space-y-2">
+    <div className={`${FRAME} ${className}`}>
+      {/* sits behind the map so the frame never looks empty while it loads */}
+      <div aria-hidden="true" className="absolute inset-0 grid place-items-center">
+        <MapPin className="h-10 w-10 text-brand-300 motion-safe:animate-pulse" />
+      </div>
       <iframe
         title={`Map of ${location.name}`}
         src={location.mapEmbedUrl}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        className={`w-full rounded-2xl border-0 ${className}`}
+        className="relative h-full w-full border-0"
       />
-      {location.mapUrl && (
-        <a
-          href={location.mapUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline"
-        >
-          Open in Google Maps <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-        </a>
-      )}
     </div>
   );
 }

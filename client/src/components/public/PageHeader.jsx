@@ -3,12 +3,12 @@ import { ChevronRight } from 'lucide-react';
 import Container from './Container.jsx';
 
 /** Title band at the top of inner pages, with breadcrumbs. */
-export default function PageHeader({ title, description, crumbs = [], children }) {
+export default function PageHeader({ title, description, crumbs = [], className = '', children }) {
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-blush-50 to-white">
       <div aria-hidden="true" className="anim-drift absolute -top-24 -right-16 h-64 w-64 rounded-full bg-brand-100/60 blur-3xl" />
       <div aria-hidden="true" className="anim-drift-reverse absolute -bottom-20 left-10 h-48 w-48 rounded-full bg-blush-100/70 blur-3xl" />
-      <Container className="relative py-12 sm:py-16">
+      <Container className={`relative py-12 sm:py-16 ${className}`}>
         <nav aria-label="Breadcrumb" className="hero-in mb-4 text-sm text-slate-500">
           <ol className="flex flex-wrap items-center gap-1">
             <li>

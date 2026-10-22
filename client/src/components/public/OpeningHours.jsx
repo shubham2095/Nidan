@@ -4,6 +4,7 @@ import { useSite } from '../../context/SiteContext.jsx';
 /**
  * The clinic's opening hours (Site settings > Opening hours).
  *  - default: heading, underline and a row per day range with the time in a coloured tag
+ *  - `variant="card"`: tidy rows for a white card (day on the left, time in a pill on the right)
  *  - `variant="dark"`: compact list for the footer
  */
 export default function OpeningHours({ variant = 'default', heading = true, className = '' }) {
@@ -20,6 +21,22 @@ export default function OpeningHours({ variant = 'default', heading = true, clas
             <span>
               <strong className="font-semibold text-white">{row.days}</strong>
               <span className="block sm:inline"> {row.time}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (variant === 'card') {
+    return (
+      <ul className={`divide-y divide-slate-100 ${className}`}>
+        {hours.map((row) => (
+          <li key={`${row.days}-${row.time}`} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3.5">
+            <span className="font-semibold text-slate-700">{row.days}</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3.5 py-1.5 text-sm font-bold text-brand-800">
+              <Clock className="h-4 w-4 text-brand-600" aria-hidden="true" />
+              {row.time}
             </span>
           </li>
         ))}
