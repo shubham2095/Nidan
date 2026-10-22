@@ -569,10 +569,7 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 28. **Deployment targets Hostinger's Node.js web app with a GitHub import.** I could not test on Hostinger itself; the
     production build, start-up, first-deploy flags (`RUN_MIGRATIONS` / `RUN_SEEDS`) and the SEO / security behaviour
     were tested locally in `NODE_ENV=production`, including a first start on an empty database.
-29. **Automated checks** (booking race, roles, vaccination, content management, SEO) were run during development as
-    throw-away scripts and are not part of the repository, so deployments stay lean. Ask if you want them added as an
-    `npm test` suite.
-30. **One production build quirk fixed:** the root `.env` contains `NODE_ENV=development`, which used to make
+29. **One production build quirk fixed:** the root `.env` contains `NODE_ENV=development`, which used to make
     `vite build` produce a slower development bundle on a developer machine. `client/vite.config.js` now reads only
     `PORT` from that file. (On a server where the variables are set in a control panel there is no `.env`, so it was
     most likely unaffected, but the fix removes the risk.)
