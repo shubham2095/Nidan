@@ -11,6 +11,7 @@ import { getSettings, saveSetting, uploadImage } from '../../services/adminServi
 import { serverFieldErrors } from '../../utils/crm.js';
 
 const MAX_REASONS = 8;
+const MAX_FAQS = 12;
 
 const SECTIONS = [
   {
@@ -137,8 +138,12 @@ function SimpleSection({ section, value }) {
   );
 }
 
-function ReasonsSection({ value }) {
-  const [items, setItems] = useState(() => (value || []).map((item) => ({ title: item.title, description: item.description || '', icon: item.icon || 'sparkles' })));
+/**
+ * Editor for a setting that is a list of items (reasons, FAQs): add, remove, reorder, save as a whole.
+ * `fields` are FieldInput configs; `blank` is a new empty item; `min` / `max` bound the list length.
+ */
+function ListSection({ settingKey, title, description, label, itemName, value, fields, blank, min = 0, max }) {
+  const [items, setItems] = useState(() => (value || []).map((item) => ({ ...blank, ...item })));
   const change = (index, name, next) => setItems((current) => current.map((item, position) => (position === index ? { ...item, [name]: next } : item)));
   const move = (index, delta) =>
     setItems((current) => {
@@ -147,32 +152,34 @@ function ReasonsSection({ value }) {
       next.splice(index + delta, 0, moved);
       return next;
     });
+  const iconButton = 'rounded-full p-2 text-slate-500 hover:bg-slate-100 disabled:opacity-30';
 
   return (
-    <Card title="Why choose us">
-      <p className="-mt-2 mb-5 text-sm text-slate-600">The reasons shown on the home page. Between 1 and {MAX_REASONS}.</p>
-      <SettingsForm settingKey="whyChooseUs" label="reasons"onSave={() => saveSetting('whyChooseUs', items)} disabled={items.length === 0}>
+    <Card title={title}>
+      <p className="-mt-2 mb-5 text-sm text-slate-600">{description}</p>
+      <SettingsForm settingKey={settingKey} label={label} onSave={() => saveSetting(settingKey, items)} disabled={items.length < min}>
         {({ errors }) => (
           <div className="space-y-4">
+            {items.length === 0 && <p className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">Nothing here yet, so this section is hidden on the website.</p>}
             {items.map((item, index) => (
               <fieldset key={index} className="rounded-2xl border border-slate-200 p-4">
-                <legend className="px-2 text-sm font-semibold text-slate-500">Reason {index + 1}</legend>
+                <legend className="px-2 text-sm font-semibold text-slate-500">{itemName} {index + 1}</legend>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <FieldInput field={{ name: 'title', label: 'Title', required: true }} value={item.title} error={errors[`${index}.title`]} onChange={(name, next) => change(index, name, next)} />
-                  <FieldInput field={{ name: 'icon', label: 'Icon', type: 'icon' }} value={item.icon} error={errors[`${index}.icon`]} onChange={(name, next) => change(index, name, next)} />
-                  <FieldInput field={{ name: 'description', label: 'Description', type: 'textarea', rows: 2 }} value={item.description} error={errors[`${index}.description`]} onChange={(name, next) => change(index, name, next)} />
+                  {fields.map((field) => (
+                    <FieldInput key={field.name} field={field} value={item[field.name]} error={errors[`${index}.${field.name}`]} onChange={(name, next) => change(index, name, next)} />
+                  ))}
                 </div>
                 <div className="mt-3 flex justify-end gap-1">
-                  <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label={`Move reason ${index + 1} up`} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 disabled:opacity-30"><ArrowUp className="h-4 w-4" aria-hidden="true" /></button>
-                  <button type="button" onClick={() => move(index, 1)} disabled={index === items.length - 1} aria-label={`Move reason ${index + 1} down`} className="rounded-full p-2 text-slate-500 hover:bg-slate-100 disabled:opacity-30"><ArrowDown className="h-4 w-4" aria-hidden="true" /></button>
-                  <button type="button" onClick={() => setItems((current) => current.filter((_, position) => position !== index))} disabled={items.length === 1} aria-label={`Remove reason ${index + 1}`} className="rounded-full p-2 text-slate-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"><Trash2 className="h-4 w-4" aria-hidden="true" /></button>
+                  <button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label={`Move ${itemName.toLowerCase()} ${index + 1} up`} className={iconButton}><ArrowUp className="h-4 w-4" aria-hidden="true" /></button>
+                  <button type="button" onClick={() => move(index, 1)} disabled={index === items.length - 1} aria-label={`Move ${itemName.toLowerCase()} ${index + 1} down`} className={iconButton}><ArrowDown className="h-4 w-4" aria-hidden="true" /></button>
+                  <button type="button" onClick={() => setItems((current) => current.filter((_, position) => position !== index))} disabled={items.length <= min} aria-label={`Remove ${itemName.toLowerCase()} ${index + 1}`} className={`${iconButton} hover:!bg-red-50 hover:!text-red-600`}><Trash2 className="h-4 w-4" aria-hidden="true" /></button>
                 </div>
               </fieldset>
             ))}
-            {items.length < MAX_REASONS && (
-              <Button variant="outline" onClick={() => setItems((current) => [...current, { title: '', description: '', icon: 'sparkles' }])}>
+            {(!max || items.length < max) && (
+              <Button variant="outline" onClick={() => setItems((current) => [...current, { ...blank }])}>
                 <Plus className="h-4 w-4" aria-hidden="true" />
-                Add a reason
+                Add {/^[aeiou]/i.test(itemName) ? 'an' : 'a'} {itemName.toLowerCase()}
               </Button>
             )}
           </div>
@@ -181,6 +188,16 @@ function ReasonsSection({ value }) {
     </Card>
   );
 }
+
+const REASON_FIELDS = [
+  { name: 'title', label: 'Title', required: true },
+  { name: 'icon', label: 'Icon', type: 'icon' },
+  { name: 'description', label: 'Description', type: 'textarea', rows: 2 },
+];
+const FAQ_FIELDS = [
+  { name: 'question', label: 'Question', required: true, wide: true },
+  { name: 'answer', label: 'Answer', type: 'textarea', rows: 4, required: true, hint: 'Plain text. Keep it short and friendly.' },
+];
 
 export default function SettingsPage() {
   const { data, loading, error, reload } = useFetch((signal) => getSettings(signal), []);
@@ -195,7 +212,29 @@ export default function SettingsPage() {
           {SECTIONS.slice(0, 4).map((section) => (
             <SimpleSection key={section.key} section={section} value={data.settings[section.key]} />
           ))}
-          <ReasonsSection value={data.settings.whyChooseUs} />
+          <ListSection
+            settingKey="whyChooseUs"
+            title="Why choose us"
+            description={`The reasons shown on the home page. Between 1 and ${MAX_REASONS}.`}
+            label="reasons"
+            itemName="Reason"
+            value={data.settings.whyChooseUs}
+            fields={REASON_FIELDS}
+            blank={{ title: '', description: '', icon: 'sparkles' }}
+            min={1}
+            max={MAX_REASONS}
+          />
+          <ListSection
+            settingKey="faq"
+            title="Frequently asked questions"
+            description={`Shown on the home page, in this order. Up to ${MAX_FAQS}. Remove every question to hide the section.`}
+            label="questions"
+            itemName="Question"
+            value={data.settings.faq}
+            fields={FAQ_FIELDS}
+            blank={{ question: '', answer: '' }}
+            max={MAX_FAQS}
+          />
           {SECTIONS.slice(4).map((section) => (
             <SimpleSection key={section.key} section={section} value={data.settings[section.key]} />
           ))}

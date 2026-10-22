@@ -293,7 +293,8 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
   address). Pictures must be JPEG, PNG or WebP up to 5 MB and are identified from the file's first bytes. Everything
   rich-text is sanitised on the server before it is stored.
 - **Site settings** (`/admin/settings`): clinic name, phone numbers, WhatsApp number and email; social links; home page
-  banner text; the announcement bar; the "Why choose us" list; the About page text; default search title and
+  banner text and picture; the announcement bar; the "Why choose us" list; the home page FAQ (add, remove and reorder
+  questions; seven starter questions are included, so read and adjust them); the About page text; default search title and
   description. Each section is saved on its own and shows on the website within a minute.
 - **Users** (`/admin/users`): add a login with a starting password (8+ characters, a letter and a number), choose the
   role, switch a login on or off, set a new password (the person is signed out everywhere) or email them a reset
@@ -481,6 +482,8 @@ minute.
 
 **Other common jobs**
 - *Change phone numbers, WhatsApp, email, banner text or the announcement bar:* **Site settings**.
+- *Edit the home page questions and answers:* **Site settings → Frequently asked questions**. Removing every question
+  hides the section.
 - *Put a real photo on the home page banner:* **Site settings → Home page banner → Banner picture**. Portrait or square
   works best. It is also the picture shown when the site is shared on WhatsApp. Remove it to go back to the illustration.
 - *Approve a visitor's testimonial:* **Testimonials → To review → Approve**.
@@ -500,6 +503,7 @@ minute.
       overlapping hours (assumption 4).
 - [ ] Dr. Rajeev Ranjan reviewed the vaccination schedule (**Vaccinations → Schedule**).
 - [ ] Privacy policy reviewed (it has a `TODO` for the record-retention period).
+- [ ] Home page FAQ answers read and adjusted to the clinic's real practice (**Site settings → Frequently asked questions**).
 - [ ] Sent a test booking and a test contact message; both emails arrived; reception can confirm the booking.
 - [ ] `/robots.txt` and `/sitemap.xml` show the live domain; sitemap submitted in Google Search Console.
 - [ ] Shared a page on WhatsApp and checked the preview.

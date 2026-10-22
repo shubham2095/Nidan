@@ -4,6 +4,7 @@ import Button from '../../components/public/Button.jsx';
 import Container from '../../components/public/Container.jsx';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
 import DoctorCard from '../../components/public/DoctorCard.jsx';
+import FaqSection from '../../components/public/FaqSection.jsx';
 import Icon from '../../components/public/Icon.jsx';
 import PostCard from '../../components/public/PostCard.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
@@ -180,6 +181,7 @@ export default function HomePage() {
   const site = useSite();
   const { data, loading, error, reload } = useFetch((signal) => getHome(signal), []);
   const whyChooseUs = site.settings.whyChooseUs || [];
+  const faq = site.settings.faq || [];
 
   return (
     <>
@@ -300,6 +302,8 @@ export default function HomePage() {
               </p>
             </Section>
           )}
+
+          {faq.length > 0 && <FaqSection items={faq} />}
         </>
       )}
 

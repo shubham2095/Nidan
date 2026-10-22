@@ -5,7 +5,7 @@ const activityLog = require('./activityLog.service');
 const mediaService = require('./media.service');
 
 // The only settings that exist; each one's shape is checked by validators/admin.validators.js.
-const SETTING_KEYS = ['clinic', 'social', 'hero', 'announcement', 'whyChooseUs', 'about', 'seo'];
+const SETTING_KEYS = ['clinic', 'social', 'hero', 'announcement', 'whyChooseUs', 'faq', 'about', 'seo'];
 
 const getAll = async () => {
   const rows = await Setting.findAll({ where: { settingKey: SETTING_KEYS } });
