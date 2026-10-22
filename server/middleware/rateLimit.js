@@ -34,4 +34,11 @@ const passwordResetLimiter = createLimiter({
   message: 'Too many password reset requests. Please try again in an hour.',
 });
 
-module.exports = { apiLimiter, loginLimiter, passwordResetLimiter };
+/** Public forms (contact, testimonials, booking) are open to anyone, so keep them tight. */
+const publicFormLimiter = createLimiter({
+  windowMs: 15 * MINUTE,
+  limit: 8,
+  message: 'You have sent several requests in a short time. Please wait a few minutes or call us directly.',
+});
+
+module.exports = { apiLimiter, loginLimiter, passwordResetLimiter, publicFormLimiter };

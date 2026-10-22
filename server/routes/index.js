@@ -11,5 +11,6 @@ router.get('/health', async (req, res) => {
 });
 
 router.use('/auth', require('./auth.routes'));
+router.use('/public', require('./public.routes'));
 
 module.exports = router;

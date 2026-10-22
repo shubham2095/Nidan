@@ -5,7 +5,7 @@ const PHONE = '+91 97735 07333, 0120-4545700';
 const locations = [
   {
     slug: 'nidan-sector-51',
-    name: 'Nidan Mother & Child Care, Sector 51',
+    name: 'Nidan – Sector 51',
     address: 'B-170, Sector 51',
     postalCode: '201301',
     phone: PHONE,
@@ -14,7 +14,7 @@ const locations = [
   },
   {
     slug: 'nidan-noida-extension',
-    name: 'Nidan Noida Extension',
+    name: 'Nidan – Noida Extension',
     address: 'Aarza Square 2, Shop No. 219, Gaur City 1, Noida Extension',
     phone: PHONE,
     isOwnClinic: true,
@@ -22,7 +22,7 @@ const locations = [
   },
   {
     slug: 'cloudnine-hospital-gaur-city',
-    name: 'Cloudnine Hospital, Gaur City',
+    name: 'Cloudnine Hospital – Gaur City',
     address: '5th Avenue, Gaur City 1, Sector 4, Noida Extension',
     postalCode: '201009',
     isOwnClinic: false,
@@ -30,7 +30,7 @@ const locations = [
   },
   {
     slug: 'motherhood-hospital-sector-48',
-    name: 'Motherhood Hospital, Sector 48',
+    name: 'Motherhood Hospital – Sector 48',
     address: 'Sector 48',
     postalCode: '201301',
     isOwnClinic: false,

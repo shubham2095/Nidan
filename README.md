@@ -11,7 +11,7 @@ booking, and a CRM / admin panel for doctors and reception staff. One Node.js ap
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1 | Scaffold, DB config, migrations, seeders, auth | Done |
-| 2 | Public website pages | Planned |
+| 2 | Public website pages | Done (booking page is a call/WhatsApp placeholder until Phase 3) |
 | 3 | Booking engine (slots, double-booking protection, emails) | Planned |
 | 4 | CRM: dashboard, appointments, patients, leads, follow-ups | Planned |
 | 5 | Vaccination tracker, content management, settings, users, activity log | Planned |
@@ -101,9 +101,13 @@ exists. Change the password from the admin panel (or with the forgot-password fl
 ├── client/                  React app (Vite)
 │   ├── public/              Static files (favicon, ...)
 │   ├── src/
-│   │   ├── components/      Shared UI (public/ and admin/)
+│   │   ├── components/      Shared UI (public/ now, admin/ later)
+│   │   ├── context/         SiteContext: clinic details, locations, settings
+│   │   ├── hooks/           useFetch (data loading with cancel + retry)
+│   │   ├── layouts/         PublicLayout: header, footer, floating call/WhatsApp
 │   │   ├── pages/           public/ and admin/ pages
-│   │   ├── services/        axios instance + one file per API resource
+│   │   ├── services/        axios instance + API calls
+│   │   ├── utils/           formatting, schedule grouping, form schemas, JSON-LD
 │   │   ├── App.jsx, main.jsx
 │   └── vite.config.js       Dev proxy: /api and /uploads -> the API server
 ├── server/                  Express + Sequelize
@@ -147,6 +151,31 @@ exists. Change the password from the admin panel (or with the forgot-password fl
 Passwords are hashed with bcrypt (cost 12). Reset tokens are stored only as a SHA-256 hash. Without `SMTP_HOST` set,
 emails are skipped with a log line (no content is logged).
 
+### Public website (`/api/public`)
+
+Read-only content endpoints (cached for 60 seconds) feed the React pages. They only return whitelisted fields, never
+patient data, and admin-written HTML (bios, service pages, blog posts) is sanitised before it is sent.
+
+| Endpoint | Used by |
+|----------|---------|
+| `GET /site` | Header, footer, announcement bar, SEO defaults (clinic details, social links, locations) |
+| `GET /home` | Home page in one request (services, doctors, specialties, testimonials, gallery preview, latest posts) |
+| `GET /doctors`, `/doctors/:slug` | Doctor pages, with timings grouped by location |
+| `GET /services`, `/services/:slug` | Service pages |
+| `GET /testimonials`, `POST /testimonials` | Approved testimonials; visitor submissions are saved as `pending` for moderation |
+| `GET /gallery` | Gallery (only categories that have images) |
+| `GET /blog`, `/blog/categories`, `/blog/:slug` | Blog list (search, category, pagination) and articles |
+| `POST /contact` | Contact form: creates a **Lead** (source `website`, status `new`) and emails `CLINIC_NOTIFY_EMAIL` |
+
+The two `POST` endpoints are rate limited (8 requests / 15 min / IP), require the consent box, validate the phone
+number (stored normalised as `+91XXXXXXXXXX`) and include a hidden honeypot field that silently drops bot submissions.
+
+Pages: `/`, `/about-us`, `/doctors`, `/doctors/:slug`, `/services`, `/services/:slug`, `/gallery`, `/testimonials`,
+`/blog`, `/blog/:slug`, `/contact-us`, `/book-appointment`, `/privacy-policy`. Home page sections that have no content
+yet (testimonials, gallery, blog) are hidden automatically, so the site never shows empty placeholders. Each page sets
+its own title, description, canonical URL and Open Graph tags; the home and contact pages add `MedicalClinic`
+structured data, doctor pages add `Physician`, and blog posts add `BlogPosting`.
+
 ### Database notes
 
 - Charset `utf8mb4`, collation `utf8mb4_unicode_ci`; indexed strings are `VARCHAR(191)`.
@@ -189,3 +218,15 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
    experience, awards and patient counts are deliberately not stated anywhere.
 10. **WhatsApp number** defaults to +91 97735 07333 (editable in site settings).
 11. **Login session length** defaults to 12 hours (`JWT_EXPIRES_IN`).
+12. **No static content layer.** The seeded database already holds the real clinic content, so the public pages read
+    from the API directly instead of from a throwaway static copy. Only the clinic name and phone/WhatsApp numbers
+    have a built-in fallback (`client/src/utils/siteDefaults.js`) so Call and WhatsApp keep working if the API is down.
+13. **Privacy policy** (`/privacy-policy`) is a plain-language draft for the DPDP Act with a `TODO` for the record
+    retention period. Have it reviewed before launch.
+14. **No default share image.** Pages only emit an Open Graph image when a doctor photo, blog cover or service image
+    exists. Add a branded image later if you want link previews on pages without one.
+15. **Maps in the footer** load on click (a placeholder button swaps in the Google Maps iframe), so third-party map
+    code does not slow down every page. The Contact page loads its maps directly.
+16. **Search engines and social previews.** The site is a single-page app: Google renders it fine, but link previews
+    (WhatsApp, Facebook) do not run JavaScript. Phase 6 will inject per-page meta tags on the server for blog posts and
+    doctor pages.

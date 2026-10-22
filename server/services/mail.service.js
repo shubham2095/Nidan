@@ -49,4 +49,25 @@ const sendPasswordResetEmail = ({ user, resetUrl }) =>
       '<p>If you did not ask for this, you can safely ignore this email.</p>',
   });
 
-module.exports = { sendMail, sendPasswordResetEmail };
+/** Tells the clinic about a new website enquiry. Does nothing when CLINIC_NOTIFY_EMAIL is not set. */
+const sendContactNotification = ({ lead, doctorName }) => {
+  if (!env.mail.notifyEmail) return Promise.resolve(false);
+  const lines = [
+    ['Name', lead.name],
+    ['Phone', lead.phone],
+    ['Email', lead.email || '-'],
+    ['Preferred doctor', doctorName || 'No preference'],
+    ['Message', lead.message],
+  ];
+  return sendMail({
+    to: env.mail.notifyEmail,
+    subject: `New website enquiry from ${lead.name}`,
+    text: `${lines.map(([label, value]) => `${label}: ${value}`).join('\n')}\n\nFollow up in the CRM under Leads.`,
+    html:
+      '<p>A new enquiry came in from the website contact form.</p><table cellpadding="6">' +
+      lines.map(([label, value]) => `<tr><td><strong>${escapeHtml(label)}</strong></td><td>${escapeHtml(value)}</td></tr>`).join('') +
+      '</table><p>Follow up in the CRM under Leads.</p>',
+  });
+};
+
+module.exports = { sendMail, sendPasswordResetEmail, sendContactNotification };
