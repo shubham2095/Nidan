@@ -27,6 +27,19 @@ const patient = z.object({
   guardianName: z.preprocess(emptyToUndefined, z.string().trim().min(2, 'Enter the parent or guardian\'s name').max(100).optional()),
 });
 
+/** Extra rules for a child: guardian name, and either a plausible date of birth or an age. `issue(field, message)` reports problems. */
+const checkChild = ({ type, dob, ageYears, guardianName }, issue) => {
+  if (type !== 'child') return;
+  const today = nowInIndia().date;
+
+  if (!guardianName) issue('guardianName', 'Enter the parent or guardian\'s name');
+  if (!dob && ageYears === undefined) {
+    issue('dob', 'Enter the child\'s date of birth or age');
+  } else if (dob && (dob > today || dob < dateFromAge(today, 19))) {
+    issue('dob', 'Check the date of birth');
+  }
+};
+
 const createBooking = z
   .object({
     doctorId: id,
@@ -39,17 +52,7 @@ const createBooking = z
     website: publicSchemas.contact.shape.website,
   })
   .superRefine((value, ctx) => {
-    if (value.patient.type !== 'child') return;
-    const issue = (path, message) => ctx.addIssue({ code: 'custom', path: ['patient', path], message });
-    const { dob, ageYears, guardianName } = value.patient;
-    const today = nowInIndia().date;
-
-    if (!guardianName) issue('guardianName', 'Enter the parent or guardian\'s name');
-    if (!dob && ageYears === undefined) {
-      issue('dob', 'Enter the child\'s date of birth or age');
-    } else if (dob && (dob > today || dob < dateFromAge(today, 19))) {
-      issue('dob', 'Check the date of birth');
-    }
+    checkChild(value.patient, (field, message) => ctx.addIssue({ code: 'custom', path: ['patient', field], message }));
   });
 
-module.exports = { dateQuery, slotsQuery, createBooking };
+module.exports = { dateQuery, slotsQuery, createBooking, patient, checkChild, date, startTime, id };

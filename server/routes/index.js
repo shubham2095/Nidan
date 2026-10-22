@@ -13,4 +13,10 @@ router.get('/health', async (req, res) => {
 router.use('/auth', require('./auth.routes'));
 router.use('/public', require('./public.routes'));
 
+// CRM (staff only; every route below requires a signed-in user and checks the role)
+router.use('/appointments', require('./appointment.routes'));
+router.use('/patients', require('./patient.routes'));
+router.use('/attachments', require('./attachment.routes'));
+router.use(require('./crm.routes'));
+
 module.exports = router;

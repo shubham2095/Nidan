@@ -12,16 +12,21 @@ const { toMinutes, toTime, addDays, weekdayOf } = require('../utils/datetime');
  * now = { date: 'YYYY-MM-DD', minutes }   current time in India
  *
  * A doctor cannot be in two places at once, so bookings at other locations also block a slot.
+ * Reception staff (`staff: true`) may book same-day walk-ins and book further ahead than the public site allows.
  */
+
+const STAFF_WINDOW_DAYS = 120;
 
 const overlaps = (startA, endA, startB, endB) => startA < endB && startB < endA;
 
+const windowDays = (doctor, staff) => (staff ? STAFF_WINDOW_DAYS : doctor.bookingWindowDays);
+
 /** Free slots on `date`, earliest first: [{ startTime: '18:00:00', endTime: '18:15:00' }] */
-const slotsForDate = (ctx, date, now) => {
+const slotsForDate = (ctx, date, now, { staff = false } = {}) => {
   const { doctor, schedules, leaves, booked } = ctx;
 
   if (date < now.date) return [];
-  if (date > addDays(now.date, doctor.bookingWindowDays)) return [];
+  if (date > addDays(now.date, windowDays(doctor, staff))) return [];
 
   const dayLeaves = leaves.filter((leave) => leave.startDate <= date && leave.endDate >= date);
   if (dayLeaves.some((leave) => !leave.startTime || !leave.endTime)) return [];
@@ -33,7 +38,8 @@ const slotsForDate = (ctx, date, now) => {
       .map((appointment) => [toMinutes(appointment.startTime), toMinutes(appointment.endTime)]),
   ];
 
-  const earliest = date === now.date ? now.minutes + doctor.minNoticeMinutes : 0;
+  const notice = staff ? 0 : doctor.minNoticeMinutes;
+  const earliest = date === now.date ? now.minutes + notice : 0;
   const weekday = weekdayOf(date);
   const step = doctor.slotMinutes;
   const slots = new Map();
@@ -53,14 +59,14 @@ const slotsForDate = (ctx, date, now) => {
 };
 
 /** Dates in the booking window that still have at least one free slot: [{ date, slots: 12 }] */
-const availableDates = (ctx, now) => {
+const availableDates = (ctx, now, { staff = false } = {}) => {
   const dates = [];
-  for (let offset = 0; offset <= ctx.doctor.bookingWindowDays; offset += 1) {
+  for (let offset = 0; offset <= windowDays(ctx.doctor, staff); offset += 1) {
     const date = addDays(now.date, offset);
-    const count = slotsForDate(ctx, date, now).length;
+    const count = slotsForDate(ctx, date, now, { staff }).length;
     if (count > 0) dates.push({ date, slots: count });
   }
   return dates;
 };
 
-module.exports = { slotsForDate, availableDates };
+module.exports = { slotsForDate, availableDates, STAFF_WINDOW_DAYS };

@@ -7,7 +7,8 @@ const { zodDetails } = require('./errorHandler');
  * (Express 5 makes req.query read-only, so parsed values are never written back.)
  */
 const validate = (schemas) => (req, res, next) => {
-  req.valid = {};
+  // Merge, so a route may run several validators (e.g. params first, body after a file upload).
+  req.valid ??= {};
   for (const part of ['params', 'query', 'body']) {
     if (!schemas[part]) continue;
     const result = schemas[part].safeParse(req[part] ?? {});

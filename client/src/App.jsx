@@ -1,5 +1,6 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { LoadingState } from './components/public/States.jsx';
 import { SiteProvider } from './context/SiteContext.jsx';
 import PublicLayout from './layouts/PublicLayout.jsx';
 import HomePage from './pages/public/HomePage.jsx';
@@ -19,27 +20,80 @@ const BookAppointmentPage = lazy(() => import('./pages/public/BookAppointmentPag
 const PrivacyPolicyPage = lazy(() => import('./pages/public/PrivacyPolicyPage.jsx'));
 const NotFoundPage = lazy(() => import('./pages/public/NotFoundPage.jsx'));
 
+// CRM screens are separate chunks: website visitors never download them.
+const AdminRoot = lazy(() => import('./layouts/AdminRoot.jsx'));
+const AdminLayout = lazy(() => import('./layouts/AdminLayout.jsx'));
+const LoginPage = lazy(() => import('./pages/admin/LoginPage.jsx'));
+const ForgotPasswordPage = lazy(() => import('./pages/admin/ForgotPasswordPage.jsx'));
+const ResetPasswordPage = lazy(() => import('./pages/admin/ResetPasswordPage.jsx'));
+const DashboardPage = lazy(() => import('./pages/admin/DashboardPage.jsx'));
+const AppointmentsPage = lazy(() => import('./pages/admin/AppointmentsPage.jsx'));
+const PatientsPage = lazy(() => import('./pages/admin/PatientsPage.jsx'));
+const PatientDetailPage = lazy(() => import('./pages/admin/PatientDetailPage.jsx'));
+const LeadsPage = lazy(() => import('./pages/admin/LeadsPage.jsx'));
+const LeadDetailPage = lazy(() => import('./pages/admin/LeadDetailPage.jsx'));
+const FollowUpsPage = lazy(() => import('./pages/admin/FollowUpsPage.jsx'));
+const RequireRole = lazy(() => import('./components/admin/RouteGuards.jsx').then((module) => ({ default: module.RequireRole })));
+
+const receptionOnly = ['receptionist'];
+
 export default function App() {
   return (
-    <SiteProvider>
-      <Routes>
-        <Route element={<PublicLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="about-us" element={<AboutPage />} />
-          <Route path="doctors" element={<DoctorsPage />} />
-          <Route path="doctors/:slug" element={<DoctorDetailPage />} />
-          <Route path="services" element={<ServicesPage />} />
-          <Route path="services/:slug" element={<ServiceDetailPage />} />
-          <Route path="gallery" element={<GalleryPage />} />
-          <Route path="testimonials" element={<TestimonialsPage />} />
-          <Route path="blog" element={<BlogPage />} />
-          <Route path="blog/:slug" element={<BlogPostPage />} />
-          <Route path="contact-us" element={<ContactPage />} />
-          <Route path="book-appointment" element={<BookAppointmentPage />} />
-          <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="*" element={<NotFoundPage />} />
+    <Suspense fallback={<LoadingState className="min-h-screen" />}>
+      <AppRoutes />
+    </Suspense>
+  );
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="admin" element={<AdminRoot />}>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
+        <Route element={<AdminLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="appointments" element={<AppointmentsPage />} />
+          <Route path="patients" element={<PatientsPage />} />
+          <Route path="patients/:id" element={<PatientDetailPage />} />
+          <Route path="leads" element={<RequireRole roles={receptionOnly}><LeadsPage /></RequireRole>} />
+          <Route path="leads/:id" element={<RequireRole roles={receptionOnly}><LeadDetailPage /></RequireRole>} />
+          <Route path="follow-ups" element={<FollowUpsPage />} />
         </Route>
-      </Routes>
-    </SiteProvider>
+      </Route>
+
+      <Route
+        path="*"
+        element={
+          <SiteProvider>
+            <PublicRoutes />
+          </SiteProvider>
+        }
+      />
+    </Routes>
+  );
+}
+
+function PublicRoutes() {
+  return (
+    <Routes>
+      <Route element={<PublicLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="about-us" element={<AboutPage />} />
+        <Route path="doctors" element={<DoctorsPage />} />
+        <Route path="doctors/:slug" element={<DoctorDetailPage />} />
+        <Route path="services" element={<ServicesPage />} />
+        <Route path="services/:slug" element={<ServiceDetailPage />} />
+        <Route path="gallery" element={<GalleryPage />} />
+        <Route path="testimonials" element={<TestimonialsPage />} />
+        <Route path="blog" element={<BlogPage />} />
+        <Route path="blog/:slug" element={<BlogPostPage />} />
+        <Route path="contact-us" element={<ContactPage />} />
+        <Route path="book-appointment" element={<BookAppointmentPage />} />
+        <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }

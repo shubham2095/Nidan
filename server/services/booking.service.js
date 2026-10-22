@@ -5,7 +5,7 @@ const {
 } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { nowInIndia, addDays, dateFromAge } = require('../utils/datetime');
-const { slotsForDate, availableDates } = require('./slots.service');
+const { slotsForDate, availableDates, STAFF_WINDOW_DAYS } = require('./slots.service');
 const patientService = require('./patient.service');
 const mailService = require('./mail.service');
 const activityLog = require('./activityLog.service');
@@ -18,16 +18,17 @@ const slotUnavailable = () =>
 
 /**
  * Loads everything slot generation needs for one doctor at one location from `from` to `to`
- * (defaults to the end of the doctor's booking window).
+ * (defaults to the end of the booking window). `excludeAppointmentId` leaves one appointment out of
+ * the busy list, which is how a reschedule avoids blocking itself.
  */
-const loadContext = async ({ doctorId, locationId }, from, to) => {
+const loadContext = async ({ doctorId, locationId }, from, to, { staff = false, excludeAppointmentId } = {}) => {
   const [doctor, location] = await Promise.all([
     Doctor.findOne({ where: { id: doctorId, isActive: true } }),
     Location.findOne({ where: { id: locationId, isActive: true } }),
   ]);
   if (!doctor || !location) throw ApiError.notFound('Doctor or location not found');
 
-  const rangeEnd = to ?? addDays(from, doctor.bookingWindowDays);
+  const rangeEnd = to ?? addDays(from, staff ? STAFF_WINDOW_DAYS : doctor.bookingWindowDays);
 
   const [schedules, leaves, booked] = await Promise.all([
     DoctorSchedule.findAll({ where: { doctorId, locationId, isActive: true } }),
@@ -41,7 +42,12 @@ const loadContext = async ({ doctorId, locationId }, from, to) => {
     }),
     // Any location: the same doctor cannot be booked twice at the same time.
     Appointment.findAll({
-      where: { doctorId, appointmentDate: { [Op.between]: [from, rangeEnd] }, slotLock: 1 },
+      where: {
+        doctorId,
+        appointmentDate: { [Op.between]: [from, rangeEnd] },
+        slotLock: 1,
+        ...(excludeAppointmentId && { id: { [Op.ne]: excludeAppointmentId } }),
+      },
       attributes: ['appointmentDate', 'startTime', 'endTime'],
     }),
   ]);
@@ -50,15 +56,15 @@ const loadContext = async ({ doctorId, locationId }, from, to) => {
   return { doctor, location, schedules, leaves, booked };
 };
 
-const listDates = async ({ doctorId, locationId }) => {
+const listDates = async ({ doctorId, locationId }, { staff = false } = {}) => {
   const now = nowInIndia();
-  const ctx = await loadContext({ doctorId, locationId }, now.date);
-  return { dates: availableDates(ctx, now) };
+  const ctx = await loadContext({ doctorId, locationId }, now.date, undefined, { staff });
+  return { dates: availableDates(ctx, now, { staff }) };
 };
 
-const listSlots = async ({ doctorId, locationId, date }) => {
-  const ctx = await loadContext({ doctorId, locationId }, date, date);
-  return { date, slots: slotsForDate(ctx, date, nowInIndia()) };
+const listSlots = async ({ doctorId, locationId, date }, { staff = false } = {}) => {
+  const ctx = await loadContext({ doctorId, locationId }, date, date, { staff });
+  return { date, slots: slotsForDate(ctx, date, nowInIndia(), { staff }) };
 };
 
 const generateRef = async (transaction) => {
@@ -71,38 +77,39 @@ const generateRef = async (transaction) => {
   throw new Error('Could not generate a unique booking reference');
 };
 
+const duplicateBooking = () =>
+  ApiError.conflict('This patient already has a booking with this doctor on that day.', { code: 'duplicate_booking' });
+
 /**
- * Books a slot from the public website.
+ * Reserves a slot and creates the appointment. Shared by the public website and reception staff.
  * Order of defence against double booking: (1) the slot must be free right now, (2) the database
  * unique index on (doctor, date, start time, slot_lock) rejects any concurrent second booking.
+ *
+ * `resolvePatient(transaction, now)` returns the patient record; `fields` are the appointment columns
+ * that differ between callers (status, source, reason, createdBy ...).
  */
-const createBooking = async ({ doctorId, locationId, date, startTime, reason, patient: patientInput }, req) => {
-  const ctx = await loadContext({ doctorId, locationId }, date, date);
+const bookSlot = async ({ doctorId, locationId, date, startTime, staff = false, resolvePatient, fields }) => {
+  const ctx = await loadContext({ doctorId, locationId }, date, date, { staff });
   const now = nowInIndia();
 
-  const slot = slotsForDate(ctx, date, now).find((candidate) => candidate.startTime === startTime);
+  const slot = slotsForDate(ctx, date, now, { staff }).find((candidate) => candidate.startTime === startTime);
   if (!slot) throw slotUnavailable();
-
-  const dob = patientInput.dob || (patientInput.ageYears !== undefined ? dateFromAge(now.date, patientInput.ageYears, patientInput.ageMonths || 0) : undefined);
 
   let appointment;
   let patient;
   try {
     await sequelize.transaction(async (transaction) => {
-      patient = await patientService.findOrCreateFromBooking({ ...patientInput, dob }, transaction);
+      patient = await resolvePatient(transaction, now);
 
       const duplicate = await Appointment.findOne({
         where: { patientId: patient.id, doctorId, appointmentDate: date, slotLock: 1 },
         transaction,
       });
-      if (duplicate) {
-        throw ApiError.conflict('This patient already has a booking with this doctor on that day. Please call us if you need to change it.', {
-          code: 'duplicate_booking',
-        });
-      }
+      if (duplicate) throw duplicateBooking();
 
       appointment = await Appointment.create(
         {
+          ...fields,
           bookingRef: await generateRef(transaction),
           patientId: patient.id,
           doctorId,
@@ -110,10 +117,6 @@ const createBooking = async ({ doctorId, locationId, date, startTime, reason, pa
           appointmentDate: date,
           startTime: slot.startTime,
           endTime: slot.endTime,
-          status: 'pending',
-          source: 'website',
-          reason,
-          consentAt: new Date(),
         },
         { transaction },
       );
@@ -124,6 +127,32 @@ const createBooking = async ({ doctorId, locationId, date, startTime, reason, pa
     throw error;
   }
 
+  return { appointment, patient, doctor: ctx.doctor, location: ctx.location };
+};
+
+const clinicSettings = async () => (await Setting.findOne({ where: { settingKey: 'clinic' } }))?.settingValue || {};
+
+/** Books a slot from the public website. New bookings wait for staff to confirm them. */
+const createBooking = async ({ doctorId, locationId, date, startTime, reason, patient: patientInput }, req) => {
+  const { appointment, patient, doctor, location } = await bookSlot({
+    doctorId,
+    locationId,
+    date,
+    startTime,
+    resolvePatient: (transaction, now) => {
+      const dob =
+        patientInput.dob ||
+        (patientInput.ageYears !== undefined ? dateFromAge(now.date, patientInput.ageYears, patientInput.ageMonths || 0) : undefined);
+      return patientService.findOrCreateFromBooking({ ...patientInput, dob }, transaction);
+    },
+    fields: { status: 'pending', source: 'website', reason, consentAt: new Date() },
+  }).catch((error) => {
+    if (error.details?.code === 'duplicate_booking') {
+      throw ApiError.conflict(`${error.message} Please call us if you need to change it.`, error.details);
+    }
+    throw error;
+  });
+
   await activityLog.record({
     entityType: 'appointment',
     entityId: appointment.id,
@@ -132,15 +161,8 @@ const createBooking = async ({ doctorId, locationId, date, startTime, reason, pa
     req,
   });
 
-  const clinicSetting = await Setting.findOne({ where: { settingKey: 'clinic' } });
   // Not awaited: the patient should not wait on the mail server (sendMail never throws).
-  mailService.sendBookingEmails({
-    appointment,
-    patient,
-    doctor: ctx.doctor,
-    location: ctx.location,
-    clinic: clinicSetting?.settingValue || {},
-  });
+  mailService.sendBookingEmails({ appointment, patient, doctor, location, clinic: await clinicSettings() });
 
   return {
     ref: appointment.bookingRef,
@@ -149,9 +171,9 @@ const createBooking = async ({ doctorId, locationId, date, startTime, reason, pa
     startTime: appointment.startTime,
     endTime: appointment.endTime,
     patientName: patient.name,
-    doctor: { name: ctx.doctor.name, slug: ctx.doctor.slug },
-    location: { name: ctx.location.name, address: ctx.location.address, mapUrl: ctx.location.mapUrl },
+    doctor: { name: doctor.name, slug: doctor.slug },
+    location: { name: location.name, address: location.address, mapUrl: location.mapUrl },
   };
 };
 
-module.exports = { listDates, listSlots, createBooking };
+module.exports = { listDates, listSlots, createBooking, loadContext, bookSlot, slotUnavailable, duplicateBooking, clinicSettings };

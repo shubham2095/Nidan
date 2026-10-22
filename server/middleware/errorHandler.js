@@ -29,6 +29,9 @@ const errorHandler = (error, req, res, next) => {
     status = 422;
     message = 'Please check the highlighted fields';
     details = error.errors.map((item) => ({ field: item.path, message: item.message }));
+  } else if (error.name === 'MulterError') {
+    status = error.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+    message = error.code === 'LIMIT_FILE_SIZE' ? 'That file is too large. The limit is 10 MB.' : 'The upload could not be processed.';
   } else if (error.type === 'entity.parse.failed') {
     status = 400;
     message = 'Request body is not valid JSON';

@@ -139,4 +139,39 @@ const sendBookingEmails = ({ appointment, patient, doctor, location, clinic }) =
   return Promise.all(results);
 };
 
-module.exports = { sendMail, sendPasswordResetEmail, sendContactNotification, sendBookingEmails };
+const APPOINTMENT_EMAILS = {
+  confirmed: {
+    subject: (ref) => `Your appointment is confirmed (${ref})`,
+    intro: 'Good news! Your appointment is confirmed.',
+  },
+  rescheduled: {
+    subject: (ref) => `Your appointment has been rescheduled (${ref})`,
+    intro: 'Your appointment has been moved to a new time. The new details are below.',
+  },
+  cancelled: {
+    subject: (ref) => `Your appointment has been cancelled (${ref})`,
+    intro: 'Your appointment has been cancelled. You are welcome to book again whenever it suits you.',
+  },
+};
+
+/** Tells the patient when staff confirm, reschedule or cancel an appointment (only if they gave an email address). */
+const sendAppointmentEmail = ({ type, appointment, patient, doctor, location, clinic }) => {
+  if (!patient.email) return Promise.resolve(false);
+  const { subject, intro } = APPOINTMENT_EMAILS[type];
+  const rows = [
+    ['Booking ID', appointment.bookingRef],
+    ['Patient', patient.name],
+    ['Doctor', doctor.name],
+    ['When', `${formatDateLong(appointment.appointmentDate)}, ${formatTime12(appointment.startTime)}`],
+    ['Where', `${location.name}, ${location.address}`],
+  ];
+  const phoneLine = clinic?.phonePrimary ? `Questions? Call us on ${clinic.phonePrimary}.` : '';
+  return sendMail({
+    to: patient.email,
+    subject: subject(appointment.bookingRef),
+    text: `Hello ${patient.name},\n\n${intro}\n\n${rows.map(([label, value]) => `${label}: ${value}`).join('\n')}\n\n${phoneLine}`,
+    html: `<p>Hello ${escapeHtml(patient.name)},</p><p>${escapeHtml(intro)}</p>${detailsTable(rows)}<p>${escapeHtml(phoneLine)}</p>`,
+  });
+};
+
+module.exports = { sendMail, sendPasswordResetEmail, sendContactNotification, sendBookingEmails, sendAppointmentEmail };

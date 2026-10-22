@@ -13,7 +13,7 @@ booking, and a CRM / admin panel for doctors and reception staff. One Node.js ap
 | 1 | Scaffold, DB config, migrations, seeders, auth | Done |
 | 2 | Public website pages | Done |
 | 3 | Booking engine (slots, double-booking protection, emails) | Done |
-| 4 | CRM: dashboard, appointments, patients, leads, follow-ups | Planned |
+| 4 | CRM: dashboard, appointments, patients, leads, follow-ups | Done |
 | 5 | Vaccination tracker, content management, settings, users, activity log | Planned |
 | 6 | SEO, security hardening, performance, deployment guide | Planned |
 
@@ -215,6 +215,54 @@ Booking rules:
   Emails are sent in the background, so a mail problem never blocks or fails a booking.
 - Booking IDs look like `APT-7K4P9X` (no look-alike characters such as 0/O or 1/I).
 
+### Clinic CRM (`/admin`)
+
+Staff sign in at `/admin` (forgot / reset password by email; "Change password" is in the sidebar). The CRM is a
+separate lazy-loaded bundle, so website visitors never download it, and `/admin` is marked `noindex`. Until the Users
+screen arrives in Phase 5, only the seeded super admin account exists.
+
+| | Super admin | Reception | Doctor |
+|---|---|---|---|
+| Dashboard | everything | everything | own appointments and tasks only |
+| Appointments | all; book, reschedule, change status | all; book, reschedule, change status | own only; change status |
+| Patients | all; add, edit, **delete** | all; add, edit, link family | only patients they have seen; edit |
+| Visit notes | read all, cannot write | **no access** | read and write their own |
+| Patient files | yes | yes | for their own patients |
+| Leads | yes | yes | no |
+| Follow-ups | all | all | only tasks assigned to them |
+
+Roles are enforced **on the API** (`requireRole`) and again in the services (doctor scoping). A doctor asking for
+someone else's patient or appointment gets a plain 404, so existence is not revealed.
+
+What each screen does:
+
+- **Dashboard:** today's appointments grouped by doctor, awaiting-confirmation count, new leads, follow-ups due and
+  overdue, a 14-day appointment chart and lead sources for the last 30 days.
+- **Appointments:** list (search by name, phone or booking ID; filters for doctor, location, status and date range)
+  and a day / week calendar. Staff can book phone and walk-in appointments (same-day allowed, up to 120 days ahead),
+  reschedule, cancel with a reason, and mark completed / no-show. Print the list, export it as CSV, or message the
+  patient on WhatsApp with the confirmation text already typed in.
+  Status flow: `pending → confirmed → completed`, with `cancelled` and `no_show` as exits. Cancelled is final (its slot
+  may already be re-booked); completed and no-show visits can be re-opened.
+- **Patients:** search by name, phone, patient ID or tag; profile with appointment history, tags, family links
+  (mother ↔ child, sibling, guardian), visit notes, private files and follow-ups. Booking from the website creates and
+  links patients automatically.
+- **Leads:** from the contact form, booking call-back requests and manual entry. Status `new → contacted →
+  converted / lost` (a lost lead needs a reason), assignee, next follow-up date, a notes timeline, and **Convert to
+  patient**. Adding the first note moves a new lead to contacted.
+- **Follow-ups:** tasks with a due date linked to a lead, patient or appointment, grouped as overdue / today /
+  upcoming / done.
+- **Emails to patients** (only when an email address is on file): appointment confirmed, rescheduled and cancelled.
+
+Patient files (reports, scans) are stored in `UPLOAD_DIR/private/`, which is never served as static files. They download
+only through `GET /api/attachments/:id/download`, which checks the session and the doctor's access to that patient.
+Uploads are limited to PDF, JPEG, PNG and WebP up to 10 MB, identified from the file's first bytes (a renamed `.exe`
+is refused) and stored under a random name. `src/services/storage.service.js` is the only code that touches the disk, so
+it can later be swapped for S3 or Cloudinary.
+
+Privacy: visit-note text and passwords are never written to the activity log; the CSV export neutralises spreadsheet
+formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
+
 ### Database notes
 
 - Charset `utf8mb4`, collation `utf8mb4_unicode_ci`; indexed strings are `VARCHAR(191)`.
@@ -271,6 +319,14 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     exposed publicly; changes and cancellations go through the clinic by phone or WhatsApp.
 17. **Booking defaults** (15-minute slots, 30-day window, 60-minute notice) are columns on each doctor and will be
     editable in the admin panel (Phase 5).
-18. **Search engines and social previews.** The site is a single-page app: Google renders it fine, but link previews
+18. **"Own patients" for a doctor** means patients who have (or had) an appointment with that doctor. A newly
+    registered patient with no appointment is visible to reception and the super admin only.
+19. **Reception cannot read visit notes.** They are medical records, so only the writing doctor and the super admin see
+    them. Reception can still upload and see files for patients (reports are usually filed by the front desk).
+20. **Doctors cannot book or reschedule.** They confirm, complete, mark no-show or cancel their own appointments;
+    booking and moving appointments is a reception task. Easy to change in `appointment.routes.js` if you disagree.
+21. **Staff bookings are confirmed immediately** (the patient is told by email when an address is on file) unless
+    "Pending" is chosen in the form.
+22. **Search engines and social previews.** The site is a single-page app: Google renders it fine, but link previews
     (WhatsApp, Facebook) do not run JavaScript. Phase 6 will inject per-page meta tags on the server for blog posts and
     doctor pages.
