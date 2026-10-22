@@ -7,7 +7,7 @@ const ApiError = require('../utils/ApiError');
 const { sanitizeRichText, stripHtml } = require('../utils/sanitize');
 
 // Only these settings are visible to visitors; anything else stays private.
-const PUBLIC_SETTING_KEYS = ['clinic', 'social', 'hero', 'announcement', 'whyChooseUs', 'faq', 'about', 'seo'];
+const PUBLIC_SETTING_KEYS = ['clinic', 'social', 'hero', 'announcement', 'whyChooseUs', 'faq', 'hours', 'about', 'seo'];
 const BLOG_PAGE_SIZE = 9;
 const WORDS_PER_MINUTE = 200;
 

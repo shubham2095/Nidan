@@ -8,7 +8,7 @@ export default function AuthCard({ title, description, children, footer }) {
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center">
           <Link to="/" aria-label="Back to the website">
-            <Logo />
+            <Logo className="h-20" />
           </Link>
         </div>
         <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-lg sm:p-8">

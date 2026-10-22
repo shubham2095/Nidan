@@ -14,6 +14,8 @@ export const siteDefaults = {
     hero: {},
     announcement: { enabled: false },
     whyChooseUs: [],
+    faq: [],
+    hours: [],
     about: {},
     seo: {},
   },

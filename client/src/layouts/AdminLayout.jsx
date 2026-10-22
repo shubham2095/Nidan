@@ -67,7 +67,7 @@ function Sidebar({ onNavigate, onChangePassword }) {
   return (
     <div className="flex h-full flex-col">
       <div className="px-4 py-5">
-        <Logo />
+        <Logo className="h-14" />
         <p className="mt-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">Clinic CRM</p>
       </div>
 
@@ -128,7 +128,7 @@ function Shell() {
       </aside>
 
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden print:hidden">
-        <Logo />
+        <Logo className="h-10" />
         <button type="button" onClick={() => setDrawer(true)} aria-label="Open menu" className="grid h-11 w-11 place-items-center rounded-full text-slate-700 hover:bg-slate-100">
           <Menu className="h-6 w-6" aria-hidden="true" />
         </button>

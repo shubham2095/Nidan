@@ -6,6 +6,7 @@ import { Loader2, Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react'
 import Button from '../../components/public/Button.jsx';
 import { ConsentCheckbox, Field, FormMessage, Honeypot } from '../../components/public/FormField.jsx';
 import MapEmbed from '../../components/public/MapEmbed.jsx';
+import OpeningHours from '../../components/public/OpeningHours.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import ScheduleTabs from '../../components/public/ScheduleTabs.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
@@ -98,7 +99,7 @@ export default function ContactPage() {
     <>
       <Seo
         title="Contact Us"
-        description={`Call, WhatsApp or write to ${clinic.name}. Find our clinics in Sector 51 and Noida Extension, with maps and doctor timings.`}
+        description={`Call, WhatsApp or write to ${clinic.name}. Find our clinic in Sector 51, Noida, with the map, opening hours and doctor timings.`}
         jsonLd={clinicJsonLd(site, window.location.origin)}
       />
       <PageHeader title="Contact Us" crumbs={[{ label: 'Contact Us' }]} description="We would love to hear from you. Send a message and we will call you back, or reach us directly." />
@@ -163,19 +164,28 @@ export default function ContactPage() {
 
       {ownClinics.length > 0 && (
         <Section tone="soft">
-          <SectionHeading eyebrow="Find us" title="Our clinics" />
+          <SectionHeading eyebrow="Find us" title={ownClinics.length === 1 ? 'Our clinic' : 'Our clinics'} />
           <div className="grid gap-8 lg:grid-cols-2">
-            {ownClinics.map((location) => (
-              <div key={location.id} className="space-y-4 rounded-3xl bg-white p-6 shadow-sm">
-                <h3 className="text-xl font-bold">{location.name}</h3>
-                <p className="flex items-start gap-2 text-slate-600">
-                  <MapPin className="mt-1 h-4 w-4 shrink-0 text-blush-500" aria-hidden="true" />
-                  {location.address}, {location.city}, {location.state}
-                  {location.postalCode && ` ${location.postalCode}`}
-                </p>
-                <MapEmbed location={location} instant className="h-64" />
+            <div className="space-y-6">
+              {ownClinics.map((location) => (
+                <div key={location.id} className="space-y-3 rounded-3xl bg-white p-6 shadow-sm">
+                  <h3 className="text-xl font-bold">{location.name}</h3>
+                  <p className="flex items-start gap-2 text-slate-600">
+                    <MapPin className="mt-1 h-4 w-4 shrink-0 text-blush-500" aria-hidden="true" />
+                    {location.address}, {location.city}, {location.state}
+                    {location.postalCode && ` ${location.postalCode}`}
+                  </p>
+                </div>
+              ))}
+              <div className="rounded-3xl bg-white p-6 shadow-sm sm:p-8">
+                <OpeningHours />
               </div>
-            ))}
+            </div>
+            <div className="space-y-6">
+              {ownClinics.map((location) => (
+                <MapEmbed key={location.id} location={location} instant className="h-96" />
+              ))}
+            </div>
           </div>
         </Section>
       )}

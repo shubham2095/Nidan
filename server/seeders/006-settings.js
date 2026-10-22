@@ -53,7 +53,7 @@ const settings = {
     body:
       '<p>Nidan Mother & Child Care is a mother and child clinic in Noida, run by two doctors who care for families from pregnancy through childhood.</p>' +
       '<p>Dr. Manisha Ranjan, Consultant Obstetrician & Gynaecologist, cares for women through pregnancy, childbirth and every stage of life. Dr. Rajeev Ranjan, Consultant Paediatrician & Neonatologist, looks after babies and children from their very first day.</p>' +
-      '<p>You can see them at our clinics in Sector 51 and Noida Extension, as well as at partner hospitals in Gaur City and Sector 48.</p>',
+      '<p>You can see them both at our clinic in Sector 51, Noida.</p>',
   },
   seo: {
     siteTitle: 'Nidan Mother & Child Care | Gynaecologist & Paediatrician in Noida',

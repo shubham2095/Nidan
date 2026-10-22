@@ -194,6 +194,10 @@ const REASON_FIELDS = [
   { name: 'icon', label: 'Icon', type: 'icon' },
   { name: 'description', label: 'Description', type: 'textarea', rows: 2 },
 ];
+const HOURS_FIELDS = [
+  { name: 'days', label: 'Days', required: true, hint: 'e.g. Monday – Friday' },
+  { name: 'time', label: 'Hours', required: true, hint: 'e.g. 7:00 am – 10:00 pm, or Closed' },
+];
 const FAQ_FIELDS = [
   { name: 'question', label: 'Question', required: true, wide: true },
   { name: 'answer', label: 'Answer', type: 'textarea', rows: 4, required: true, hint: 'Plain text. Keep it short and friendly.' },
@@ -212,6 +216,17 @@ export default function SettingsPage() {
           {SECTIONS.slice(0, 4).map((section) => (
             <SimpleSection key={section.key} section={section} value={data.settings[section.key]} />
           ))}
+          <ListSection
+            settingKey="hours"
+            title="Opening hours"
+            description="Shown on the home page, Contact page and footer. These are the clinic's opening hours; the times patients can book online come from each doctor's timetable (Doctors)."
+            label="opening hours"
+            itemName="Row"
+            value={data.settings.hours}
+            fields={HOURS_FIELDS}
+            blank={{ days: '', time: '' }}
+            max={10}
+          />
           <ListSection
             settingKey="whyChooseUs"
             title="Why choose us"

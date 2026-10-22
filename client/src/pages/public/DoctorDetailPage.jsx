@@ -95,7 +95,7 @@ export default function DoctorDetailPage() {
             )}
 
             <div>
-              <h2 className="mb-4 text-2xl font-extrabold">Locations &amp; timings</h2>
+              <h2 className="mb-4 text-2xl font-extrabold">{doctor.schedules.length > 1 ? 'Locations & timings' : 'Clinic timings'}</h2>
               {doctor.schedules.length === 0 && (
                 <p className="text-slate-600">Timings will be updated soon. Please call us to confirm.</p>
               )}

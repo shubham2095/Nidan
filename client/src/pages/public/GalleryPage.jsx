@@ -26,8 +26,8 @@ export default function GalleryPage() {
 
   return (
     <>
-      <Seo title="Gallery" description="Take a look inside Nidan Mother & Child Care: our clinics, our team and our community events in Noida." />
-      <PageHeader title="Gallery" crumbs={[{ label: 'Gallery' }]} description="A look at our clinics, team and community." />
+      <Seo title="Gallery" description="Take a look inside Nidan Mother & Child Care: our clinic, our team and our community events in Noida." />
+      <PageHeader title="Gallery" crumbs={[{ label: 'Gallery' }]} description="A look at our clinic, team and community." />
 
       <Section>
         {loading && <LoadingState />}
@@ -35,7 +35,7 @@ export default function GalleryPage() {
 
         {data && data.images.length === 0 && (
           <EmptyState title="Photos are coming soon" message="We are putting our gallery together. In the meantime, you are always welcome to visit us.">
-            <Button to="/contact-us">Find our clinics</Button>
+            <Button to="/contact-us">Find our clinic</Button>
           </EmptyState>
         )}
 

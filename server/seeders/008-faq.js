@@ -16,7 +16,7 @@ const faq = [
   {
     question: 'Which doctors can I see, and where?',
     answer:
-      "Dr. Manisha Ranjan is our Obstetrician and Gynaecologist, and Dr. Rajeev Ranjan is our Paediatrician and Neonatologist. They see patients at our clinics in Sector 51 and Noida Extension, and at partner hospitals in Gaur City and Sector 48. Each doctor's days, timings and locations are on the Doctors page and in the booking steps.",
+      'Dr. Manisha Ranjan is our Obstetrician and Gynaecologist, and Dr. Rajeev Ranjan is our Paediatrician and Neonatologist. Both see patients at our clinic in Sector 51, Noida. Our opening hours and address are on this page and on the Contact page, and you can pick a day and time in the booking steps.',
   },
   {
     question: "Do you give children's vaccinations?",

@@ -101,7 +101,8 @@ exists. Change the password from the admin panel (or with the forgot-password fl
 ```
 .
 ├── client/                  React app (Vite)
-│   ├── public/              Static files (favicon, ...)
+│   ├── public/              Static files: favicon.png, apple-touch-icon.png, images/ (the logo and the two doctor
+│   │                        photos; replace the files, keeping their names, to change them)
 │   ├── src/
 │   │   ├── components/      Shared UI (public/ for the website, admin/ for the CRM)
 │   │   ├── context/         SiteContext (public site data); AuthContext + ToastContext (CRM)
@@ -282,7 +283,7 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
   description, appointment length), a **weekly timetable** (blocks of location + from/to + weekdays) and **leave and
   blocked dates** (whole days or part of a day, at one location or everywhere). The booking page and website use these
   within a minute. Two ranges at the same location on the same weekday cannot overlap. Overlap across *different*
-  locations is allowed with a warning (see assumption 4). Adding leave never cancels anything: it warns how many existing
+  locations is allowed with a warning. Adding leave never cancels anything: it warns how many existing
   appointments fall in the blocked time so reception can reschedule or cancel them. Only the super admin changes a doctor's
   web address, visibility, booking window and minimum notice.
 - **Website content** (super admin): **Locations** (map links are generated from the address unless you paste your own),
@@ -293,7 +294,7 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
   address). Pictures must be JPEG, PNG or WebP up to 5 MB and are identified from the file's first bytes. Everything
   rich-text is sanitised on the server before it is stored.
 - **Site settings** (`/admin/settings`): clinic name, phone numbers, WhatsApp number and email; social links; home page
-  banner text and picture; the announcement bar; the "Why choose us" list; the home page FAQ (add, remove and reorder
+  banner text and picture; the announcement bar; the clinic's opening hours (shown on the home page, Contact page and footer); the "Why choose us" list; the home page FAQ (add, remove and reorder
   questions; seven starter questions are included, so read and adjust them); the About page text; default search title and
   description. Each section is saved on its own and shows on the website within a minute.
 - **Users** (`/admin/users`): add a login with a starting password (8+ characters, a letter and a number), choose the
@@ -499,8 +500,10 @@ minute.
 - [ ] `RUN_MIGRATIONS` / `RUN_SEEDS` back to `false` after the first start; `UPLOAD_DIR` outside the app folder.
 - [ ] Signed in as the super admin and changed the password from the sidebar.
 - [ ] Replaced the three `TODO` placeholder testimonials (they never show until approved) with real ones, with consent.
-- [ ] Uploaded both doctors' photos and filled in their "About" text; confirmed the timetables and Dr. Manisha Ranjan's
-      overlapping hours (assumption 4).
+- [ ] Checked both doctors' photos and "About" text, and each doctor's timetable (both are seeded with the clinic's full
+      opening hours, so shorten them if a doctor does not sit all day; assumption 4).
+- [ ] Opening hours checked (**Site settings → Opening hours**) and the map on the Contact page points at the clinic
+      (**Locations**: paste the exact Google Maps embed link if the automatic one is off).
 - [ ] Dr. Rajeev Ranjan reviewed the vaccination schedule (**Vaccinations → Schedule**).
 - [ ] Privacy policy reviewed (it has a `TODO` for the record-retention period).
 - [ ] Home page FAQ answers read and adjusted to the clinic's real practice (**Site settings → Frequently asked questions**).
@@ -521,10 +524,11 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 3. **Old site URLs.** The current WordPress site has no per-service or per-doctor pages (`/services/` returns 404 and
    the doctors page has no profile links), so there are no old slugs to preserve for those. New slugs:
    `/doctors/dr-manisha-ranjan`, `/doctors/dr-rajeev-ranjan`, `/services/maternity`, etc.
-4. **Dr. Manisha Ranjan's timetable overlaps.** As specified, she is at Cloudnine (Mon-Sat 9 am-3 pm) and at the
-   Noida Extension clinic (Mon/Wed/Fri 1-3 pm) at the same time. The seed keeps your values. The database still
-   prevents a double booking (a slot booked at one location disappears from the other), but please confirm the real
-   timings and edit them in the admin panel.
+4. **One clinic.** The clinic has a single location, Basement B, 170, Block B, Sector 51, Noida, Uttar Pradesh 201303,
+   where both doctors see patients. Its opening hours (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) are
+   a separate, editable setting, and both doctors' timetables are seeded with the same hours, so patients can book
+   any 15-minute slot inside them. The "7 am" and "10 pm" are as you told me. More locations (or partner hospitals) can
+   still be added in the admin panel, and the website then shows a location choice automatically.
 5. **Uploads.** `UPLOAD_DIR` has two sub-folders: `public/` (gallery, blog, doctor photos) is served at `/uploads`,
    and `private/` (patient reports) is never served directly and will be streamed only through authenticated routes.
 6. **Patient de-duplication** matches on normalised phone number plus name. The same phone with a different name

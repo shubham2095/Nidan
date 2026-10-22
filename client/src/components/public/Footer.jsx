@@ -5,6 +5,7 @@ import { telHref } from '../../utils/format.js';
 import Container from './Container.jsx';
 import Logo from './Logo.jsx';
 import MapEmbed from './MapEmbed.jsx';
+import OpeningHours from './OpeningHours.jsx';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './SocialIcons.jsx';
 import { NAV_LINKS } from './navLinks.js';
 
@@ -68,6 +69,10 @@ export default function Footer() {
                 <MapEmbed location={location} className="h-40" />
               </div>
             ))}
+            <div>
+              <h3 className="mb-3 text-sm font-semibold text-white">Opening hours</h3>
+              <OpeningHours variant="dark" />
+            </div>
           </div>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">

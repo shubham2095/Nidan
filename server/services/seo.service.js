@@ -38,7 +38,7 @@ const absolute = (pathOrUrl) => new URL(pathOrUrl, `${env.clientUrl}/`).href;
 const STATIC_PAGES = {
   '/about-us': (clinic) => ({
     title: 'About Us',
-    description: `Learn about ${clinic.name}: ${clinic.tagline}. Meet our doctors and find our clinics in Noida.`,
+    description: `Learn about ${clinic.name}: ${clinic.tagline}. Meet our doctors and find our clinic in Noida.`,
   }),
   '/doctors': () => ({
     title: 'Our Doctors',
@@ -50,7 +50,7 @@ const STATIC_PAGES = {
   }),
   '/gallery': () => ({
     title: 'Gallery',
-    description: 'Take a look inside Nidan Mother & Child Care: our clinics, our team and our community events in Noida.',
+    description: 'Take a look inside Nidan Mother & Child Care: our clinic, our team and our community events in Noida.',
   }),
   '/testimonials': () => ({
     title: 'Patient Testimonials',
@@ -62,7 +62,7 @@ const STATIC_PAGES = {
   }),
   '/contact-us': (clinic) => ({
     title: 'Contact Us',
-    description: `Call, WhatsApp or write to ${clinic.name}. Find our clinics in Sector 51 and Noida Extension, with maps and doctor timings.`,
+    description: `Call, WhatsApp or write to ${clinic.name}. Find our clinic in Sector 51, Noida, with the map, opening hours and doctor timings.`,
   }),
   '/book-appointment': () => ({
     title: 'Book an Appointment',

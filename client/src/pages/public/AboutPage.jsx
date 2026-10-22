@@ -20,7 +20,7 @@ export default function AboutPage() {
     <>
       <Seo
         title="About Us"
-        description={`Learn about ${clinic.name}: ${clinic.tagline}. Meet our doctors and find our clinics in Noida.`}
+        description={`Learn about ${clinic.name}: ${clinic.tagline}. Meet our doctors and find our clinic in Noida.`}
       />
       <PageHeader title={about.heading || `About ${clinic.name}`} crumbs={[{ label: 'About Us' }]} description={clinic.tagline} />
 
@@ -73,7 +73,7 @@ export default function AboutPage() {
 
       {ownClinics.length > 0 && (
         <Section tone="soft">
-          <SectionHeading eyebrow="Visit us" title="Our clinics" />
+          <SectionHeading eyebrow="Visit us" title={ownClinics.length === 1 ? 'Our clinic' : 'Our clinics'} />
           <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
             {ownClinics.map((location) => (
               <div key={location.id} className="rounded-3xl bg-white p-6 shadow-sm">

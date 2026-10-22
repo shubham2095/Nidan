@@ -19,7 +19,7 @@ export default function DoctorsPage() {
       <PageHeader
         title="Our Doctors"
         crumbs={[{ label: 'Doctors' }]}
-        description="Experienced, compassionate specialists for mothers and children. Pick a location to see timings."
+        description="Experienced, compassionate specialists for mothers and children, available at our clinic in Sector 51, Noida."
       />
       <Section>
         {loading && <LoadingState />}

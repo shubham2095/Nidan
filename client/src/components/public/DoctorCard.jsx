@@ -36,7 +36,7 @@ export default function DoctorCard({ doctor }) {
       )}
 
       <div className="mt-6 flex-1">
-        <h4 className="mb-3 font-heading text-base font-bold">Locations &amp; timings</h4>
+        <h4 className="mb-3 font-heading text-base font-bold">{doctor.schedules.length > 1 ? 'Locations & timings' : 'Timings'}</h4>
         <ScheduleTabs schedules={doctor.schedules} showAddress={false} />
       </div>
 

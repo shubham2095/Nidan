@@ -1,17 +1,9 @@
-import { Heart } from 'lucide-react';
-
-export default function Logo({ tone = 'dark' }) {
-  const text = tone === 'dark' ? 'text-slate-900' : 'text-white';
-  const sub = tone === 'dark' ? 'text-slate-500' : 'text-brand-100';
-  return (
-    <span className="flex items-center gap-3">
-      <span className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-700 text-blush-200 shadow-sm">
-        <Heart className="h-5 w-5 fill-current" aria-hidden="true" />
-      </span>
-      <span className="leading-tight">
-        <span className={`block font-heading text-xl font-extrabold tracking-tight ${text}`}>Nidan</span>
-        <span className={`block text-[11px] font-semibold tracking-wide uppercase ${sub}`}>Mother &amp; Child Care</span>
-      </span>
-    </span>
-  );
+/**
+ * The clinic logo (client/public/images/nidan-logo.webp). It has a white background, so on dark areas
+ * (`tone="light"`, e.g. the footer) it sits on a white tile. `className` sets the height.
+ */
+export default function Logo({ tone = 'dark', className = 'h-12 lg:h-16' }) {
+  const image = <img src="/images/nidan-logo.webp" alt="Nidan Mother & Child Care" width="300" height="162" className={`w-auto ${className}`} />;
+  if (tone === 'light') return <span className="inline-block rounded-2xl bg-white p-2 shadow-sm">{image}</span>;
+  return image;
 }

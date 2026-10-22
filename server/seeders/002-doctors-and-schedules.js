@@ -1,12 +1,14 @@
 const { createOnce } = require('../utils/seedHelpers');
 
 // weekday: 0 = Sunday ... 6 = Saturday
-const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
 const MON_TO_FRI = [1, 2, 3, 4, 5];
-const MON_TO_SAT = [1, 2, 3, 4, 5, 6];
-const MON_WED_FRI = [1, 3, 5];
-const TUE_THU_SAT = [2, 4, 6];
 const SAT_SUN = [6, 0];
+
+// Both doctors see patients at the one clinic during its opening hours (also shown in Site settings > Opening hours).
+const CLINIC_HOURS = [
+  { location: 'nidan-sector-51', days: MON_TO_FRI, start: '07:00:00', end: '22:00:00' },
+  { location: 'nidan-sector-51', days: SAT_SUN, start: '12:00:00', end: '18:00:00' },
+];
 
 const doctors = [
   {
@@ -26,13 +28,9 @@ const doctors = [
       "She cares for women through every stage of life, with a special focus on high-risk pregnancies, infertility treatments such as IUI, vaginal deliveries and women's health.</p>" +
       '<p>She believes every pregnancy deserves attentive, compassionate and personalised care, from the first visit to the day you take your baby home.</p>',
     quote: 'The journey of a thousand miles begins with the heartbeat of a new life, echoing the promise of tomorrow.',
+    photoUrl: '/images/doctors/dr-manisha-ranjan.webp',
     sortOrder: 1,
-    schedules: [
-      { location: 'nidan-sector-51', days: ALL_DAYS, start: '18:00:00', end: '21:00:00' },
-      { location: 'cloudnine-hospital-gaur-city', days: MON_TO_SAT, start: '09:00:00', end: '15:00:00' },
-      { location: 'nidan-noida-extension', days: MON_WED_FRI, start: '13:00:00', end: '15:00:00' },
-      { location: 'nidan-noida-extension', days: SAT_SUN, start: '15:00:00', end: '17:00:00' },
-    ],
+    schedules: CLINIC_HOURS,
   },
   {
     slug: 'dr-rajeev-ranjan',
@@ -46,16 +44,9 @@ const doctors = [
       'He looks after children from the day they are born, with a focus on child vaccinations, routine check-ups, paediatric conditions and newborn care.</p>' +
       '<p>He works closely with parents to help every child grow up healthy, happy and well protected.</p>',
     quote: "Each child's potential is a delicate seed; with the right care, it blossoms into a vibrant future.",
+    photoUrl: '/images/doctors/dr-rajeev-ranjan.webp',
     sortOrder: 2,
-    schedules: [
-      { location: 'nidan-sector-51', days: MON_TO_FRI, start: '09:00:00', end: '13:00:00' },
-      { location: 'nidan-sector-51', days: [6], start: '10:00:00', end: '13:00:00' },
-      { location: 'nidan-sector-51', days: [0], start: '10:00:00', end: '14:00:00' },
-      { location: 'nidan-sector-51', days: ALL_DAYS, start: '18:00:00', end: '21:00:00' },
-      { location: 'motherhood-hospital-sector-48', days: TUE_THU_SAT, start: '13:00:00', end: '15:00:00' },
-      { location: 'nidan-noida-extension', days: MON_WED_FRI, start: '13:00:00', end: '15:00:00' },
-      { location: 'nidan-noida-extension', days: SAT_SUN, start: '15:00:00', end: '17:00:00' },
-    ],
+    schedules: CLINIC_HOURS,
   },
 ];
 

@@ -15,7 +15,8 @@ export default function ScheduleTabs({ schedules, showAddress = true }) {
 
   return (
     <div>
-      <div role="tablist" aria-label="Choose a location" className="flex flex-wrap gap-2">
+      {/* with a single location there is nothing to choose, so the tab is not shown */}
+      <div role="tablist" aria-label="Choose a location" className={schedules.length > 1 ? 'flex flex-wrap gap-2' : 'hidden'}>
         {schedules.map(({ location }, index) => {
           const selected = index === active;
           return (
@@ -46,7 +47,7 @@ export default function ScheduleTabs({ schedules, showAddress = true }) {
         role="tabpanel"
         id={`${baseId}-panel`}
         aria-labelledby={`${baseId}-tab-${Math.min(active, schedules.length - 1)}`}
-        className="mt-4 rounded-2xl bg-brand-50/70 p-4"
+        className={`rounded-2xl bg-brand-50/70 p-4 ${schedules.length > 1 ? 'mt-4' : ''}`}
       >
         <ul className="space-y-2">
           {groupSchedule(current.slots).map((line) => (
