@@ -73,7 +73,7 @@ const serviceImages = {
   'lactation': '/images/services/lactation.webp',
 };
 
-const HERO = { imageUrl: '/images/gallery/doctor-with-baby-girl.webp', imageAlt: 'A smiling doctor with a baby girl in her arms at Nidan Mother & Child Care' };
+const HERO = { imageUrl: '/images/hero-clinic.webp', imageAlt: 'The front of the Nidan Mother & Child Care clinic building in Sector 51, Noida' };
 
 module.exports = {
   async up({ models: { GalleryCategory, GalleryImage, Service, Setting } }) {
