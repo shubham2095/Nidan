@@ -35,7 +35,7 @@ export default function Lightbox({ images, index, onClose, onChange }) {
       role="dialog"
       aria-modal="true"
       aria-label={image.title || image.altText}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      className="pop-in fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
       onClick={onClose}
     >
       <button
@@ -76,7 +76,7 @@ export default function Lightbox({ images, index, onClose, onChange }) {
       )}
 
       <figure className="max-h-full max-w-5xl" onClick={(event) => event.stopPropagation()}>
-        <img src={image.imageUrl} alt={image.altText} className="max-h-[80vh] w-auto rounded-xl object-contain" />
+        <img key={image.imageUrl} src={image.imageUrl} alt={image.altText} className="pop-in max-h-[80vh] w-auto rounded-xl object-contain" />
         {image.title && <figcaption className="mt-3 text-center text-sm text-white/90">{image.title}</figcaption>}
       </figure>
     </div>

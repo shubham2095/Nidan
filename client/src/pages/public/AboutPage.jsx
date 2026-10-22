@@ -3,6 +3,7 @@ import { MapPin } from 'lucide-react';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
 import DoctorAvatar from '../../components/public/DoctorAvatar.jsx';
 import Icon from '../../components/public/Icon.jsx';
+import { RevealGrid } from '../../components/public/Reveal.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
@@ -33,7 +34,7 @@ export default function AboutPage() {
       {data && data.items.length > 0 && (
         <Section tone="mint">
           <SectionHeading eyebrow="Our doctors" title="The people behind Nidan" />
-          <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
+          <RevealGrid className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2" columns={2} step={140}>
             {data.items.map((doctor) => (
               <Link
                 key={doctor.id}
@@ -48,14 +49,14 @@ export default function AboutPage() {
                 </span>
               </Link>
             ))}
-          </div>
+          </RevealGrid>
         </Section>
       )}
 
       {whyChooseUs.length > 0 && (
         <Section>
           <SectionHeading eyebrow="Why choose us" title="What you can expect" />
-          <div className="grid gap-6 sm:grid-cols-2">
+          <RevealGrid className="grid gap-6 sm:grid-cols-2" columns={2}>
             {whyChooseUs.map((item) => (
               <div key={item.title} className="flex gap-4 rounded-3xl border border-slate-100 p-6">
                 <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-blush-100 text-blush-600">
@@ -67,14 +68,14 @@ export default function AboutPage() {
                 </div>
               </div>
             ))}
-          </div>
+          </RevealGrid>
         </Section>
       )}
 
       {ownClinics.length > 0 && (
         <Section tone="soft">
           <SectionHeading eyebrow="Visit us" title={ownClinics.length === 1 ? 'Our clinic' : 'Our clinics'} />
-          <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
+          <RevealGrid className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2" columns={2}>
             {ownClinics.map((location) => (
               <div key={location.id} className="rounded-3xl bg-white p-6 shadow-sm">
                 <h3 className="text-lg font-bold">{location.name}</h3>
@@ -85,7 +86,7 @@ export default function AboutPage() {
                 </p>
               </div>
             ))}
-          </div>
+          </RevealGrid>
         </Section>
       )}
 

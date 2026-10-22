@@ -3,6 +3,7 @@ import { ArrowLeft, Clock } from 'lucide-react';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import PostCard from '../../components/public/PostCard.jsx';
+import { RevealGrid } from '../../components/public/Reveal.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
 import { ErrorState, LoadingState } from '../../components/public/States.jsx';
@@ -63,11 +64,11 @@ export default function BlogPostPage() {
       {post.related.length > 0 && (
         <Section tone="soft">
           <SectionHeading title="Keep reading" />
-          <div className="grid gap-6 md:grid-cols-3">
+          <RevealGrid className="grid gap-6 md:grid-cols-3" columns={3}>
             {post.related.map((item) => (
               <PostCard key={item.id} post={item} />
             ))}
-          </div>
+          </RevealGrid>
         </Section>
       )}
       <ContactStrip />

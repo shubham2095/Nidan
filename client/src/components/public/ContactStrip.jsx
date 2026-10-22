@@ -3,6 +3,7 @@ import { useSite } from '../../context/SiteContext.jsx';
 import { telHref, whatsappHref } from '../../utils/format.js';
 import Button from './Button.jsx';
 import Container from './Container.jsx';
+import Reveal from './Reveal.jsx';
 
 /** "Talk to us" band used at the bottom of the home page and detail pages. */
 export default function ContactStrip() {
@@ -11,6 +12,7 @@ export default function ContactStrip() {
   return (
     <section className="py-14 sm:py-20">
       <Container>
+        <Reveal variant="zoom">
         <div className="relative overflow-hidden rounded-[2rem] bg-brand-800 px-6 py-12 text-white sm:px-12">
           <div aria-hidden="true" className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-brand-600/50 blur-2xl" />
           <div aria-hidden="true" className="absolute -bottom-24 -left-10 h-64 w-64 rounded-full bg-blush-400/20 blur-2xl" />
@@ -73,6 +75,7 @@ export default function ContactStrip() {
             </ul>
           </div>
         </div>
+        </Reveal>
       </Container>
     </section>
   );

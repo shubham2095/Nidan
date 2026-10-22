@@ -4,6 +4,7 @@ import AnnouncementBar from '../components/public/AnnouncementBar.jsx';
 import FloatingActions from '../components/public/FloatingActions.jsx';
 import Footer from '../components/public/Footer.jsx';
 import Header from '../components/public/Header.jsx';
+import ScrollProgress from '../components/public/ScrollProgress.jsx';
 import { LoadingState } from '../components/public/States.jsx';
 
 function ScrollToTop() {
@@ -15,6 +16,7 @@ function ScrollToTop() {
 }
 
 export default function PublicLayout() {
+  const { pathname } = useLocation();
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -24,12 +26,16 @@ export default function PublicLayout() {
         Skip to content
       </a>
       <ScrollToTop />
+      <ScrollProgress />
       <AnnouncementBar />
       <Header />
       <main id="main" className="flex-1">
-        <Suspense fallback={<LoadingState className="min-h-[50vh]" />}>
-          <Outlet />
-        </Suspense>
+        {/* keyed by address, so every page change starts with a soft fade */}
+        <div key={pathname} className="page-in">
+          <Suspense fallback={<LoadingState className="min-h-[50vh]" />}>
+            <Outlet />
+          </Suspense>
+        </div>
       </main>
       <Footer />
       <FloatingActions />

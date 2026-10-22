@@ -5,6 +5,7 @@ import Button from '../../components/public/Button.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import Pagination from '../../components/public/Pagination.jsx';
 import PostCard from '../../components/public/PostCard.jsx';
+import { RevealGrid } from '../../components/public/Reveal.jsx';
 import Section from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
 import { EmptyState, ErrorState, LoadingState } from '../../components/public/States.jsx';
@@ -92,11 +93,11 @@ export default function BlogPage() {
 
         {posts.data && posts.data.items.length > 0 && (
           <>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <RevealGrid className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" columns={3}>
               {posts.data.items.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
-            </div>
+            </RevealGrid>
             <Pagination page={posts.data.page} totalPages={posts.data.totalPages} onChange={(next) => update({ page: next > 1 ? String(next) : '' })} />
           </>
         )}

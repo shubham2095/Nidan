@@ -16,7 +16,8 @@ const SIZES = {
 
 /** Renders a router <Link> (to), an <a> (href) or a <button>, all with the same look. */
 export default function Button({ to, href, variant = 'primary', size = 'md', className = '', children, ...rest }) {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${SIZES[size]} ${VARIANTS[variant]} ${className}`;
+  const shine = variant === 'outline' || variant === 'secondary' ? '' : 'btn-shine';
+  const classes = `inline-flex items-center justify-center gap-2 rounded-full font-semibold transition duration-200 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 ${shine} ${SIZES[size]} ${VARIANTS[variant]} ${className}`;
 
   if (to) {
     return (

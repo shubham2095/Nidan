@@ -7,6 +7,7 @@ import Button from '../../components/public/Button.jsx';
 import { ConsentCheckbox, Field, FormMessage, Honeypot } from '../../components/public/FormField.jsx';
 import MapEmbed from '../../components/public/MapEmbed.jsx';
 import OpeningHours from '../../components/public/OpeningHours.jsx';
+import Reveal, { RevealGrid } from '../../components/public/Reveal.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import ScheduleTabs from '../../components/public/ScheduleTabs.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
@@ -106,12 +107,12 @@ export default function ContactPage() {
 
       <Section>
         <div className="grid gap-10 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+          <Reveal variant="left" className="lg:col-span-3">
             <h2 className="mb-5 text-2xl font-extrabold">Send us a message</h2>
             <ContactForm doctors={doctors} />
-          </div>
+          </Reveal>
 
-          <aside className="space-y-5 lg:col-span-2">
+          <Reveal as="aside" variant="right" delay={120} className="space-y-5 lg:col-span-2">
             <h2 className="text-2xl font-extrabold">Reach us directly</h2>
             <ul className="space-y-4">
               <li className="flex items-start gap-4 rounded-3xl bg-brand-50 p-5">
@@ -158,7 +159,7 @@ export default function ContactPage() {
             <Button to="/book-appointment" size="lg" className="w-full">
               Book an appointment online
             </Button>
-          </aside>
+          </Reveal>
         </div>
       </Section>
 
@@ -166,7 +167,7 @@ export default function ContactPage() {
         <Section tone="soft">
           <SectionHeading eyebrow="Find us" title={ownClinics.length === 1 ? 'Our clinic' : 'Our clinics'} />
           <div className="grid gap-8 lg:grid-cols-2">
-            <div className="space-y-6">
+            <Reveal variant="left" className="space-y-6">
               {ownClinics.map((location) => (
                 <div key={location.id} className="space-y-3 rounded-3xl bg-white p-6 shadow-sm">
                   <h3 className="text-xl font-bold">{location.name}</h3>
@@ -180,12 +181,12 @@ export default function ContactPage() {
               <div className="rounded-3xl bg-white p-6 shadow-sm sm:p-8">
                 <OpeningHours />
               </div>
-            </div>
-            <div className="space-y-6">
+            </Reveal>
+            <Reveal variant="right" delay={120} className="space-y-6">
               {ownClinics.map((location) => (
                 <MapEmbed key={location.id} location={location} instant className="h-96" />
               ))}
-            </div>
+            </Reveal>
           </div>
         </Section>
       )}
@@ -193,14 +194,14 @@ export default function ContactPage() {
       {doctors.length > 0 && (
         <Section>
           <SectionHeading eyebrow="Timings" title="When our doctors are available" />
-          <div className="grid gap-8 lg:grid-cols-2">
+          <RevealGrid className="grid gap-8 lg:grid-cols-2" columns={2} step={140}>
             {doctors.map((doctor) => (
               <div key={doctor.id} className="rounded-3xl border border-slate-100 p-6">
                 <h3 className="mb-4 text-xl font-bold">{doctor.name}</h3>
                 <ScheduleTabs schedules={doctor.schedules} />
               </div>
             ))}
-          </div>
+          </RevealGrid>
         </Section>
       )}
     </>

@@ -17,15 +17,19 @@ export default function FloatingActions() {
       >
         <Phone className="h-6 w-6" aria-hidden="true" />
       </a>
-      <a
-        href={whatsappHref(clinic.whatsappNumber, `Hello ${clinic.name}, I would like some information.`)}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat with us on WhatsApp"
-        className={`${buttonBase} bg-emerald-700`}
-      >
-        <MessageCircle className="h-6 w-6" aria-hidden="true" />
-      </a>
+      <span className="relative block">
+        {/* a slow ring around the WhatsApp button draws the eye without being noisy */}
+        <span aria-hidden="true" className="anim-ping absolute inset-0 rounded-full bg-emerald-600/50" />
+        <a
+          href={whatsappHref(clinic.whatsappNumber, `Hello ${clinic.name}, I would like some information.`)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat with us on WhatsApp"
+          className={`${buttonBase} relative bg-emerald-700`}
+        >
+          <MessageCircle className="h-6 w-6" aria-hidden="true" />
+        </a>
+      </span>
     </div>
   );
 }

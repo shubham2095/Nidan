@@ -9,6 +9,7 @@ import Section, { SectionHeading } from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
 import { EmptyState, ErrorState, LoadingState } from '../../components/public/States.jsx';
 import TestimonialCard from '../../components/public/TestimonialCard.jsx';
+import Reveal from '../../components/public/Reveal.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getTestimonials, submitTestimonial } from '../../services/publicService.js';
 import { applyServerErrors, testimonialSchema } from '../../utils/forms.js';
@@ -91,10 +92,10 @@ export default function TestimonialsPage() {
         )}
         {data && data.items.length > 0 && (
           <div className="columns-1 gap-5 md:columns-2 lg:columns-3">
-            {data.items.map((testimonial) => (
-              <div key={testimonial.id} className="mb-5 break-inside-avoid">
+            {data.items.map((testimonial, index) => (
+              <Reveal key={testimonial.id} variant="zoom" delay={(index % 3) * 90} className="mb-5 break-inside-avoid">
                 <TestimonialCard testimonial={testimonial} />
-              </div>
+              </Reveal>
             ))}
           </div>
         )}

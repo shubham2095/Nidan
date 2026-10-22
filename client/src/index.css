@@ -34,6 +34,8 @@
 
   body {
     @apply bg-white font-sans text-slate-700 antialiased;
+    /* things sliding in from the side must never make the page scroll sideways (clip, unlike hidden, keeps sticky working) */
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4 {
@@ -94,6 +96,190 @@
   }
   .rich-text strong {
     @apply font-semibold text-slate-900;
+  }
+}
+
+/*
+ * Motion. Everything lives inside "no-preference" so people who ask their device to reduce motion get a calm,
+ * static site (content is simply visible). Only opacity and transform are animated, which keeps it smooth.
+ *  - .reveal      scroll reveal, driven by components/public/Reveal.jsx (adds .is-visible)
+ *  - .hero-in     entrance on page load (pure CSS), delay set with style={{ '--d': '120ms' }}
+ *  - .anim-*      gentle looping motion for decorations (float, drift, heartbeat, ping)
+ *  - .page-in     soft fade when moving between pages
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-y, 28px), 0);
+    transition:
+      opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+      transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  }
+  .reveal[data-reveal='left'] {
+    transform: translate3d(-40px, 0, 0);
+  }
+  .reveal[data-reveal='right'] {
+    transform: translate3d(40px, 0, 0);
+  }
+  .reveal[data-reveal='zoom'] {
+    transform: scale(0.92);
+  }
+  .reveal[data-reveal='fade'] {
+    transform: none;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-in-right {
+    from {
+      opacity: 0;
+      transform: translate3d(48px, 0, 0) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes drift {
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+      transform: translate3d(48px, 32px, 0) scale(1.12);
+    }
+  }
+  @keyframes heartbeat {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    14% {
+      transform: scale(1.09);
+    }
+    28% {
+      transform: scale(1);
+    }
+    42% {
+      transform: scale(1.06);
+    }
+    70% {
+      transform: scale(1);
+    }
+  }
+  @keyframes ping-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    80%,
+    100% {
+      transform: scale(1.7);
+      opacity: 0;
+    }
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes open-down {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -8px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .hero-in {
+    animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .hero-in-right {
+    animation: fade-in-right 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .anim-float {
+    animation: float 6s ease-in-out infinite;
+    animation-delay: var(--d, 0ms);
+  }
+  .anim-drift {
+    animation: drift 16s ease-in-out infinite alternate;
+  }
+  .anim-drift-reverse {
+    animation: drift 20s ease-in-out infinite alternate-reverse;
+  }
+  .anim-heartbeat {
+    animation: heartbeat 2.8s ease-in-out infinite;
+    transform-origin: center;
+  }
+  .anim-ping {
+    animation: ping-ring 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  .page-in {
+    animation: page-in 0.45s ease-out both;
+  }
+  .pop-in {
+    animation: pop-in 0.28s ease-out both;
+  }
+  details[open] > .open-down {
+    animation: open-down 0.35s ease-out both;
+  }
+
+  /* Soft light sweep across buttons on hover */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s ease;
+    pointer-events: none;
+  }
+  .btn-shine:hover::after {
+    transform: translateX(120%);
   }
 }
 

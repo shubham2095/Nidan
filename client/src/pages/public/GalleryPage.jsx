@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ZoomIn } from 'lucide-react';
 import Button from '../../components/public/Button.jsx';
 import Lightbox from '../../components/public/Lightbox.jsx';
+import Reveal from '../../components/public/Reveal.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import Section from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
@@ -56,7 +57,7 @@ export default function GalleryPage() {
 
             <ul className="columns-2 gap-4 md:columns-3 lg:columns-4">
               {images.map((image, index) => (
-                <li key={image.id} className="mb-4 break-inside-avoid">
+                <Reveal as="li" key={image.id} variant="zoom" delay={(index % 4) * 80} className="mb-4 break-inside-avoid">
                   <button
                     type="button"
                     onClick={() => setOpenIndex(index)}
@@ -68,7 +69,7 @@ export default function GalleryPage() {
                       <ZoomIn className="h-8 w-8" aria-hidden="true" />
                     </span>
                   </button>
-                </li>
+                </Reveal>
               ))}
             </ul>
 

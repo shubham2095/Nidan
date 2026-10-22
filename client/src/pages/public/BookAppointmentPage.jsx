@@ -115,7 +115,7 @@ export default function BookAppointmentPage() {
       <PageHeader title="Book an Appointment" crumbs={[{ label: 'Book Appointment' }]} description="Choose your doctor, a convenient time and share a few details. It takes about a minute." />
 
       <Container size="narrow" className="py-10 sm:py-14">
-        <div ref={card} tabIndex={-1} className="scroll-mt-24 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm outline-none sm:p-8">
+        <div ref={card} tabIndex={-1} className="pop-in scroll-mt-24 rounded-3xl border border-slate-100 bg-white p-5 shadow-sm outline-none sm:p-8">
           {step < CONFIRMATION && (
             <div className="mb-8">
               <BookingStepper current={step} onGo={goTo} />

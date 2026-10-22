@@ -1,5 +1,6 @@
 import ContactStrip from '../../components/public/ContactStrip.jsx';
 import DoctorCard from '../../components/public/DoctorCard.jsx';
+import { RevealGrid } from '../../components/public/Reveal.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import Section from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
@@ -25,11 +26,11 @@ export default function DoctorsPage() {
         {loading && <LoadingState />}
         {error && <ErrorState message={error} onRetry={reload} />}
         {data && (
-          <div className="grid gap-6 lg:grid-cols-2">
+          <RevealGrid className="grid gap-6 lg:grid-cols-2" columns={2} step={140}>
             {data.items.map((doctor) => (
               <DoctorCard key={doctor.id} doctor={doctor} />
             ))}
-          </div>
+          </RevealGrid>
         )}
       </Section>
       <ContactStrip />

@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { Award, CalendarCheck, Check, Clock, MapPin, Phone } from 'lucide-react';
 import Button from '../../components/public/Button.jsx';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
+import { RevealGrid } from '../../components/public/Reveal.jsx';
 import DoctorAvatar from '../../components/public/DoctorAvatar.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import Section from '../../components/public/Section.jsx';
@@ -99,7 +100,7 @@ export default function DoctorDetailPage() {
               {doctor.schedules.length === 0 && (
                 <p className="text-slate-600">Timings will be updated soon. Please call us to confirm.</p>
               )}
-              <div className="grid gap-5 md:grid-cols-2">
+              <RevealGrid className="grid gap-5 md:grid-cols-2" columns={2}>
                 {doctor.schedules.map(({ location, slots }) => (
                   <section key={location.id} className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
                     <h3 className="text-lg font-bold">{location.name}</h3>
@@ -137,7 +138,7 @@ export default function DoctorDetailPage() {
                     </Button>
                   </section>
                 ))}
-              </div>
+              </RevealGrid>
             </div>
           </div>
         </div>

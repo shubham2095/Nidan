@@ -1,4 +1,5 @@
 import Container from './Container.jsx';
+import Reveal from './Reveal.jsx';
 
 const TONES = {
   white: 'bg-white',
@@ -6,11 +7,19 @@ const TONES = {
   mint: 'bg-brand-50',
 };
 
-/** Page band with consistent spacing. */
-export default function Section({ tone = 'white', className = '', children, ...rest }) {
+/** Page band with consistent spacing. The content eases in as the band scrolls into view (pass reveal={false} to skip). */
+export default function Section({ tone = 'white', className = '', reveal = true, children, ...rest }) {
   return (
     <section className={`py-14 sm:py-20 ${TONES[tone]} ${className}`} {...rest}>
-      <Container>{children}</Container>
+      <Container>
+        {reveal ? (
+          <Reveal distance={20} variant="up">
+            {children}
+          </Reveal>
+        ) : (
+          children
+        )}
+      </Container>
     </section>
   );
 }

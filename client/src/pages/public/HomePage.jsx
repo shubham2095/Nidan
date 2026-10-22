@@ -9,6 +9,7 @@ import Icon from '../../components/public/Icon.jsx';
 import MapEmbed from '../../components/public/MapEmbed.jsx';
 import OpeningHours from '../../components/public/OpeningHours.jsx';
 import PostCard from '../../components/public/PostCard.jsx';
+import Reveal, { RevealGrid } from '../../components/public/Reveal.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
 import ServiceCard from '../../components/public/ServiceCard.jsx';
@@ -27,13 +28,13 @@ function HeroBadges({ doctorCount }) {
   return (
     <>
       {doctorCount > 0 && (
-        <span className="absolute bottom-6 left-0 flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg">
+        <span className="anim-float absolute bottom-6 left-0 flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg" style={{ '--d': '600ms' }}>
           <CheckCircle2 className="h-5 w-5 text-brand-600" aria-hidden="true" />
           {doctorCount} specialist doctors
         </span>
       )}
       {ownClinics.length > 0 && (
-        <span className="absolute top-1/2 -left-3 hidden items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg sm:flex">
+        <span className="anim-float absolute top-1/2 -left-3 hidden items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg sm:flex" style={{ '--d': '1800ms' }}>
           <CheckCircle2 className="h-5 w-5 text-brand-600" aria-hidden="true" />
           {ownClinics.length === 1 ? 'Our clinic in Noida' : `${ownClinics.length} clinics in Noida`}
         </span>
@@ -49,14 +50,14 @@ function HeroVisual({ doctorCount }) {
 
   if (imageUrl) {
     return (
-      <div className="relative mx-auto w-full max-w-xs sm:max-w-sm">
+      <div className="hero-in-right relative mx-auto w-full max-w-xs sm:max-w-sm" style={{ '--d': '250ms' }}>
         <div aria-hidden="true" className="absolute -inset-3 rounded-[3rem] bg-gradient-to-br from-blush-200 via-blush-100 to-brand-100" />
         <img
           src={imageUrl}
           alt={imageAlt || ''}
           width="640"
           height="800"
-          fetchPriority="high"
+          fetchpriority="high"
           className="relative aspect-[4/3] w-full rounded-[2rem] object-cover shadow-xl sm:aspect-[4/5] sm:rounded-[2.5rem]"
         />
         <HeroBadges doctorCount={doctorCount} />
@@ -65,18 +66,18 @@ function HeroVisual({ doctorCount }) {
   }
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-md" aria-hidden="true">
+    <div className="hero-in-right relative mx-auto aspect-square w-full max-w-md" aria-hidden="true" style={{ '--d': '250ms' }}>
       <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-blush-200 via-blush-100 to-brand-100" />
       <div className="absolute inset-6 grid place-items-center rounded-[2.5rem] bg-white/70 backdrop-blur">
-        <Heart className="h-32 w-32 fill-blush-300 text-blush-400" />
+        <Heart className="anim-heartbeat h-32 w-32 fill-blush-300 text-blush-400" />
       </div>
-      <span className="absolute top-8 left-2 grid h-16 w-16 place-items-center rounded-full bg-white text-blush-500 shadow-lg">
+      <span className="anim-float absolute top-8 left-2 grid h-16 w-16 place-items-center rounded-full bg-white text-blush-500 shadow-lg">
         <Baby className="h-8 w-8" />
       </span>
-      <span className="absolute top-14 -right-2 grid h-14 w-14 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
+      <span className="anim-float absolute top-14 -right-2 grid h-14 w-14 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
         <Syringe className="h-7 w-7" />
       </span>
-      <span className="absolute right-10 bottom-10 grid h-16 w-16 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
+      <span className="anim-float absolute right-10 bottom-10 grid h-16 w-16 place-items-center rounded-full bg-white text-brand-700 shadow-lg">
         <Stethoscope className="h-8 w-8" />
       </span>
       <HeroBadges doctorCount={doctorCount} />
@@ -90,21 +91,25 @@ function Hero({ doctorCount }) {
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blush-50 via-white to-white">
-      <div aria-hidden="true" className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-blush-100 blur-3xl" />
-      <div aria-hidden="true" className="absolute top-20 -right-24 h-96 w-96 rounded-full bg-brand-100/70 blur-3xl" />
+      <div aria-hidden="true" className="anim-drift absolute -top-32 -left-24 h-96 w-96 rounded-full bg-blush-100 blur-3xl" />
+      <div aria-hidden="true" className="anim-drift-reverse absolute top-20 -right-24 h-96 w-96 rounded-full bg-brand-100/70 blur-3xl" />
 
       <Container className="relative grid items-center gap-12 pt-14 pb-20 sm:pt-20 sm:pb-24 lg:grid-cols-2 lg:pt-24 lg:pb-28">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-brand-800 shadow-sm ring-1 ring-brand-100">
+          <p className="hero-in inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-brand-800 shadow-sm ring-1 ring-brand-100">
             <Heart className="h-4 w-4 fill-blush-400 text-blush-400" aria-hidden="true" />
             Mother &amp; Child Care · Noida
           </p>
-          <h1 className="mt-6 text-4xl leading-tight font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="hero-in mt-6 text-4xl leading-tight font-extrabold tracking-tight sm:text-5xl lg:text-6xl" style={{ '--d': '120ms' }}>
             {hero.heading || clinic.tagline}
           </h1>
-          {hero.subheading && <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">{hero.subheading}</p>}
+          {hero.subheading && (
+            <p className="hero-in mt-5 max-w-xl text-lg leading-relaxed text-slate-600" style={{ '--d': '260ms' }}>
+              {hero.subheading}
+            </p>
+          )}
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="hero-in mt-8 flex flex-wrap gap-3" style={{ '--d': '400ms' }}>
             <Button to="/book-appointment" size="lg">
               <CalendarCheck className="h-5 w-5" aria-hidden="true" />
               {hero.primaryCta || 'Book Appointment'}
@@ -129,9 +134,11 @@ function VisitSection() {
   return (
     <Section id="visit">
       <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
-        <OpeningHours />
+        <Reveal variant="left">
+          <OpeningHours />
+        </Reveal>
 
-        <div className="space-y-5">
+        <Reveal variant="right" delay={120} className="space-y-5">
           {ownClinics.map((location) => (
             <div key={location.id} className="rounded-3xl border border-slate-100 bg-brand-50/60 p-6 sm:p-8">
               <h3 className="flex items-center gap-2 font-heading text-xl font-extrabold text-slate-900">
@@ -159,7 +166,7 @@ function VisitSection() {
               </div>
             </div>
           ))}
-        </div>
+        </Reveal>
       </div>
     </Section>
   );
@@ -194,7 +201,7 @@ function QuickActions() {
     <div className="relative z-10 -mt-10 sm:-mt-14">
       <Container>
         <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {actions.map(({ key, to, href, external, Icon, title, text, accent }) => {
+          {actions.map(({ key, to, href, external, Icon, title, text, accent }, index) => {
             const classes = 'group flex h-full flex-col items-start gap-3 rounded-3xl border border-slate-100 bg-white p-4 shadow-lg shadow-slate-900/5 transition hover:-translate-y-0.5 hover:shadow-xl sm:flex-row sm:items-center sm:gap-4 sm:p-5';
             const body = (
               <>
@@ -208,13 +215,13 @@ function QuickActions() {
               </>
             );
             return (
-              <li key={key}>
+              <Reveal as="li" key={key} delay={300 + index * 100}>
                 {to ? (
                   <Link to={to} className={classes}>{body}</Link>
                 ) : (
                   <a href={href} className={classes} {...(external && { target: '_blank', rel: 'noopener noreferrer' })}>{body}</a>
                 )}
-              </li>
+              </Reveal>
             );
           })}
         </ul>
@@ -246,11 +253,11 @@ export default function HomePage() {
               title="Complete care for mother and child"
               description="From pregnancy and delivery to newborn care and childhood health, find what your family needs in one place."
             />
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <RevealGrid className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" columns={4}>
               {data.services.map((service) => (
                 <ServiceCard key={service.id} service={service} />
               ))}
-            </div>
+            </RevealGrid>
           </Section>
 
           <Section tone="mint" id="doctors">
@@ -259,11 +266,11 @@ export default function HomePage() {
               title="Meet the doctors who care for your family"
               description="Both doctors see patients at our clinic in Sector 51. Pick a day and time that suits you."
             />
-            <div className="grid gap-6 lg:grid-cols-2">
+            <RevealGrid className="grid gap-6 lg:grid-cols-2" columns={2} step={140}>
               {data.doctors.map((doctor) => (
                 <DoctorCard key={doctor.id} doctor={doctor} />
               ))}
-            </div>
+            </RevealGrid>
           </Section>
 
           <VisitSection />
@@ -271,18 +278,18 @@ export default function HomePage() {
           {data.specialties.length > 0 && (
             <Section tone="soft">
               <SectionHeading eyebrow="Our specialties" title="What we are known for" />
-              <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              <RevealGrid className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" columns={3} variant="zoom">
                 {data.specialties.map((specialty) => (
                   <SpecialtyCard key={specialty.id} specialty={specialty} />
                 ))}
-              </div>
+              </RevealGrid>
             </Section>
           )}
 
           {whyChooseUs.length > 0 && (
             <Section>
               <SectionHeading eyebrow="Why choose us" title="Care that puts you first" />
-              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              <RevealGrid className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4" columns={4} itemClassName="">
                 {whyChooseUs.map((item) => (
                   <div key={item.title} className="text-center">
                     <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand-50 text-brand-700">
@@ -292,7 +299,7 @@ export default function HomePage() {
                     <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
                   </div>
                 ))}
-              </div>
+              </RevealGrid>
             </Section>
           )}
 
@@ -312,8 +319,8 @@ export default function HomePage() {
             <Section>
               <SectionHeading eyebrow="Gallery" title="A look inside Nidan" />
               <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-                {data.gallery.images.map((image) => (
-                  <li key={image.id} className="aspect-square overflow-hidden rounded-3xl bg-slate-100">
+                {data.gallery.images.map((image, index) => (
+                  <Reveal as="li" key={image.id} variant="zoom" delay={(index % 4) * 90} className="aspect-square overflow-hidden rounded-3xl bg-slate-100">
                     <Link to="/gallery" className="block h-full w-full">
                       <img
                         src={image.imageUrl}
@@ -324,7 +331,7 @@ export default function HomePage() {
                         className="h-full w-full object-cover transition duration-500 hover:scale-105"
                       />
                     </Link>
-                  </li>
+                  </Reveal>
                 ))}
               </ul>
               <p className="mt-8 text-center">
@@ -338,11 +345,11 @@ export default function HomePage() {
           {data.posts.length > 0 && (
             <Section tone="soft">
               <SectionHeading eyebrow="From our blog" title="Helpful reading for parents" />
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <RevealGrid className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" columns={3}>
                 {data.posts.map((post) => (
                   <PostCard key={post.id} post={post} />
                 ))}
-              </div>
+              </RevealGrid>
               <p className="mt-8 text-center">
                 <Button to="/blog" variant="outline">
                   Read all articles

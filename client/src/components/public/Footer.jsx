@@ -6,6 +6,7 @@ import Button from './Button.jsx';
 import Container from './Container.jsx';
 import Logo from './Logo.jsx';
 import OpeningHours from './OpeningHours.jsx';
+import Reveal from './Reveal.jsx';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './SocialIcons.jsx';
 import { NAV_LINKS } from './navLinks.js';
 
@@ -43,6 +44,7 @@ export default function Footer() {
       <div aria-hidden="true" className="pointer-events-none absolute -top-28 -right-24 h-96 w-96 rounded-full bg-brand-600/30 blur-3xl" />
       <div aria-hidden="true" className="pointer-events-none absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-blush-400/10 blur-3xl" />
 
+      <Reveal variant="fade" distance={24}>
       <Container className="relative grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10 lg:py-16">
         <div className="sm:col-span-2 lg:col-span-3">
           <Logo tone="light" className="h-16" />
@@ -167,6 +169,7 @@ export default function Footer() {
           )}
         </div>
       </Container>
+      </Reveal>
 
       <div className="relative border-t border-white/10">
         {/* extra room at the bottom and right keeps the floating call / WhatsApp buttons off the links */}

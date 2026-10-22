@@ -3,6 +3,7 @@ import PageHeader from '../../components/public/PageHeader.jsx';
 import Section from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
 import ServiceCard from '../../components/public/ServiceCard.jsx';
+import { RevealGrid } from '../../components/public/Reveal.jsx';
 import { ErrorState, LoadingState } from '../../components/public/States.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getServices } from '../../services/publicService.js';
@@ -25,11 +26,11 @@ export default function ServicesPage() {
         {loading && <LoadingState />}
         {error && <ErrorState message={error} onRetry={reload} />}
         {data && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <RevealGrid className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" columns={4}>
             {data.items.map((service) => (
               <ServiceCard key={service.id} service={service} />
             ))}
-          </div>
+          </RevealGrid>
         )}
       </Section>
       <ContactStrip />

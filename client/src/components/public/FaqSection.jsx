@@ -2,6 +2,7 @@ import { ChevronDown, MessageCircle, Phone } from 'lucide-react';
 import { useSite } from '../../context/SiteContext.jsx';
 import { telHref, whatsappHref } from '../../utils/format.js';
 import Button from './Button.jsx';
+import { RevealGrid } from './Reveal.jsx';
 import Section, { SectionHeading } from './Section.jsx';
 
 /** Frequently asked questions (edited in Site settings). Native <details>, so it works with keyboard and screen readers. */
@@ -31,17 +32,17 @@ export default function FaqSection({ items }) {
           </div>
         </div>
 
-        <div className="space-y-3">
+        <RevealGrid className="space-y-3" columns={1} step={0} itemClassName="" variant="right">
           {items.map((item, index) => (
             <details key={item.question} open={index === 0} className="group rounded-2xl border border-slate-200 bg-white transition-colors open:border-brand-200 open:bg-brand-50/40">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl p-5 font-heading text-base font-bold text-slate-900 marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:text-lg [&::-webkit-details-marker]:hidden">
                 {item.question}
                 <ChevronDown className="h-5 w-5 shrink-0 text-brand-700 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
               </summary>
-              <p className="px-5 pb-5 leading-relaxed whitespace-pre-line text-slate-600">{item.answer}</p>
+              <p className="open-down px-5 pb-5 leading-relaxed whitespace-pre-line text-slate-600">{item.answer}</p>
             </details>
           ))}
-        </div>
+        </RevealGrid>
       </div>
     </Section>
   );
