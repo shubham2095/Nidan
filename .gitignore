@@ -13,6 +13,10 @@ client/dist/
 # uploaded files live outside git in production (see UPLOAD_DIR)
 uploads/
 
+# database dumps hold patient data
+*.sql
+*.sql.gz
+
 # logs
 logs/
 *.log

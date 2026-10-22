@@ -12,6 +12,9 @@ module.exports = {
     if (password.length < 8) {
       throw new Error('ADMIN_PASSWORD must be at least 8 characters');
     }
+    if (env.isProd && (env.isPlaceholder(password) || env.isPlaceholder(email))) {
+      throw new Error('ADMIN_EMAIL / ADMIN_PASSWORD still hold the example values from .env.example; set real ones before seeding production');
+    }
 
     const [, created] = await createOnce(User, { email }, {
       name,

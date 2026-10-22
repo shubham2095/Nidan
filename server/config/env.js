@@ -19,6 +19,7 @@ const env = {
   timezone: 'Asia/Kolkata',
   clientUrl: (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, ''),
   runMigrations: toBool(process.env.RUN_MIGRATIONS),
+  runSeeds: toBool(process.env.RUN_SEEDS),
   cookieSecure: toBool(process.env.COOKIE_SECURE, isProd),
   db: {
     host: process.env.DB_HOST || '127.0.0.1',
@@ -50,13 +51,21 @@ const env = {
   privateUploadDir: path.join(uploadDir, 'private'),
 };
 
+// Values copied from .env.example that must never reach a live site.
+const isPlaceholder = (value) => /^change-me/i.test(value) || value === 'admin@example.com';
+env.isPlaceholder = isPlaceholder;
+
 /** Fail fast on settings the web server cannot run safely without. */
 env.assertServerConfig = () => {
   const problems = [];
   if (env.jwt.secret.length < 32) problems.push('JWT_SECRET must be set to a random string of at least 32 characters');
+  if (env.isProd && isPlaceholder(env.jwt.secret)) problems.push('JWT_SECRET is still the example value; generate a random one (see .env.example)');
   if (problems.length) {
     throw new Error(`Invalid environment configuration:\n - ${problems.join('\n - ')}`);
   }
+
+  if (env.isProd && !env.cookieSecure) console.warn('[server] COOKIE_SECURE is false in production: login cookies will also travel over plain HTTP');
+  if (env.isProd && !/^https:\/\//.test(env.clientUrl)) console.warn(`[server] CLIENT_URL (${env.clientUrl}) is not an https:// address: canonical links, the sitemap and emailed links will use it`);
 };
 
 module.exports = env;

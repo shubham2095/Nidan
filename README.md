@@ -15,10 +15,12 @@ booking, and a CRM / admin panel for doctors and reception staff. One Node.js ap
 | 3 | Booking engine (slots, double-booking protection, emails) | Done |
 | 4 | CRM: dashboard, appointments, patients, leads, follow-ups | Done |
 | 5 | Vaccination tracker, doctors and timetables, content management, settings, users, activity log | Done |
-| 6 | SEO, security hardening, performance, deployment guide | Planned |
+| 6 | SEO, security hardening, performance, deployment guide | Done |
 
-This README grows with each phase. Hostinger deployment and the "how to add a doctor / location / service / blog
-post" guides are written in Phase 6.
+Jump to: [local setup](#local-setup-on-windows-with-xampp) · [deploying to Hostinger](#deploying-to-hostinger) ·
+[moving the database with phpMyAdmin](#moving-the-database-with-phpmyadmin) ·
+[everyday tasks in the admin panel](#everyday-tasks-in-the-admin-panel) · [launch checklist](#launch-checklist) ·
+[assumptions](#assumptions)
 
 ---
 
@@ -314,6 +316,193 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
 - JSON-like fields (tags, specialities, settings, audit changes) are stored as plain `TEXT` holding JSON, because
   MariaDB and MySQL treat the `JSON` type differently.
 
+### Search engines and link previews
+
+- **Per-page `<head>` from the server.** In production every page request returns `index.html` with that page's own
+  title, description, canonical URL and Open Graph / Twitter tags already filled in (`server/services/seo.service.js`),
+  built from the database. WhatsApp, Facebook and Google therefore see the right text without running JavaScript. Once
+  the page loads, React takes over and replaces those tags with its own (no duplicates).
+- **Real 404s.** Unknown addresses, switched-off doctors and services, drafts and scheduled articles answer HTTP 404 with
+  `noindex`, so search engines never keep empty pages.
+- **`/sitemap.xml`** lists the public pages, active doctors and services and published articles, built live with
+  `lastmod`. **`/robots.txt`** blocks `/admin` and `/api` and points to the sitemap. Outside production it blocks
+  everything, so a staging copy is never indexed.
+- **One address per page.** `/about-us/` redirects (301) to `/about-us`; `/admin` and `/api` send `X-Robots-Tag: noindex`.
+- All of this uses `CLIENT_URL` as the site address, so set it to the real `https://` domain in production.
+- Structured data (`MedicalClinic`, `Physician`, `BlogPosting`) is added by the pages themselves. Google runs
+  JavaScript and reads it; link-preview crawlers do not need it.
+
+### Security notes
+
+- Passwords: bcrypt (cost 12). Sessions: signed JWT in an `httpOnly`, `Secure` (in production), `SameSite=Lax` cookie;
+  changing a password signs out every older session. Roles are checked on the API, not just hidden in the screens.
+- Rate limits: 10 failed sign-ins and 5 password-reset requests per IP, 8 public form posts per 15 minutes, and a
+  general ceiling on the API. Forms also have a hidden honeypot field.
+- Helmet sets a strict Content-Security-Policy (scripts only from the site itself), HSTS and the other standard
+  headers. All input is validated with zod; database access goes through Sequelize (parameterised queries); rich text is
+  sanitised on the server; uploads are type-checked from their first bytes and stored under random names; patient
+  files are never served as static files.
+- The server **refuses to start in production** if `JWT_SECRET` is missing, shorter than 32 characters or still the
+  example value, and the seeder refuses the example admin email / password. `db:reset` is blocked in production.
+- `npm audit` (as of this release): the website bundle has no known issues. The server reports moderate advisories in
+  two indirect packages (`uuid` inside Sequelize, `sprintf-js` inside Umzug's command-line helper). Neither is reachable
+  here (the affected functions are not used, and nothing user-supplied reaches them), and the suggested "fix" would
+  downgrade Sequelize to a 2016 version, so they are left alone. A further high advisory is in `braces`, used only by
+  `nodemon` during development. Re-run `npm audit` now and then and update when Sequelize / Umzug publish fixes.
+
+### Performance notes
+
+- Public pages and settings are cached for 60 seconds; built files in `/assets` are cached for a year (they are
+  fingerprinted); uploads for a week; responses are gzip-compressed.
+- The website's first JavaScript file is about 190 kB (60 kB compressed); every page, and the whole CRM, loads on demand.
+  The rich-text editor (about 130 kB compressed) only downloads when staff open an article or content editor.
+- Pictures below the fold load lazily, fonts use `display=swap`, and the footer map loads only when clicked.
+
+---
+
+## Deploying to Hostinger
+
+The repository is built and started by Hostinger's **Node.js web app** feature (GitHub import). The commands are the
+ones in `package.json`:
+
+| Setting | Value |
+|---------|-------|
+| Build command | `npm run build` |
+| Start / entry file | `server/server.js` (`npm start`) |
+| Node.js version | 20 or newer (22 is fine) |
+| Output / static folder | not needed: Express serves `client/dist` itself |
+
+Menu names in hPanel change from time to time, so follow the idea if a label differs.
+
+1. **Push the code to GitHub** (once):
+   ```bash
+   git remote add origin https://github.com/<your-account>/<your-repo>.git
+   git push -u origin main
+   ```
+   After that, `git push origin main` deploys again.
+2. **Create the database.** hPanel → **Databases → Management** → create a MySQL database and user. Note the full
+   names (Hostinger adds a prefix such as `u123456789_`), the password and the host (usually `localhost`).
+3. **Create the app.** hPanel → **Websites → Add website → Node.js Apps → Import Git repository**, pick the repo and
+   branch, and enter the build and start settings above.
+4. **Add the environment variables** (same screen). Copy every line from `.env.example` and set:
+
+   | Variable | Production value |
+   |----------|------------------|
+   | `NODE_ENV` | `production` |
+   | `CLIENT_URL` | `https://nidanmotherandchildcare.com` (the real domain, no trailing slash) |
+   | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` | from step 2 |
+   | `JWT_SECRET` | a new random string (`node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`) |
+   | `COOKIE_SECURE` | `true` |
+   | `ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | the real owner's details (first login only) |
+   | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | a Hostinger mailbox: `smtp.hostinger.com`, port `465` |
+   | `CLINIC_NOTIFY_EMAIL` | who is told about new bookings and enquiries |
+   | `UPLOAD_DIR` | a folder **outside** the app, e.g. `/home/u123456789/nidan-uploads` |
+   | `RUN_MIGRATIONS`, `RUN_SEEDS` | `true` for the first deploy only (see below) |
+
+   Never put these in git. `.env` is ignored by `.gitignore`.
+5. **First deploy.** With `RUN_MIGRATIONS=true` and `RUN_SEEDS=true` the server creates the tables, the clinic content
+   and the first super admin when it starts, so no SSH is needed. Open the site, sign in at `/admin`, then **set both
+   flags back to `false`** and restart. (With SSH you can run `npm run db:migrate` and `npm run db:seed` instead.)
+   The seeders are safe to repeat: they never overwrite rows that exist.
+6. **Domain and HTTPS.** Point the domain at the app in hPanel and switch on the free SSL certificate and the
+   "force HTTPS" option. Choose one of `www` / non-`www` and redirect the other to it, to match `CLIENT_URL`.
+7. **Check it:** `https://your-domain/api/health` should say `"status":"ok"`; `/robots.txt` and `/sitemap.xml` should
+   show your domain; the site, booking and `/admin` login should all work.
+8. **Tell Google.** Add the site to Google Search Console and submit `https://your-domain/sitemap.xml`.
+
+**Updating the live site:** change code, `git push origin main`, and let Hostinger rebuild (or press **Redeploy**).
+New database changes ship as new files in `server/migrations`; set `RUN_MIGRATIONS=true` for one deploy to apply them.
+
+**If something goes wrong**
+
+- *"The website has not been built yet"*: the build did not run. Check the build log; the build command must be `npm run build`.
+- *Server stops at start with "Invalid environment configuration"*: read the message; usually `JWT_SECRET`.
+- *`ECONNREFUSED` / "Access denied" for the database*: re-check `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
+  against hPanel (names include the prefix).
+- *Staff cannot stay signed in*: the site must be served over HTTPS while `COOKIE_SECURE=true`.
+- *Emails are not sent*: check the `SMTP_*` values and that the mailbox exists. Without `SMTP_HOST` emails are skipped
+  (with a log line); bookings still work.
+- *Uploaded pictures disappear after a deploy*: `UPLOAD_DIR` points inside the app folder. Move it outside and re-upload.
+- *"Too many requests" (429)*: a rate limit was hit (for example many failed sign-ins). Wait 15 minutes.
+
+---
+
+## Moving the database with phpMyAdmin
+
+**Export (backup, or to copy a database elsewhere):**
+
+1. Open phpMyAdmin (XAMPP: <http://localhost/phpmyadmin>; Hostinger: hPanel → Databases → **phpMyAdmin**).
+2. Click the database (`nidan_crm`) in the left list → **Export** tab.
+3. Method **Quick**, format **SQL** → **Export**. Save the `.sql` file somewhere private: it contains patient data.
+
+**Import:**
+
+1. Create the empty database first (see the setup steps above) and click it in phpMyAdmin.
+2. **Import** tab → choose the `.sql` file → leave the character set as `utf8mb4` → **Import**.
+3. The dump includes the `schema_migrations` and `schema_seeders` tables, so the app knows nothing is left to run:
+   keep `RUN_MIGRATIONS` and `RUN_SEEDS` on `false` after importing.
+
+Do **not** use both a seeded start and an import on the same database. Never import a development database that holds
+test patients into the live clinic's database, and keep dumps out of git (`*.sql` files should not be committed).
+Take a fresh export before every risky change, and keep Hostinger's own backups switched on.
+
+---
+
+## Everyday tasks in the admin panel
+
+Sign in at `/admin`. Only a super admin sees Website, Users and Activity log. Changes reach the public site within a
+minute.
+
+**Add a doctor**
+1. **Doctors → Add doctor**: enter name, designation and qualifications → you land on the doctor's page.
+2. Upload a photo, add the "About" text and areas of focus, choose the appointment length, tick
+   *Show this doctor on the website and allow online booking*, and **Save profile**.
+3. Build the **Weekly timetable**: add a time range for each location (pick the location, from / to, tick the weekdays)
+   → **Save timetable**. Patients can book as soon as a timetable exists.
+4. Optional: **Users → Add login**, role *Doctor*, linked to this doctor, so they can sign in and see their own patients.
+
+**Add a location**
+1. **Locations → Add location**: name, address, phone, whether it is one of your own clinics or a partner hospital.
+   A map link is created from the address (paste your own link if you prefer).
+2. Add timetable ranges for it on each doctor's page. Patients can book a location once a doctor has a timetable there.
+
+**Add a service**
+1. **Services → Add service**: name, short description (for the cards), icon, the page content, an optional picture and
+   search title / description.
+2. Leave *Web address* empty to create it from the name. Use the arrows to change the order. Untick
+   *Show this service on the website* to hide it without deleting it.
+
+**Publish a blog post**
+1. **Blog → New article**: title, summary, cover picture, category, author, and the article text (use the toolbar for
+   headings, lists, links and pictures).
+2. **Save draft** to keep working. When ready, set the status to *Published* and **Publish**.
+   To schedule it, choose *Published* and a future date and time.
+3. Categories are managed at the bottom of the Blog screen.
+
+**Other common jobs**
+- *Change phone numbers, WhatsApp, email, banner text or the announcement bar:* **Site settings**.
+- *Approve a visitor's testimonial:* **Testimonials → To review → Approve**.
+- *Block a doctor's leave dates:* **Doctors →** the doctor **→ Leave and blocked dates**.
+- *Reset a staff member's password:* **Users → Password** (or **Email link**).
+- *See who changed something:* **Activity log**.
+
+---
+
+## Launch checklist
+
+- [ ] All environment variables set (above), `NODE_ENV=production`, `COOKIE_SECURE=true`, real `JWT_SECRET`.
+- [ ] `RUN_MIGRATIONS` / `RUN_SEEDS` back to `false` after the first start; `UPLOAD_DIR` outside the app folder.
+- [ ] Signed in as the super admin and changed the password from the sidebar.
+- [ ] Replaced the three `TODO` placeholder testimonials (they never show until approved) with real ones, with consent.
+- [ ] Uploaded both doctors' photos and filled in their "About" text; confirmed the timetables and Dr. Manisha Ranjan's
+      overlapping hours (assumption 4).
+- [ ] Dr. Rajeev Ranjan reviewed the vaccination schedule (**Vaccinations → Schedule**).
+- [ ] Privacy policy reviewed (it has a `TODO` for the record-retention period).
+- [ ] Sent a test booking and a test contact message; both emails arrived; reception can confirm the booking.
+- [ ] `/robots.txt` and `/sitemap.xml` show the live domain; sitemap submitted in Google Search Console.
+- [ ] Shared a page on WhatsApp and checked the preview.
+- [ ] A first database backup taken (phpMyAdmin export) and Hostinger backups on.
+
 ---
 
 ## Assumptions
@@ -364,12 +553,26 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     booking and moving appointments is a reception task. Easy to change in `appointment.routes.js` if you disagree.
 21. **Staff bookings are confirmed immediately** (the patient is told by email when an address is on file) unless
     "Pending" is chosen in the form.
-22. **Search engines and social previews.** The site is a single-page app: Google renders it fine, but link previews
-    (WhatsApp, Facebook) do not run JavaScript. Phase 6 will inject per-page meta tags on the server for blog posts and
-    doctor pages.
+22. **Search engines and social previews.** The site is a single-page app, so the server fills in each page's title,
+    description and Open Graph tags itself (see "Search engines and link previews"). The text for the fixed pages
+    (About, Services, ...) is written in two places: `client/src/pages/public/*` and `server/services/seo.service.js`.
+    If you reword one, reword the other.
 23. **Website content, settings, users and the activity log are super admin only.** Doctors edit their own profile,
     photo, timetable and leave; reception can add or remove leave dates for any doctor.
 24. **"Due soon" for a vaccine means due within the next 7 days.** Children registered after their early vaccines were
     due start with those doses overdue; reception records the ones already given.
 25. **New logins get an admin-set password** (optionally followed by an emailed reset link). Public pages and settings
     are cached for up to 60 seconds, so a change can take that long to appear for visitors.
+26. **The site's public address is `CLIENT_URL`.** Canonical links, the sitemap, Open Graph URLs and emailed links all
+    use it, so it must be the live `https://` domain in production.
+27. **Removed content answers 404**, not 410 ("gone"). Search engines drop such pages on their own after a while.
+28. **Deployment targets Hostinger's Node.js web app with a GitHub import.** I could not test on Hostinger itself; the
+    production build, start-up, first-deploy flags (`RUN_MIGRATIONS` / `RUN_SEEDS`) and the SEO / security behaviour
+    were tested locally in `NODE_ENV=production`, including a first start on an empty database.
+29. **Automated checks** (booking race, roles, vaccination, content management, SEO) were run during development as
+    throw-away scripts and are not part of the repository, so deployments stay lean. Ask if you want them added as an
+    `npm test` suite.
+30. **One production build quirk fixed:** the root `.env` contains `NODE_ENV=development`, which used to make
+    `vite build` produce a slower development bundle on a developer machine. `client/vite.config.js` now reads only
+    `PORT` from that file. (On a server where the variables are set in a control panel there is no `.env`, so it was
+    most likely unaffected, but the fix removes the risk.)
