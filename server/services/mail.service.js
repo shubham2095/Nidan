@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const env = require('../config/env');
 const escapeHtml = require('../utils/escapeHtml');
+const { formatDateLong, formatTime12 } = require('../utils/datetime');
 
 let transporter;
 
@@ -70,4 +71,72 @@ const sendContactNotification = ({ lead, doctorName }) => {
   });
 };
 
-module.exports = { sendMail, sendPasswordResetEmail, sendContactNotification };
+const detailsTable = (rows) =>
+  '<table cellpadding="6" style="border-collapse:collapse">' +
+  rows.map(([label, value]) => `<tr><td style="color:#475569"><strong>${escapeHtml(label)}</strong></td><td>${escapeHtml(value)}</td></tr>`).join('') +
+  '</table>';
+
+/**
+ * After an online booking: a "request received" email to the patient (if they gave an email address)
+ * and a heads-up to the clinic. Both are fire-and-forget and never block or fail the booking.
+ */
+const sendBookingEmails = ({ appointment, patient, doctor, location, clinic }) => {
+  const when = `${formatDateLong(appointment.appointmentDate)}, ${formatTime12(appointment.startTime)}`;
+  const where = `${location.name}, ${location.address}`;
+  const phoneLine = clinic.phonePrimary ? ` or call us on ${clinic.phonePrimary}` : '';
+  const results = [];
+
+  if (patient.email) {
+    const rows = [
+      ['Booking ID', appointment.bookingRef],
+      ['Patient', patient.name],
+      ['Doctor', doctor.name],
+      ['When', when],
+      ['Where', where],
+    ];
+    results.push(
+      sendMail({
+        to: patient.email,
+        subject: `Appointment request received (${appointment.bookingRef})`,
+        text:
+          `Hello ${patient.name},\n\nThank you for booking with ${clinic.name || 'Nidan Mother & Child Care'}. ` +
+          'We have received your appointment request. Our team will confirm it shortly.\n\n' +
+          `${rows.map(([label, value]) => `${label}: ${value}`).join('\n')}\n` +
+          `${location.mapUrl ? `Map: ${location.mapUrl}\n` : ''}\n` +
+          `If you need to change or cancel, please quote your booking ID${phoneLine}.`,
+        html:
+          `<p>Hello ${escapeHtml(patient.name)},</p>` +
+          `<p>Thank you for booking with ${escapeHtml(clinic.name || 'Nidan Mother & Child Care')}. We have received your appointment request and our team will confirm it shortly.</p>` +
+          detailsTable(rows) +
+          (location.mapUrl ? `<p><a href="${escapeHtml(location.mapUrl)}">Open the location in Google Maps</a></p>` : '') +
+          `<p>If you need to change or cancel, please quote your booking ID${escapeHtml(phoneLine)}.</p>`,
+      }),
+    );
+  }
+
+  if (env.mail.notifyEmail) {
+    const rows = [
+      ['Booking ID', appointment.bookingRef],
+      ['Patient', `${patient.name} (${patient.type === 'child' ? 'child' : 'mother / woman'})`],
+      ['Phone', patient.phone],
+      ['Email', patient.email || '-'],
+      ['Guardian', patient.guardianName || '-'],
+      ['Doctor', doctor.name],
+      ['When', when],
+      ['Where', location.name],
+      ['Reason', appointment.reason || '-'],
+    ];
+    results.push(
+      sendMail({
+        to: env.mail.notifyEmail,
+        subject: `New appointment request: ${patient.name} with ${doctor.name}, ${formatDateLong(appointment.appointmentDate)} ${formatTime12(appointment.startTime)}`,
+        text: `${rows.map(([label, value]) => `${label}: ${value}`).join('\n')}\n\nConfirm it in the CRM under Appointments.`,
+        html: `<p>A new appointment request came in from the website.</p>${detailsTable(rows)}<p>Confirm it in the CRM under Appointments.</p>`,
+      }),
+    );
+  }
+
+  return Promise.all(results);
+};
+
+module.exports = { sendMail, sendPasswordResetEmail, sendContactNotification, sendBookingEmails };

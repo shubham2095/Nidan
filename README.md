@@ -11,8 +11,8 @@ booking, and a CRM / admin panel for doctors and reception staff. One Node.js ap
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1 | Scaffold, DB config, migrations, seeders, auth | Done |
-| 2 | Public website pages | Done (booking page is a call/WhatsApp placeholder until Phase 3) |
-| 3 | Booking engine (slots, double-booking protection, emails) | Planned |
+| 2 | Public website pages | Done |
+| 3 | Booking engine (slots, double-booking protection, emails) | Done |
 | 4 | CRM: dashboard, appointments, patients, leads, follow-ups | Planned |
 | 5 | Vaccination tracker, content management, settings, users, activity log | Planned |
 | 6 | SEO, security hardening, performance, deployment guide | Planned |
@@ -176,6 +176,45 @@ yet (testimonials, gallery, blog) are hidden automatically, so the site never sh
 its own title, description, canonical URL and Open Graph tags; the home and contact pages add `MedicalClinic`
 structured data, doctor pages add `Physician`, and blog posts add `BlogPosting`.
 
+### Online booking (`/api/public/booking`)
+
+The booking page (`/book-appointment`) is a six-step flow: doctor, location, date, time, patient details, confirmation.
+Links such as `/book-appointment?doctor=dr-rajeev-ranjan&location=nidan-sector-51` start part-way through (the
+"Book with this doctor" buttons use them). Every step shows Call, WhatsApp and "Request a call back" (which saves a
+lead with source `booking_dropoff`).
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /dates?doctorId&locationId` | Days in the doctor's booking window that still have a free slot |
+| `GET /slots?doctorId&locationId&date` | Free slots for one day (never cached) |
+| `POST /` | Create the appointment (rate limited, consent required, honeypot) |
+
+How slots are worked out (`server/services/slots.service.js`, pure logic with no database access):
+
+- Start from the doctor's weekly schedule **at that location** and cut it into slots of `doctors.slot_minutes`
+  (default 15; set per doctor).
+- Remove whole-day and part-day **leaves** (`doctor_leaves`; a leave with no location applies everywhere).
+- Remove slots that overlap an active booking of the same doctor **at any location**, because a doctor cannot be in
+  two places at once.
+- Hide the past, anything sooner than `doctors.min_notice_minutes` from now (default 60), and anything beyond
+  `doctors.booking_window_days` (default 30). "Now" is always Asia/Kolkata time.
+
+Booking rules:
+
+- The chosen time must still be a free slot when the request arrives; if not, the visitor gets a friendly
+  "no longer available" message and the slot list refreshes.
+- Two people can still click the same slot in the same instant. The database unique index on
+  `(doctor_id, appointment_date, start_time, slot_lock)` lets exactly one win; the others get the same friendly message.
+  This is tested with 10 simultaneous bookings.
+- The same patient cannot hold two active bookings with the same doctor on the same day.
+- **Patients are matched by phone number + name** (case and spacing ignored). A child's age can be entered instead of a
+  date of birth (the birth date is then estimated). When exactly one mother uses a phone number, the children booked
+  under that number are linked to her automatically.
+- New online bookings start as **`pending`**; staff confirm them in the CRM (Phase 4). The patient sees "Awaiting
+  confirmation" and gets a "request received" email (if they gave an address); `CLINIC_NOTIFY_EMAIL` gets the details.
+  Emails are sent in the background, so a mail problem never blocks or fails a booking.
+- Booking IDs look like `APT-7K4P9X` (no look-alike characters such as 0/O or 1/I).
+
 ### Database notes
 
 - Charset `utf8mb4`, collation `utf8mb4_unicode_ci`; indexed strings are `VARCHAR(191)`.
@@ -227,6 +266,11 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     exists. Add a branded image later if you want link previews on pages without one.
 15. **Maps in the footer** load on click (a placeholder button swaps in the Google Maps iframe), so third-party map
     code does not slow down every page. The Contact page loads its maps directly.
-16. **Search engines and social previews.** The site is a single-page app: Google renders it fine, but link previews
+16. **Bookings are not auto-confirmed.** They start as `pending` (the brief's workflow is pending → confirmed) and the
+    confirmation screen says so. There is no lookup-by-booking-ID page for patients, so booking details are never
+    exposed publicly; changes and cancellations go through the clinic by phone or WhatsApp.
+17. **Booking defaults** (15-minute slots, 30-day window, 60-minute notice) are columns on each doctor and will be
+    editable in the admin panel (Phase 5).
+18. **Search engines and social previews.** The site is a single-page app: Google renders it fine, but link previews
     (WhatsApp, Facebook) do not run JavaScript. Phase 6 will inject per-page meta tags on the server for blog posts and
     doctor pages.

@@ -15,5 +15,10 @@ export const getPosts = (params, signal) => get('/public/blog', params, signal);
 export const getPostCategories = (signal) => get('/public/blog/categories', undefined, signal);
 export const getPost = (slug, signal) => get(`/public/blog/${slug}`, undefined, signal);
 
-export const submitContact = (payload) => api.post('/public/contact', payload).then((response) => response.data);
+// Availability and booking. Never cached: slots change with every booking.
+export const getBookingDates = (params, signal) => get('/public/booking/dates', params, signal);
+export const getBookingSlots = (params, signal) => get('/public/booking/slots', params, signal);
+export const createBooking = (payload) => api.post('/public/booking', payload).then((response) => response.data.booking);
+
+export const submitContact =(payload) => api.post('/public/contact', payload).then((response) => response.data);
 export const submitTestimonial = (payload) => api.post('/public/testimonials', payload).then((response) => response.data);

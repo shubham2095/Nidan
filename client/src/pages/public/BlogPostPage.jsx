@@ -1,7 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Clock } from 'lucide-react';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
-import Container from '../../components/public/Container.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import PostCard from '../../components/public/PostCard.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
@@ -45,7 +44,7 @@ export default function BlogPostPage() {
       </PageHeader>
 
       <Section>
-        <Container className="max-w-3xl px-0 sm:px-0 lg:px-0">
+        <div className="mx-auto max-w-3xl">
           <article>
             {post.coverImageUrl && (
               <img src={post.coverImageUrl} alt="" width="1200" height="675" className="mb-8 aspect-video w-full rounded-3xl object-cover" />
@@ -58,7 +57,7 @@ export default function BlogPostPage() {
               Back to all articles
             </Link>
           </p>
-        </Container>
+        </div>
       </Section>
 
       {post.related.length > 0 && (

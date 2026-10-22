@@ -22,6 +22,8 @@ router.get('/blog', cached, validate({ query: schemas.blogQuery }), controller.p
 router.get('/blog/categories', cached, controller.postCategories);
 router.get('/blog/:slug', cached, withSlug, controller.post);
 
+router.use('/booking', require('./booking.routes'));
+
 router.post('/contact', publicFormLimiter, validate({ body: schemas.contact }), controller.submitContact);
 router.post('/testimonials', publicFormLimiter, validate({ body: schemas.testimonial }), controller.submitTestimonial);
 

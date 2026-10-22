@@ -40,6 +40,8 @@ const contact = z.object({
   email: optionalEmail,
   message: z.string().trim().min(5, 'Tell us a little about how we can help').max(2000),
   preferredDoctorId: optionalId,
+  // "booking_dropoff" = a call-back request made from the booking page; visitors cannot pick any other source.
+  source: z.enum(['website', 'booking_dropoff']).optional(),
   consent,
   website: honeypot,
 });

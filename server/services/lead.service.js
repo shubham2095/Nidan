@@ -3,7 +3,7 @@ const mailService = require('./mail.service');
 const activityLog = require('./activityLog.service');
 
 /** Website contact form -> a new Lead in the CRM, plus a heads-up email to the clinic. */
-const createFromContactForm = async ({ name, phone, email, message, preferredDoctorId }, req) => {
+const createFromContactForm = async ({ name, phone, email, message, preferredDoctorId, source = 'website' }, req) => {
   // An unknown or inactive doctor id is simply ignored; it must never block an enquiry.
   const doctor = preferredDoctorId ? await Doctor.findOne({ where: { id: preferredDoctorId, isActive: true } }) : null;
 
@@ -13,7 +13,7 @@ const createFromContactForm = async ({ name, phone, email, message, preferredDoc
     email,
     message,
     preferredDoctorId: doctor?.id ?? null,
-    source: 'website',
+    source,
     status: 'new',
     consentAt: new Date(),
   });
@@ -22,7 +22,7 @@ const createFromContactForm = async ({ name, phone, email, message, preferredDoc
     entityType: 'lead',
     entityId: lead.id,
     action: 'create',
-    summary: 'New enquiry from the website contact form',
+    summary: source === 'booking_dropoff' ? 'Call-back request from the booking page' : 'New enquiry from the website contact form',
     req,
   });
 

@@ -15,6 +15,14 @@ export function formatDate(value) {
   );
 }
 
+/** "2027-01-15" -> "Friday, 15 January 2027". Date-only strings are clinic dates, so no timezone shift is applied. */
+export function formatDateOnly(value, { short = false } = {}) {
+  const options = short
+    ? { weekday: 'short', day: 'numeric', month: 'short' }
+    : { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  return new Intl.DateTimeFormat('en-IN', { ...options, timeZone: 'UTC' }).format(new Date(`${value}T00:00:00Z`));
+}
+
 /** "Dr. Manisha Ranjan" -> "MR" */
 export function initials(name = '') {
   return name

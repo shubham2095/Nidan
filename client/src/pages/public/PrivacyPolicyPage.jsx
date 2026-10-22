@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
     <>
       <Seo title="Privacy Policy" description={`How ${clinic.name} collects, uses and protects your personal information.`} />
       <PageHeader title="Privacy Policy" crumbs={[{ label: 'Privacy Policy' }]} />
-      <Container className="max-w-3xl py-14">
+      <Container size="narrow" className="py-14">
         <div className="rich-text">
           <p>
             {clinic.name} respects your privacy. This page explains, in simple words, what information we collect through this website,
