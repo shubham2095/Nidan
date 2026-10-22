@@ -145,6 +145,10 @@ export function toPatientBody(value, { editing = false } = {}) {
 
 export { parseTags };
 
+/** Form values for an existing record: every key of `initial` filled from `row`, with nulls shown as empty text. */
+export const fromRow = (row, initial) =>
+  Object.fromEntries(Object.keys(initial).map((key) => [key, row[key] ?? (typeof initial[key] === 'boolean' ? initial[key] : '')]));
+
 /** Maps a failed request to { fieldName: message } (stripping prefixes like "newPatient.") plus a general message. */
 export function serverFieldErrors(error, prefixes = ['newPatient.', 'patient.']) {
   const fields = {};

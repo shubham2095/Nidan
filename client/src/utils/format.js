@@ -15,6 +15,27 @@ export function formatDate(value) {
   );
 }
 
+/** ISO timestamp -> "22 Oct 2026, 6:30 pm" in Indian time */
+export function formatDateTime(value) {
+  return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true, timeZone: TIME_ZONE }).format(
+    new Date(value),
+  );
+}
+
+/** ISO timestamp -> "2026-10-22T18:30" for a datetime-local input, in Indian time. */
+export function toIstInput(value) {
+  if (!value) return '';
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: TIME_ZONE })
+      .formatToParts(new Date(value))
+      .map((part) => [part.type, part.value]),
+  );
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+}
+
+/** "2026-10-22T18:30" (Indian time) -> ISO timestamp */
+export const fromIstInput = (value) => (value ? new Date(`${value}:00+05:30`).toISOString() : '');
+
 /** "2027-01-15" -> "Friday, 15 January 2027". Date-only strings are clinic dates, so no timezone shift is applied. */
 export function formatDateOnly(value, { short = false } = {}) {
   const options = short

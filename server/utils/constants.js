@@ -19,7 +19,14 @@ const FOLLOW_UP_STATUSES = ['open', 'done', 'cancelled'];
 const TESTIMONIAL_STATUSES = ['pending', 'approved', 'rejected'];
 const POST_STATUSES = ['draft', 'published'];
 
+// Icons the website can show for services, specialties and "why choose us" items (see client/components/public/Icon.jsx).
+const ICON_NAMES = [
+  'activity', 'baby', 'building-2', 'dumbbell', 'flask-conical', 'heart-handshake', 'heart-pulse', 'pill',
+  'scan-heart', 'scissors', 'shield-plus', 'smile', 'sparkles', 'sprout', 'stethoscope', 'syringe', 'users',
+];
+
 module.exports = {
+  ICON_NAMES,
   ROLES,
   APPOINTMENT_STATUSES,
   SLOT_HOLDING_STATUSES,

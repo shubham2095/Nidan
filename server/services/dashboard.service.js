@@ -3,6 +3,7 @@ const { Appointment, Patient, Doctor, Location, Lead, FollowUp } = require('../m
 const { nowInIndia, addDays } = require('../utils/datetime');
 const { ROLES } = require('../utils/constants');
 const { doctorIdFor } = require('./access.service');
+const vaccinationService = require('./vaccination.service');
 
 const CHART_DAYS_BEFORE = 6;
 const CHART_DAYS_AFTER = 7;
@@ -20,7 +21,7 @@ const get = async (actor) => {
   const chartTo = addDays(today, CHART_DAYS_AFTER);
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-  const [todayRows, pendingConfirmations, tomorrow, followUpsToday, followUpsOverdue, perDayRows, newLeads, sourceRows] = await Promise.all([
+  const [todayRows, pendingConfirmations, tomorrow, followUpsToday, followUpsOverdue, perDayRows, newLeads, sourceRows, vaccinations] = await Promise.all([
     Appointment.findAll({
       where: { ...mine, appointmentDate: today, status: active },
       include: [
@@ -49,6 +50,7 @@ const get = async (actor) => {
           group: ['source'],
           raw: true,
         }),
+    vaccinationService.counts(actor),
   ]);
 
   const countsByDate = new Map(perDayRows.map((row) => [row.appointmentDate, Number(row.count)]));
@@ -66,6 +68,8 @@ const get = async (actor) => {
       newLeads,
       followUpsDueToday: followUpsToday,
       followUpsOverdue,
+      vaccinationsDueThisWeek: vaccinations.week,
+      vaccinationsOverdue: vaccinations.overdue,
     },
     todaysAppointments: todayRows.map((a) => ({
       id: a.id,

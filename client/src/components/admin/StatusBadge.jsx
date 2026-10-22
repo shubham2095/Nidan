@@ -14,6 +14,10 @@ const STYLES = {
   open: 'bg-amber-100 text-amber-800',
   done: 'bg-emerald-100 text-emerald-800',
   overdue: 'bg-red-100 text-red-800',
+  // vaccinations
+  given: 'bg-emerald-100 text-emerald-800',
+  due_soon: 'bg-amber-100 text-amber-800',
+  upcoming: 'bg-slate-100 text-slate-700',
   // patients
   mother: 'bg-blush-100 text-blush-700',
   child: 'bg-brand-100 text-brand-800',

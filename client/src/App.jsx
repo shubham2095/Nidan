@@ -33,9 +33,25 @@ const PatientDetailPage = lazy(() => import('./pages/admin/PatientDetailPage.jsx
 const LeadsPage = lazy(() => import('./pages/admin/LeadsPage.jsx'));
 const LeadDetailPage = lazy(() => import('./pages/admin/LeadDetailPage.jsx'));
 const FollowUpsPage = lazy(() => import('./pages/admin/FollowUpsPage.jsx'));
+const VaccinationsPage = lazy(() => import('./pages/admin/VaccinationsPage.jsx'));
+const DoctorsAdminPage = lazy(() => import('./pages/admin/DoctorsAdminPage.jsx'));
+const DoctorEditPage = lazy(() => import('./pages/admin/DoctorEditPage.jsx'));
+const LocationsAdminPage = lazy(() => import('./pages/admin/LocationsAdminPage.jsx'));
+const ServicesAdminPage = lazy(() => import('./pages/admin/ServicesAdminPage.jsx'));
+const SpecialtiesAdminPage = lazy(() => import('./pages/admin/SpecialtiesAdminPage.jsx'));
+const TestimonialsAdminPage = lazy(() => import('./pages/admin/TestimonialsAdminPage.jsx'));
+const GalleryAdminPage = lazy(() => import('./pages/admin/GalleryAdminPage.jsx'));
+const BlogAdminPage = lazy(() => import('./pages/admin/BlogAdminPage.jsx'));
+const BlogEditorPage = lazy(() => import('./pages/admin/BlogEditorPage.jsx'));
+const SettingsPage = lazy(() => import('./pages/admin/SettingsPage.jsx'));
+const UsersPage = lazy(() => import('./pages/admin/UsersPage.jsx'));
+const ActivityLogPage = lazy(() => import('./pages/admin/ActivityLogPage.jsx'));
 const RequireRole = lazy(() => import('./components/admin/RouteGuards.jsx').then((module) => ({ default: module.RequireRole })));
 
 const receptionOnly = ['receptionist'];
+const adminOnly = []; // super admin always passes RequireRole
+
+const AdminOnly = ({ children }) => <RequireRole roles={adminOnly}>{children}</RequireRole>;
 
 export default function App() {
   return (
@@ -60,6 +76,20 @@ function AppRoutes() {
           <Route path="leads" element={<RequireRole roles={receptionOnly}><LeadsPage /></RequireRole>} />
           <Route path="leads/:id" element={<RequireRole roles={receptionOnly}><LeadDetailPage /></RequireRole>} />
           <Route path="follow-ups" element={<FollowUpsPage />} />
+          <Route path="vaccinations" element={<VaccinationsPage />} />
+          <Route path="doctors" element={<DoctorsAdminPage />} />
+          <Route path="doctors/:id" element={<DoctorEditPage />} />
+          <Route path="locations" element={<AdminOnly><LocationsAdminPage /></AdminOnly>} />
+          <Route path="services" element={<AdminOnly><ServicesAdminPage /></AdminOnly>} />
+          <Route path="specialties" element={<AdminOnly><SpecialtiesAdminPage /></AdminOnly>} />
+          <Route path="testimonials" element={<AdminOnly><TestimonialsAdminPage /></AdminOnly>} />
+          <Route path="gallery" element={<AdminOnly><GalleryAdminPage /></AdminOnly>} />
+          <Route path="blog" element={<AdminOnly><BlogAdminPage /></AdminOnly>} />
+          <Route path="blog/new" element={<AdminOnly><BlogEditorPage /></AdminOnly>} />
+          <Route path="blog/:id" element={<AdminOnly><BlogEditorPage /></AdminOnly>} />
+          <Route path="settings" element={<AdminOnly><SettingsPage /></AdminOnly>} />
+          <Route path="users" element={<AdminOnly><UsersPage /></AdminOnly>} />
+          <Route path="activity" element={<AdminOnly><ActivityLogPage /></AdminOnly>} />
         </Route>
       </Route>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { CalendarPlus, Mail, MessageCircle, Pencil, Phone, Plus, Trash2, X } from 'lucide-react';
 import AdminHeader, { Card } from '../../components/admin/AdminHeader.jsx';
 import AppointmentDetailModal from '../../components/admin/AppointmentDetailModal.jsx';
@@ -12,6 +12,7 @@ import FollowUpList from '../../components/admin/FollowUpList.jsx';
 import PatientFiles from '../../components/admin/PatientFiles.jsx';
 import PatientFormModal from '../../components/admin/PatientFormModal.jsx';
 import PatientNotes from '../../components/admin/PatientNotes.jsx';
+import PatientVaccinations from '../../components/admin/PatientVaccinations.jsx';
 import StatusBadge from '../../components/admin/StatusBadge.jsx';
 import Button from '../../components/public/Button.jsx';
 import { EmptyState, ErrorState, LoadingState } from '../../components/public/States.jsx';
@@ -87,7 +88,8 @@ export default function PatientDetailPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const { data, loading, error, status, reload } = useFetch((signal) => getPatient(id, signal), [id]);
-  const [tab, setTab] = useState('appointments');
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState(searchParams.get('tab') || 'appointments');
   const [dialog, setDialog] = useState(null); // 'edit' | 'book' | 'delete' | 'followup'
   const [selected, setSelected] = useState(null);
   const [patientOverride, setPatientOverride] = useState(null);
@@ -106,6 +108,7 @@ export default function PatientDetailPage() {
 
   const tabs = [
     ['appointments', `Appointments (${data.patient.appointments.length})`],
+    ...(patient.type === 'child' ? [['vaccinations', 'Vaccinations']] : []),
     ...(canSeeNotes ? [['notes', 'Visit notes']] : []),
     ['files', 'Files'],
     ['followups', 'Follow-ups'],
@@ -206,6 +209,7 @@ export default function PatientDetailPage() {
             {tab === 'appointments' && (
               <DataTable caption="Appointment history" minWidth="24rem" columns={columns} rows={history} onRowClick={setSelected} emptyTitle="No appointments yet" emptyMessage="Appointments booked for this patient will be listed here." />
             )}
+            {tab === 'vaccinations' && patient.type === 'child' && <PatientVaccinations patient={patient} />}
             {tab === 'notes' && canSeeNotes && <PatientNotes patientId={patient.id} appointments={data.patient.appointments} currentDoctorId={user.doctorId} />}
             {tab === 'files' && <PatientFiles patientId={patient.id} />}
             {tab === 'followups' && (

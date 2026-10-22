@@ -79,4 +79,6 @@ const changePassword = async (currentUser, { currentPassword, newPassword }) => 
   return signToken(user);
 };
 
-module.exports = { login, requestPasswordReset, resetPassword, changePassword, toPublicUser };
+const hashPassword = (plain) => bcrypt.hash(plain, BCRYPT_COST);
+
+module.exports = { login, requestPasswordReset, resetPassword, changePassword, toPublicUser, hashPassword };

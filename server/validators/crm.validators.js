@@ -195,8 +195,11 @@ const updateFollowUp = z.object({
   status: z.enum(FOLLOW_UP_STATUSES).optional(),
 });
 
+/** Small building blocks other validator files reuse. */
+const helpers = { emptyToUndefined, emptyToNull, optionalId, optionalDate, optionalText, clearable, paging, search };
+
 module.exports = {
-  idParam, patientRelationParams, noteParams, appointmentFilters, calendarQuery, availabilityDates, availabilitySlots, createAppointment,
+  helpers, idParam, patientRelationParams, noteParams, appointmentFilters, calendarQuery, availabilityDates, availabilitySlots, createAppointment,
   changeStatus, reschedule, updateAppointment, createPatient, updatePatient, patientList, addRelation, visitNote,
   updateVisitNote, attachmentBody, leadList, createLead, updateLead, leadNote, convertLead, followUpList, createFollowUp,
   updateFollowUp,

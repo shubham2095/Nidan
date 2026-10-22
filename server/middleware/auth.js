@@ -41,4 +41,7 @@ const requireRole =
     throw ApiError.forbidden();
   };
 
-module.exports = { authenticate, requireRole };
+/** `[authenticate, requireRole(...roles)]` for a route. With no roles, only super_admin passes. */
+const guard = (...roles) => [authenticate, requireRole(...roles)];
+
+module.exports = { authenticate, requireRole, guard };

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CalendarCheck, CalendarClock, ClipboardCheck, MapPin, PhoneIncoming } from 'lucide-react';
+import { CalendarCheck, CalendarClock, ClipboardCheck, MapPin, PhoneIncoming, Syringe } from 'lucide-react';
 import { Card } from '../../components/admin/AdminHeader.jsx';
 import AdminHeader from '../../components/admin/AdminHeader.jsx';
 import { DayBars, HorizontalBars } from '../../components/admin/Charts.jsx';
@@ -66,6 +66,12 @@ function TodaySchedule({ items }) {
   );
 }
 
+/** "Dr. Manisha Ranjan" -> "Dr. Manisha", "Riya Sharma" -> "Riya" */
+const greetingName = (name) => {
+  const [first, second] = name.trim().split(/\s+/);
+  return /^dr\.?$/i.test(first) && second ? `${first} ${second}` : first;
+};
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const { data, loading, error, reload } = useFetch((signal) => getDashboard(signal), []);
@@ -79,9 +85,9 @@ export default function DashboardPage() {
 
   return (
     <>
-      <AdminHeader title={`Hello, ${user.name.split(' ')[0]}`} description={`${formatDateOnly(today)}. Here is what needs attention.`} />
+      <AdminHeader title={`Hello, ${greetingName(user.name)}`} description={`${formatDateOnly(today)}. Here is what needs attention.`} />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-4">
         <Stat to={`/admin/appointments?from=${today}&to=${today}`} Icon={CalendarCheck} label="Appointments today" value={counts.appointmentsToday} hint={`${counts.appointmentsTomorrow} tomorrow`} />
         <Stat to={`/admin/appointments?status=pending&from=${today}`} Icon={CalendarClock} label="Awaiting confirmation" value={counts.pendingConfirmations} tone="amber" />
         {!isDoctor && <Stat to="/admin/leads?status=new" Icon={PhoneIncoming} label="New leads" value={counts.newLeads} tone="blush" />}
@@ -92,6 +98,14 @@ export default function DashboardPage() {
           value={followUpsDue}
           tone={counts.followUpsOverdue ? 'red' : 'brand'}
           hint={counts.followUpsOverdue ? `${counts.followUpsOverdue} overdue` : 'Nothing overdue'}
+        />
+        <Stat
+          to="/admin/vaccinations"
+          Icon={Syringe}
+          label="Vaccinations due this week"
+          value={counts.vaccinationsDueThisWeek}
+          tone={counts.vaccinationsOverdue ? 'red' : 'brand'}
+          hint={counts.vaccinationsOverdue ? `${counts.vaccinationsOverdue} overdue` : 'None overdue'}
         />
       </div>
 

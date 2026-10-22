@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const controller = require('../controllers/patient.controller');
+const vaccinations = require('../controllers/vaccination.controller');
+const admin = require('../validators/admin.validators');
 const validate = require('../middleware/validate');
 const { authenticate, requireRole } = require('../middleware/auth');
 const { uploadSingle } = require('../middleware/upload');
@@ -25,6 +27,9 @@ router.delete('/:id/relations/:relationId', receptionOnly, validate({ params: sc
 router.get('/:id/notes', clinicalOnly, withId, controller.listNotes);
 router.post('/:id/notes', clinicalOnly, validate({ params: schemas.idParam, body: schemas.visitNote }), controller.createNote);
 router.patch('/:id/notes/:noteId', clinicalOnly, validate({ params: schemas.noteParams, body: schemas.updateVisitNote }), controller.updateNote);
+
+router.get('/:id/vaccinations', allStaff, withId, vaccinations.forPatient);
+router.patch('/:id/vaccinations/:recordId', allStaff, validate({ params: admin.vaccinationParams, body: admin.markGiven }), vaccinations.markGiven);
 
 router.get('/:id/attachments', allStaff, withId, controller.listFiles);
 // multer runs first so the form field (title) exists when the body is validated

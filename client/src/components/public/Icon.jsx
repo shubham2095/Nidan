@@ -24,6 +24,9 @@ const ICONS = {
   users: Users,
 };
 
+/** Icon names an editor can choose from (matches the list the server accepts). */
+export const ICON_NAMES = Object.keys(ICONS);
+
 export default function Icon({ name, ...props }) {
   const Component = ICONS[name] || Stethoscope;
   return <Component aria-hidden="true" {...props} />;

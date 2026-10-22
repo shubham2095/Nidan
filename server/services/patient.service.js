@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError');
 const { pageWindow, pageResult, escapeLike } = require('../utils/pagination');
 const { doctorIdFor, doctorPatientIds, assertPatientAccess } = require('./access.service');
 const activityLog = require('./activityLog.service');
+const vaccinationService = require('./vaccination.service');
 
 const normalizeName = (name) => name.trim().replace(/\s+/g, ' ').toLowerCase();
 const cleanName = (name) => name.trim().replace(/\s+/g, ' ');
@@ -21,7 +22,9 @@ const findOrCreateFromBooking = async ({ type, name, phone, email, dob, guardian
   const existing = candidates.find((patient) => normalizeName(patient.name) === normalizeName(name));
 
   if (!existing) {
-    return Patient.create({ type, name: cleanName(name), phone, email, dob, guardianName, consentAt: new Date() }, { transaction });
+    const created = await Patient.create({ type, name: cleanName(name), phone, email, dob, guardianName, consentAt: new Date() }, { transaction });
+    await vaccinationService.syncForPatient(created, { transaction });
+    return created;
   }
 
   const blanks = {};
@@ -30,6 +33,7 @@ const findOrCreateFromBooking = async ({ type, name, phone, email, dob, guardian
   if (!existing.guardianName && guardianName) blanks.guardianName = guardianName;
   if (!existing.consentAt) blanks.consentAt = new Date();
   if (Object.keys(blanks).length) await existing.update(blanks, { transaction });
+  if (blanks.dob) await vaccinationService.syncForPatient(existing, { transaction });
   return existing;
 };
 
@@ -175,6 +179,7 @@ const create = async (actor, input, req) => {
   const { consent, ...fields } = input;
   const patient = await Patient.create({ ...fields, name: cleanName(fields.name), consentAt: consent ? new Date() : null, createdBy: actor.id });
   await linkFamily(patient.phone);
+  await vaccinationService.syncForPatient(patient);
   await activityLog.record({ user: actor, entityType: 'patient', entityId: patient.id, action: 'create', summary: `Added patient ${patient.patientCode || patient.id}`, req });
   return serialize(await Patient.findByPk(patient.id));
 };
@@ -194,6 +199,7 @@ const update = async (actor, id, input, req) => {
     if (JSON.stringify(patient[key]) !== JSON.stringify(value)) changes[key] = { from: patient[key], to: value };
   }
   await patient.update(next);
+  await vaccinationService.syncForPatient(patient);
   await activityLog.record({ user: actor, entityType: 'patient', entityId: patient.id, action: 'update', summary: `Edited patient ${patient.patientCode}`, changes, req });
   return serialize(patient);
 };

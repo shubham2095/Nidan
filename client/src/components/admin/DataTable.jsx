@@ -10,7 +10,8 @@ export default function DataTable({ columns, rows, rowKey = 'id', onRowClick, lo
   if (!rows?.length) return <EmptyState title={emptyTitle} message={emptyMessage} className="my-6 py-10" />;
 
   return (
-    <div className={`overflow-x-auto rounded-2xl border border-slate-200 bg-white transition-opacity ${loading ? 'opacity-60' : ''}`}>
+    // `relative` keeps absolutely-positioned content (sr-only headers) inside the scroll area instead of widening the page
+    <div className={`relative overflow-x-auto rounded-2xl border border-slate-200 bg-white transition-opacity ${loading ? 'opacity-60' : ''}`}>
       <table className="w-full text-left text-sm" style={{ minWidth }}>
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold tracking-wide text-slate-500 uppercase">

@@ -14,7 +14,7 @@ booking, and a CRM / admin panel for doctors and reception staff. One Node.js ap
 | 2 | Public website pages | Done |
 | 3 | Booking engine (slots, double-booking protection, emails) | Done |
 | 4 | CRM: dashboard, appointments, patients, leads, follow-ups | Done |
-| 5 | Vaccination tracker, content management, settings, users, activity log | Planned |
+| 5 | Vaccination tracker, doctors and timetables, content management, settings, users, activity log | Done |
 | 6 | SEO, security hardening, performance, deployment guide | Planned |
 
 This README grows with each phase. Hostinger deployment and the "how to add a doctor / location / service / blog
@@ -101,8 +101,8 @@ exists. Change the password from the admin panel (or with the forgot-password fl
 ├── client/                  React app (Vite)
 │   ├── public/              Static files (favicon, ...)
 │   ├── src/
-│   │   ├── components/      Shared UI (public/ now, admin/ later)
-│   │   ├── context/         SiteContext: clinic details, locations, settings
+│   │   ├── components/      Shared UI (public/ for the website, admin/ for the CRM)
+│   │   ├── context/         SiteContext (public site data); AuthContext + ToastContext (CRM)
 │   │   ├── hooks/           useFetch (data loading with cancel + retry)
 │   │   ├── layouts/         PublicLayout: header, footer, floating call/WhatsApp
 │   │   ├── pages/           public/ and admin/ pages
@@ -218,8 +218,8 @@ Booking rules:
 ### Clinic CRM (`/admin`)
 
 Staff sign in at `/admin` (forgot / reset password by email; "Change password" is in the sidebar). The CRM is a
-separate lazy-loaded bundle, so website visitors never download it, and `/admin` is marked `noindex`. Until the Users
-screen arrives in Phase 5, only the seeded super admin account exists.
+separate lazy-loaded bundle, so website visitors never download it, and `/admin` is marked `noindex`. The seeded super
+admin creates the other logins on the **Users** screen.
 
 | | Super admin | Reception | Doctor |
 |---|---|---|---|
@@ -230,6 +230,10 @@ screen arrives in Phase 5, only the seeded super admin account exists.
 | Patient files | yes | yes | for their own patients |
 | Leads | yes | yes | no |
 | Follow-ups | all | all | only tasks assigned to them |
+| Vaccinations | everything, including the schedule | record doses, view the schedule | record doses, edit the schedule |
+| Doctors | all profiles and timetables | view; manage leave dates | edit own profile and timetable; manage leave |
+| Locations, services, specialties, testimonials, gallery, blog, site settings | yes | no | no |
+| Users and activity log | yes | no | no |
 
 Roles are enforced **on the API** (`requireRole`) and again in the services (doctor scoping). A doctor asking for
 someone else's patient or appointment gets a plain 404, so existence is not revealed.
@@ -262,6 +266,39 @@ it can later be swapped for S3 or Cloudinary.
 
 Privacy: visit-note text and passwords are never written to the activity log; the CSV export neutralises spreadsheet
 formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
+
+### Vaccinations, doctors, website content and administration
+
+- **Vaccinations** (`/admin/vaccinations`). Every child patient gets one dose row per vaccine in the schedule, due on
+  *date of birth + the vaccine's age in days*. The **Due doses** tab lists overdue, next 7 days, next 30 days or all
+  pending doses, with a WhatsApp reminder link and a **Record** button (date given, optional note and doctor). The
+  **Schedule** tab is the master vaccine list: adding a vaccine creates the dose for every existing child, changing its
+  age moves only the doses that are still pending, and a vaccine that has been given to anyone can be switched off but
+  not deleted. Doses already recorded as given are never changed. A child's vaccination history is also on their
+  patient page (Vaccinations tab), and the dashboard counts doses due this week and overdue.
+- **Doctors** (`/admin/doctors`). Profile (photo, qualifications, areas of focus, quote, "About" text, search title and
+  description, appointment length), a **weekly timetable** (blocks of location + from/to + weekdays) and **leave and
+  blocked dates** (whole days or part of a day, at one location or everywhere). The booking page and website use these
+  within a minute. Two ranges at the same location on the same weekday cannot overlap. Overlap across *different*
+  locations is allowed with a warning (see assumption 4). Adding leave never cancels anything: it warns how many existing
+  appointments fall in the blocked time so reception can reschedule or cancel them. Only the super admin changes a doctor's
+  web address, visibility, booking window and minimum notice.
+- **Website content** (super admin): **Locations** (map links are generated from the address unless you paste your own),
+  **Services** (formatted description, icon, order, visible/hidden), **Specialties** (the "known for" cards),
+  **Testimonials** (visitor submissions wait under *To review* until approved; staff can also add one), **Gallery**
+  (albums and pictures with required alt text, reorder, hide) and **Blog** (categories; each article is a draft,
+  published, or scheduled by giving it a future publish date; cover picture, summary, search title/description and web
+  address). Pictures must be JPEG, PNG or WebP up to 5 MB and are identified from the file's first bytes. Everything
+  rich-text is sanitised on the server before it is stored.
+- **Site settings** (`/admin/settings`): clinic name, phone numbers, WhatsApp number and email; social links; home page
+  banner text; the announcement bar; the "Why choose us" list; the About page text; default search title and
+  description. Each section is saved on its own and shows on the website within a minute.
+- **Users** (`/admin/users`): add a login with a starting password (8+ characters, a letter and a number), choose the
+  role, switch a login on or off, set a new password (the person is signed out everywhere) or email them a reset
+  link. A doctor login must be linked to a doctor profile that has no login yet. You cannot switch off or change the
+  role of your own account, and the last active super admin can never be demoted or switched off.
+- **Activity log** (`/admin/activity`): who did what and when, filterable by person, area, action, date range and
+  text. Expandable rows show the before and after of changed fields. Passwords, tokens and notes are never recorded.
 
 ### Database notes
 
@@ -317,8 +354,8 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 16. **Bookings are not auto-confirmed.** They start as `pending` (the brief's workflow is pending → confirmed) and the
     confirmation screen says so. There is no lookup-by-booking-ID page for patients, so booking details are never
     exposed publicly; changes and cancellations go through the clinic by phone or WhatsApp.
-17. **Booking defaults** (15-minute slots, 30-day window, 60-minute notice) are columns on each doctor and will be
-    editable in the admin panel (Phase 5).
+17. **Booking defaults** (15-minute slots, 30-day window, 60-minute notice) are columns on each doctor and are
+    editable on the doctor's page in the admin panel.
 18. **"Own patients" for a doctor** means patients who have (or had) an appointment with that doctor. A newly
     registered patient with no appointment is visible to reception and the super admin only.
 19. **Reception cannot read visit notes.** They are medical records, so only the writing doctor and the super admin see
@@ -330,3 +367,9 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 22. **Search engines and social previews.** The site is a single-page app: Google renders it fine, but link previews
     (WhatsApp, Facebook) do not run JavaScript. Phase 6 will inject per-page meta tags on the server for blog posts and
     doctor pages.
+23. **Website content, settings, users and the activity log are super admin only.** Doctors edit their own profile,
+    photo, timetable and leave; reception can add or remove leave dates for any doctor.
+24. **"Due soon" for a vaccine means due within the next 7 days.** Children registered after their early vaccines were
+    due start with those doses overdue; reception records the ones already given.
+25. **New logins get an admin-set password** (optionally followed by an emailed reset link). Public pages and settings
+    are cached for up to 60 seconds, so a change can take that long to appear for visitors.

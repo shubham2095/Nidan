@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { CalendarDays, ExternalLink, KeyRound, LayoutDashboard, ListChecks, LogOut, Menu, PhoneIncoming, Users, X } from 'lucide-react';
+import {
+  CalendarDays, ExternalLink, HeartPulse, History, Images, KeyRound, LayoutDashboard, ListChecks, LogOut, MapPin, Menu,
+  MessageSquareQuote, Newspaper, PhoneIncoming, Settings, Sparkles, Stethoscope, Syringe, UserCog, Users, X,
+} from 'lucide-react';
 import ChangePasswordModal from '../components/admin/ChangePasswordModal.jsx';
 import { RequireAuth } from '../components/admin/RouteGuards.jsx';
 import Logo from '../components/public/Logo.jsx';
@@ -8,13 +11,46 @@ import { ROLE_LABELS, useAuth } from '../context/AuthContext.jsx';
 
 const STAFF = ['receptionist']; // reception (super admin always passes)
 const ALL = ['doctor', 'receptionist'];
+const ADMIN = []; // super admin only
 
+// A group is hidden when none of its links is allowed for the signed-in role.
 const NAV = [
-  { to: '/admin', label: 'Dashboard', Icon: LayoutDashboard, end: true, roles: ALL },
-  { to: '/admin/appointments', label: 'Appointments', Icon: CalendarDays, roles: ALL },
-  { to: '/admin/patients', label: 'Patients', Icon: Users, roles: ALL },
-  { to: '/admin/leads', label: 'Leads', Icon: PhoneIncoming, roles: STAFF },
-  { to: '/admin/follow-ups', label: 'Follow-ups', Icon: ListChecks, roles: ALL },
+  {
+    heading: null,
+    items: [
+      { to: '/admin', label: 'Dashboard', Icon: LayoutDashboard, end: true, roles: ALL },
+      { to: '/admin/appointments', label: 'Appointments', Icon: CalendarDays, roles: ALL },
+      { to: '/admin/patients', label: 'Patients', Icon: Users, roles: ALL },
+      { to: '/admin/leads', label: 'Leads', Icon: PhoneIncoming, roles: STAFF },
+      { to: '/admin/follow-ups', label: 'Follow-ups', Icon: ListChecks, roles: ALL },
+      { to: '/admin/vaccinations', label: 'Vaccinations', Icon: Syringe, roles: ALL },
+    ],
+  },
+  {
+    heading: 'Clinic',
+    items: [
+      { to: '/admin/doctors', label: 'Doctors', Icon: Stethoscope, roles: ALL },
+      { to: '/admin/locations', label: 'Locations', Icon: MapPin, roles: ADMIN },
+    ],
+  },
+  {
+    heading: 'Website',
+    items: [
+      { to: '/admin/services', label: 'Services', Icon: HeartPulse, roles: ADMIN },
+      { to: '/admin/specialties', label: 'Specialties', Icon: Sparkles, roles: ADMIN },
+      { to: '/admin/testimonials', label: 'Testimonials', Icon: MessageSquareQuote, roles: ADMIN },
+      { to: '/admin/gallery', label: 'Gallery', Icon: Images, roles: ADMIN },
+      { to: '/admin/blog', label: 'Blog', Icon: Newspaper, roles: ADMIN },
+      { to: '/admin/settings', label: 'Site settings', Icon: Settings, roles: ADMIN },
+    ],
+  },
+  {
+    heading: 'Administration',
+    items: [
+      { to: '/admin/users', label: 'Users', Icon: UserCog, roles: ADMIN },
+      { to: '/admin/activity', label: 'Activity log', Icon: History, roles: ADMIN },
+    ],
+  },
 ];
 
 const linkClasses = ({ isActive }) =>
@@ -24,7 +60,9 @@ const linkClasses = ({ isActive }) =>
 
 function Sidebar({ onNavigate, onChangePassword }) {
   const { user, signOut } = useAuth();
-  const items = NAV.filter((item) => user.role === 'super_admin' || item.roles.includes(user.role));
+  const groups = NAV
+    .map((group) => ({ ...group, items: group.items.filter((item) => user.role === 'super_admin' || item.roles.includes(user.role)) }))
+    .filter((group) => group.items.length > 0);
 
   return (
     <div className="flex h-full flex-col">
@@ -33,12 +71,17 @@ function Sidebar({ onNavigate, onChangePassword }) {
         <p className="mt-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">Clinic CRM</p>
       </div>
 
-      <nav aria-label="Admin" className="flex-1 space-y-1 px-3">
-        {items.map(({ to, label, Icon, end }) => (
-          <NavLink key={to} to={to} end={end} onClick={onNavigate} className={linkClasses}>
-            <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
-            {label}
-          </NavLink>
+      <nav aria-label="Admin" className="min-h-0 flex-1 space-y-4 overflow-y-auto px-3 pb-3">
+        {groups.map((group) => (
+          <div key={group.heading || 'main'} className="space-y-1">
+            {group.heading && <p className="px-3 pt-1 text-xs font-semibold tracking-wide text-slate-400 uppercase">{group.heading}</p>}
+            {group.items.map(({ to, label, Icon, end }) => (
+              <NavLink key={to} to={to} end={end} onClick={onNavigate} className={linkClasses}>
+                <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                {label}
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
 

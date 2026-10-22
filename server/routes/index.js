@@ -18,5 +18,7 @@ router.use('/appointments', require('./appointment.routes'));
 router.use('/patients', require('./patient.routes'));
 router.use('/attachments', require('./attachment.routes'));
 router.use(require('./crm.routes'));
+router.use(require('./vaccination.routes'));
+router.use('/admin', require('./admin.routes'));
 
 module.exports = router;
