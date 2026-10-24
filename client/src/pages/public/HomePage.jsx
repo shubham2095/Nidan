@@ -126,7 +126,7 @@ function Hero({ doctorCount }) {
 }
 
 /** Our clinics: pick one to see its address, directions, opening hours and map. */
-function VisitSection() {
+function VisitSection({ doctors }) {
   const { ownClinics } = useSite();
   if (ownClinics.length === 0) return null;
 
@@ -137,7 +137,7 @@ function VisitSection() {
         title={ownClinics.length === 1 ? 'Visit our clinic' : 'Find the clinic nearest to you'}
         description={ownClinics.length === 1 ? undefined : `${ownClinics.length} clinics in ${cityList(ownClinics)}. Choose one to see its address, directions and map.`}
       />
-      <ClinicLocator />
+      <ClinicLocator doctors={doctors} />
     </Section>
   );
 }
@@ -243,7 +243,7 @@ export default function HomePage() {
             </RevealGrid>
           </Section>
 
-          <VisitSection />
+          <VisitSection doctors={data.doctors} />
 
           {data.specialties.length > 0 && (
             <Section tone="soft">

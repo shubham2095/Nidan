@@ -1,17 +1,18 @@
 import { useId, useState } from 'react';
-import { Clock, MapPin, Navigation, Phone } from 'lucide-react';
+import { Clock, MapPin, Navigation, Phone, Stethoscope } from 'lucide-react';
 import { useSite } from '../../context/SiteContext.jsx';
 import { telHref } from '../../utils/format.js';
 import Button from './Button.jsx';
 import MapEmbed from './MapEmbed.jsx';
 import OpeningHours from './OpeningHours.jsx';
+import ScheduleTabs from './ScheduleTabs.jsx';
 
 /**
  * Our clinics, one at a time: a tab for each clinic (hidden when there is only one), then its address,
- * directions, opening hours and map. The opening hours in Site settings belong to the first clinic;
- * the others say their timings are coming until doctor timings are set for them.
+ * directions, opening hours, doctor timings and map. The opening hours in Site settings belong to the first clinic.
+ * `doctors` (with their schedules) fills in the doctor timings; each clinic lists the doctors who sit there.
  */
-export default function ClinicLocator() {
+export default function ClinicLocator({ doctors }) {
   const { clinic, ownClinics, settings } = useSite();
   const [active, setActive] = useState(0);
   const baseId = useId();
@@ -21,6 +22,9 @@ export default function ClinicLocator() {
   const location = ownClinics[index];
   const showHours = index === 0 && (settings.hours || []).length > 0;
   const many = ownClinics.length > 1;
+  const timings = (doctors || [])
+    .map((doctor) => ({ doctor, entry: doctor.schedules.find((schedule) => schedule.location.id === location.id) }))
+    .filter(({ entry }) => entry && entry.slots.length > 0);
 
   return (
     <div>
@@ -91,19 +95,38 @@ export default function ClinicLocator() {
               </Button>
             </div>
 
-            <div className="mt-8 border-t border-slate-100 pt-6">
-              <h4 className="mb-2 flex items-center gap-2 text-sm font-bold tracking-wide text-slate-500 uppercase">
-                <Clock className="h-4 w-4 text-brand-600" aria-hidden="true" />
-                Opening hours
-              </h4>
-              {showHours ? (
+            {showHours && (
+              <div className="mt-8 border-t border-slate-100 pt-6">
+                <h4 className="mb-2 flex items-center gap-2 text-sm font-bold tracking-wide text-slate-500 uppercase">
+                  <Clock className="h-4 w-4 text-brand-600" aria-hidden="true" />
+                  Opening hours
+                </h4>
                 <OpeningHours variant="card" />
-              ) : (
-                <p className="rounded-2xl bg-brand-50/70 p-4 text-sm leading-relaxed text-slate-600">
-                  Timings for this clinic will be updated soon. Please call us to confirm before you visit.
-                </p>
-              )}
-            </div>
+              </div>
+            )}
+
+            {doctors && (
+              <div className="mt-8 border-t border-slate-100 pt-6">
+                <h4 className="mb-4 flex items-center gap-2 text-sm font-bold tracking-wide text-slate-500 uppercase">
+                  <Stethoscope className="h-4 w-4 text-brand-600" aria-hidden="true" />
+                  Doctor timings
+                </h4>
+                {timings.length > 0 ? (
+                  <ul className="space-y-5">
+                    {timings.map(({ doctor, entry }) => (
+                      <li key={doctor.id}>
+                        <p className="mb-2 font-semibold text-slate-900">{doctor.name}</p>
+                        <ScheduleTabs schedules={[entry]} showAddress={false} />
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="rounded-2xl bg-brand-50/70 p-4 text-sm leading-relaxed text-slate-600">
+                    Doctor timings for this clinic will be updated soon. Please call us to confirm before you visit.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

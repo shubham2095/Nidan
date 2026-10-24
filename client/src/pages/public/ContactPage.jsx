@@ -404,7 +404,7 @@ export default function ContactPage() {
                 : 'We are easy to reach. Use the map for directions.'
             }
           />
-          <ClinicLocator />
+          <ClinicLocator doctors={data ? doctors : undefined} />
         </Section>
       )}
 

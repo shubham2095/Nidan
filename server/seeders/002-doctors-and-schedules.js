@@ -4,7 +4,8 @@ const { createOnce } = require('../utils/seedHelpers');
 const MON_TO_FRI = [1, 2, 3, 4, 5];
 const SAT_SUN = [6, 0];
 
-// Both doctors see patients at the one clinic during its opening hours (also shown in Site settings > Opening hours).
+// Starter timetable: both doctors at the Sector 51 clinic during its opening hours (also in Site settings > Opening hours).
+// Dr. Rajeev's own timetable (Sector 51 and Gaur City) replaces his in 012-rajeev-timings.js.
 const CLINIC_HOURS = [
   { location: 'nidan-sector-51', days: MON_TO_FRI, start: '07:00:00', end: '22:00:00' },
   { location: 'nidan-sector-51', days: SAT_SUN, start: '12:00:00', end: '18:00:00' },
