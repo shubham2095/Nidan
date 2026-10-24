@@ -114,26 +114,26 @@ export default function Footer() {
         <div className={shownServices.length > 0 ? 'lg:col-span-4' : 'lg:col-span-7'}>
           <ColumnTitle>Visit us</ColumnTitle>
           <ul className="space-y-4">
-            {place && (
-              <li className="flex gap-3">
+            {ownClinics.map((location) => (
+              <li key={location.id} className="flex gap-3">
                 <IconTile>
                   <MapPin className="h-4 w-4" aria-hidden="true" />
                 </IconTile>
                 <span className="leading-relaxed">
-                  <strong className="block font-semibold text-white">{place.name}</strong>
-                  {place.address}, {place.city}, {place.state}
-                  {place.postalCode && ` ${place.postalCode}`}
-                  {place.mapUrl && (
+                  <strong className="block font-semibold text-white">{location.name}</strong>
+                  {location.address}, {location.city}, {location.state}
+                  {location.postalCode && ` ${location.postalCode}`}
+                  {location.mapUrl && (
                     <>
                       <br />
-                      <a href={place.mapUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blush-200 hover:text-white hover:underline">
+                      <a href={location.mapUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blush-200 hover:text-white hover:underline">
                         Get directions
                       </a>
                     </>
                   )}
                 </span>
               </li>
-            )}
+            ))}
             <li className="flex gap-3">
               <IconTile>
                 <Phone className="h-4 w-4" aria-hidden="true" />
@@ -163,8 +163,10 @@ export default function Footer() {
           </ul>
           {hasHours && (
             <div className="mt-6 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-              <h3 className="mb-3 font-heading text-sm font-extrabold text-white">Opening hours</h3>
-              <OpeningHours variant="dark" />
+              <h3 className="font-heading text-sm font-extrabold text-white">Opening hours</h3>
+              {/* the hours in Site settings belong to the first clinic, so say so when there are several */}
+              {ownClinics.length > 1 && place && <p className="mt-0.5 text-xs text-brand-200">{place.name}</p>}
+              <OpeningHours variant="dark" className="mt-3" />
             </div>
           )}
         </div>

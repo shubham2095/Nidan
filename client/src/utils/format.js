@@ -53,6 +53,17 @@ export const compactHours = (text = '') =>
     .replace(/(\d{1,2}):00/g, '$1')
     .replace(/(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s*[–-]\s*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/g, '$1–$2');
 
+/** Cities of some locations, in order and without repeats: "Noida" or "Noida & Greater Noida". */
+export function cityList(locations = []) {
+  const cities = [...new Set(locations.map((location) => location.city).filter(Boolean))];
+  if (cities.length < 2) return cities[0] || '';
+  return `${cities.slice(0, -1).join(', ')} & ${cities[cities.length - 1]}`;
+}
+
+/** "Our clinic in Noida" or "3 clinics in Noida & Greater Noida" */
+export const clinicsLabel = (locations = []) =>
+  locations.length === 1 ? `Our clinic in ${cityList(locations)}` : `${locations.length} clinics in ${cityList(locations)}`;
+
 /** "Dr. Manisha Ranjan" -> "MR" */
 export function initials(name = '') {
   return name

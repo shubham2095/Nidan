@@ -7,13 +7,11 @@ import {
   ArrowUpRight,
   CalendarCheck,
   CheckCircle2,
-  Clock,
   Loader2,
   Mail,
   MapPin,
   MessageCircle,
   MessageSquare,
-  Navigation,
   Phone,
   Send,
   ShieldCheck,
@@ -21,11 +19,10 @@ import {
   User,
 } from 'lucide-react';
 import Button from '../../components/public/Button.jsx';
+import ClinicLocator from '../../components/public/ClinicLocator.jsx';
 import Container from '../../components/public/Container.jsx';
 import DoctorAvatar from '../../components/public/DoctorAvatar.jsx';
 import { ConsentCheckbox, Field, FormMessage, Honeypot } from '../../components/public/FormField.jsx';
-import MapEmbed from '../../components/public/MapEmbed.jsx';
-import OpeningHours from '../../components/public/OpeningHours.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import Reveal, { RevealGrid } from '../../components/public/Reveal.jsx';
 import ScheduleTabs from '../../components/public/ScheduleTabs.jsx';
@@ -34,7 +31,7 @@ import Seo from '../../components/public/Seo.jsx';
 import { useSite } from '../../context/SiteContext.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getDoctors, submitContact } from '../../services/publicService.js';
-import { telHref, whatsappHref } from '../../utils/format.js';
+import { cityList, telHref, whatsappHref } from '../../utils/format.js';
 import { applyServerErrors, contactSchema } from '../../utils/forms.js';
 import { clinicJsonLd } from '../../utils/jsonLd.js';
 
@@ -74,7 +71,7 @@ function QuickCard({ icon: Icon, tone = 'brand', label, href, external = false, 
   );
 }
 
-function QuickContacts({ clinic, place }) {
+function QuickContacts({ clinic, places }) {
   return (
     <section className="relative z-10 -mt-6 sm:-mt-10">
       <Container>
@@ -103,20 +100,35 @@ function QuickContacts({ clinic, place }) {
               clinic.email
             )}
           </QuickCard>
-          {place && (
+          {places.length === 1 && (
             <QuickCard
               icon={MapPin}
               tone="blush"
               label="Visit us"
-              href={place.mapUrl || '#find-us'}
-              external={Boolean(place.mapUrl)}
+              href={places[0].mapUrl || '#find-us'}
+              external={Boolean(places[0].mapUrl)}
               extra={
                 <span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
                   Get directions <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </span>
               }
             >
-              {place.address}, {place.city}
+              {places[0].address}, {places[0].city}
+            </QuickCard>
+          )}
+          {places.length > 1 && (
+            <QuickCard
+              icon={MapPin}
+              tone="blush"
+              label="Visit us"
+              href="#find-us"
+              extra={
+                <span className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-brand-700">
+                  See all clinics <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                </span>
+              }
+            >
+              {places.length} clinics in {cityList(places)}
             </QuickCard>
           )}
         </RevealGrid>
@@ -333,54 +345,6 @@ function NextSteps({ clinic }) {
   );
 }
 
-function ClinicBlock({ location, clinic }) {
-  return (
-    <div className="grid items-stretch gap-6 lg:grid-cols-5">
-      <Reveal variant="left" className="lg:col-span-2">
-        <div className="flex h-full flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-lg shadow-brand-900/5 sm:p-8">
-          <div className="flex items-start gap-4">
-            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-blush-500 to-blush-300 text-white shadow-md shadow-blush-500/30">
-              <MapPin className="h-6 w-6" aria-hidden="true" />
-            </span>
-            <div>
-              <h3 className="text-xl font-extrabold">{location.name}</h3>
-              <p className="mt-1 leading-relaxed text-slate-600">
-                {location.address}, {location.city}, {location.state}
-                {location.postalCode && ` ${location.postalCode}`}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            {location.mapUrl && (
-              <Button href={location.mapUrl} target="_blank" rel="noopener noreferrer" variant="gradient">
-                <Navigation className="h-4 w-4" aria-hidden="true" />
-                Get directions
-              </Button>
-            )}
-            <Button href={telHref(clinic.phonePrimary)} variant="outline">
-              <Phone className="h-4 w-4" aria-hidden="true" />
-              Call the clinic
-            </Button>
-          </div>
-
-          <div className="mt-8 border-t border-slate-100 pt-6">
-            <h4 className="mb-2 flex items-center gap-2 text-sm font-bold tracking-wide text-slate-500 uppercase">
-              <Clock className="h-4 w-4 text-brand-600" aria-hidden="true" />
-              Opening hours
-            </h4>
-            <OpeningHours variant="card" />
-          </div>
-        </div>
-      </Reveal>
-
-      <Reveal variant="right" delay={120} className="lg:col-span-3">
-        <MapEmbed location={location} instant className="h-80 sm:h-[26rem] lg:h-full lg:min-h-[26rem]" />
-      </Reveal>
-    </div>
-  );
-}
-
 function DoctorTimings({ doctor }) {
   return (
     <div className="h-full rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-lg">
@@ -399,7 +363,6 @@ function DoctorTimings({ doctor }) {
 export default function ContactPage() {
   const site = useSite();
   const { clinic, ownClinics } = site;
-  const [place] = ownClinics;
   const { data } = useFetch((signal) => getDoctors(signal), []);
   const doctors = data?.items || [];
 
@@ -407,7 +370,7 @@ export default function ContactPage() {
     <>
       <Seo
         title="Contact Us"
-        description={`Call, WhatsApp or write to ${clinic.name}. Find our clinic in Sector 51, Noida, with the map, opening hours and doctor timings.`}
+        description={`Call, WhatsApp or write to ${clinic.name}. Find our clinics in Noida and Greater Noida, with maps, opening hours and doctor timings.`}
         jsonLd={clinicJsonLd(site, window.location.origin)}
       />
       <PageHeader
@@ -417,7 +380,7 @@ export default function ContactPage() {
         className="pb-16 sm:pb-24"
       />
 
-      <QuickContacts clinic={clinic} place={place} />
+      <QuickContacts clinic={clinic} places={ownClinics} />
 
       <Section>
         <div className="grid items-stretch gap-8 lg:grid-cols-5">
@@ -435,13 +398,13 @@ export default function ContactPage() {
           <SectionHeading
             eyebrow="Find us"
             title={ownClinics.length === 1 ? 'Visit our clinic' : 'Visit our clinics'}
-            description="We are easy to reach in Sector 51, Noida. Use the map for directions."
+            description={
+              ownClinics.length > 1
+                ? `We have ${ownClinics.length} clinics in ${cityList(ownClinics)}. Choose one to see its address, directions and map.`
+                : 'We are easy to reach. Use the map for directions.'
+            }
           />
-          <div className="space-y-8">
-            {ownClinics.map((location) => (
-              <ClinicBlock key={location.id} location={location} clinic={clinic} />
-            ))}
-          </div>
+          <ClinicLocator />
         </Section>
       )}
 

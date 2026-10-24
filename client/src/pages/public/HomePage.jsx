@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Baby, CalendarCheck, CheckCircle2, Heart, MapPin, MessageCircle, Phone, Stethoscope, Syringe } from 'lucide-react';
 import Button from '../../components/public/Button.jsx';
+import ClinicLocator from '../../components/public/ClinicLocator.jsx';
 import Container from '../../components/public/Container.jsx';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
 import DoctorCard from '../../components/public/DoctorCard.jsx';
 import FaqSection from '../../components/public/FaqSection.jsx';
 import Icon from '../../components/public/Icon.jsx';
-import MapEmbed from '../../components/public/MapEmbed.jsx';
-import OpeningHours from '../../components/public/OpeningHours.jsx';
 import PostCard from '../../components/public/PostCard.jsx';
 import Reveal, { RevealGrid } from '../../components/public/Reveal.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
@@ -19,7 +18,7 @@ import TestimonialSlider from '../../components/public/TestimonialSlider.jsx';
 import { useSite } from '../../context/SiteContext.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getHome } from '../../services/publicService.js';
-import { telHref, whatsappHref } from '../../utils/format.js';
+import { cityList, clinicsLabel, telHref, whatsappHref } from '../../utils/format.js';
 import { clinicJsonLd } from '../../utils/jsonLd.js';
 
 /** The two facts floating on the hero picture; real counts from the database, never invented numbers. */
@@ -36,7 +35,7 @@ function HeroBadges({ doctorCount }) {
       {ownClinics.length > 0 && (
         <span className="anim-float absolute top-1/2 -left-3 hidden items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-lg sm:flex" style={{ '--d': '1800ms' }}>
           <CheckCircle2 className="h-5 w-5 text-brand-600" aria-hidden="true" />
-          {ownClinics.length === 1 ? 'Our clinic in Noida' : `${ownClinics.length} clinics in Noida`}
+          {clinicsLabel(ownClinics)}
         </span>
       )}
     </>
@@ -126,48 +125,19 @@ function Hero({ doctorCount }) {
   );
 }
 
-/** Opening hours next to the clinic's address, map link and phone. */
+/** Our clinics: pick one to see its address, directions, opening hours and map. */
 function VisitSection() {
-  const { clinic, ownClinics, settings } = useSite();
-  if (ownClinics.length === 0 && !(settings.hours || []).length) return null;
+  const { ownClinics } = useSite();
+  if (ownClinics.length === 0) return null;
 
   return (
     <Section id="visit">
-      <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
-        <Reveal variant="left">
-          <OpeningHours />
-        </Reveal>
-
-        <Reveal variant="right" delay={120} className="space-y-5">
-          {ownClinics.map((location) => (
-            <div key={location.id} className="rounded-3xl border border-slate-100 bg-brand-50/60 p-6 sm:p-8">
-              <h3 className="flex items-center gap-2 font-heading text-xl font-extrabold text-slate-900">
-                <MapPin className="h-5 w-5 text-blush-500" aria-hidden="true" />
-                {ownClinics.length === 1 ? 'Visit our clinic' : location.name}
-              </h3>
-              <p className="mt-3 leading-relaxed text-slate-700">
-                {location.address}, {location.city}, {location.state}
-                {location.postalCode && ` ${location.postalCode}`}
-              </p>
-              <div className="mt-5 flex flex-wrap gap-3">
-                {location.mapUrl && (
-                  <Button href={location.mapUrl} target="_blank" rel="noopener noreferrer">
-                    <MapPin className="h-4 w-4" aria-hidden="true" />
-                    Get directions
-                  </Button>
-                )}
-                <Button href={telHref(clinic.phonePrimary)} variant="outline">
-                  <Phone className="h-4 w-4" aria-hidden="true" />
-                  {clinic.phonePrimary}
-                </Button>
-              </div>
-              <div className="mt-5">
-                <MapEmbed location={location} className="h-56" />
-              </div>
-            </div>
-          ))}
-        </Reveal>
-      </div>
+      <SectionHeading
+        eyebrow="Visit us"
+        title={ownClinics.length === 1 ? 'Visit our clinic' : 'Find the clinic nearest to you'}
+        description={ownClinics.length === 1 ? undefined : `${ownClinics.length} clinics in ${cityList(ownClinics)}. Choose one to see its address, directions and map.`}
+      />
+      <ClinicLocator />
     </Section>
   );
 }
@@ -192,7 +162,7 @@ function QuickActions() {
       to: '/contact-us',
       Icon: MapPin,
       title: ownClinics.length === 1 ? 'Find our clinic' : 'Find a clinic',
-      text: ownClinics.length > 1 ? `${ownClinics.length} clinics in Noida` : 'Address and hours',
+      text: ownClinics.length > 1 ? `${ownClinics.length} locations` : 'Address and hours',
       accent: 'bg-blush-100 text-blush-700',
     },
   ];
@@ -264,7 +234,7 @@ export default function HomePage() {
             <SectionHeading
               eyebrow="Our doctors"
               title="Meet the doctors who care for your family"
-              description="Both doctors see patients at our clinic in Sector 51. Pick a day and time that suits you."
+              description="Choose your doctor, the clinic that is nearest to you, and a day and time that suits you."
             />
             <RevealGrid className="grid gap-6 lg:grid-cols-2" columns={2} step={140}>
               {data.doctors.map((doctor) => (

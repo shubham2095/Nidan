@@ -75,15 +75,22 @@ export default function AboutPage() {
       {ownClinics.length > 0 && (
         <Section tone="soft">
           <SectionHeading eyebrow="Visit us" title={ownClinics.length === 1 ? 'Our clinic' : 'Our clinics'} />
-          <RevealGrid className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2" columns={2}>
+          <RevealGrid className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3" columns={3}>
             {ownClinics.map((location) => (
-              <div key={location.id} className="rounded-3xl bg-white p-6 shadow-sm">
+              <div key={location.id} className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-sm">
                 <h3 className="text-lg font-bold">{location.name}</h3>
-                <p className="mt-2 flex items-start gap-2 text-sm text-slate-600">
+                <p className="mt-2 flex flex-1 items-start gap-2 text-sm text-slate-600">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-blush-500" aria-hidden="true" />
-                  {location.address}, {location.city}, {location.state}
-                  {location.postalCode && ` ${location.postalCode}`}
+                  <span>
+                    {location.address}, {location.city}, {location.state}
+                    {location.postalCode && ` ${location.postalCode}`}
+                  </span>
                 </p>
+                {location.mapUrl && (
+                  <a href={location.mapUrl} target="_blank" rel="noopener noreferrer" className="mt-4 text-sm font-semibold text-brand-700 hover:underline">
+                    Get directions
+                  </a>
+                )}
               </div>
             ))}
           </RevealGrid>

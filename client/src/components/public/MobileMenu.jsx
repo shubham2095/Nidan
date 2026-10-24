@@ -122,13 +122,18 @@ export default function MobileMenu({ open, onClose }) {
           </div>
 
           <ul className="space-y-2 pt-1 text-sm text-slate-600">
-            {place && (
-              <li className="flex items-start gap-2">
+            {ownClinics.map((location) => (
+              <li key={location.id} className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-blush-500" aria-hidden="true" />
                 <span>
-                  {place.address}, {place.city} {place.postalCode}
+                  {ownClinics.length > 1 && <strong className="block font-semibold text-slate-800">{location.name}</strong>}
+                  {location.address}, {location.city} {location.postalCode}
                 </span>
               </li>
+            ))}
+            {/* the hours in Site settings belong to the first clinic, so say so when there are several */}
+            {ownClinics.length > 1 && place && hours.length > 0 && (
+              <li className="pt-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Opening hours · {place.name}</li>
             )}
             {hours.slice(0, 3).map((row) => (
               <li key={`${row.days}-${row.time}`} className="flex items-start gap-2">

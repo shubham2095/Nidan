@@ -527,11 +527,14 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 3. **Old site URLs.** The current WordPress site has no per-service or per-doctor pages (`/services/` returns 404 and
    the doctors page has no profile links), so there are no old slugs to preserve for those. New slugs:
    `/doctors/dr-manisha-ranjan`, `/doctors/dr-rajeev-ranjan`, `/services/maternity`, etc.
-4. **One clinic.** The clinic has a single location, Basement B, 170, Block B, Sector 51, Noida, Uttar Pradesh 201303,
-   where both doctors see patients. Its opening hours (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) are
-   a separate, editable setting, and both doctors' timetables are seeded with the same hours, so patients can book
-   any 15-minute slot inside them. The "7 am" and "10 pm" are as you told me. More locations (or partner hospitals) can
-   still be added in the admin panel, and the website then shows a location choice automatically.
+4. **Three clinics.** Nidan – Sector 51 (Basement B, 170, Block B, Sector 51, Noida 201303), Nidan – Gaur City
+   (S-219, Aarza Square 2, Gaur City 1, Greater Noida 201318) and Cloudnine Hospital – Gaur City (5th Avenue Gaur City,
+   Noida Extension 201016) are all marked "our clinic", so they appear in the footer, home page, About page and Contact
+   page. The opening hours in Site settings (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) belong to the
+   Sector 51 clinic, where both doctors' timetables are seeded with those hours. Doctor timings for the two Gaur City
+   locations are not set yet, so the website says "timings will be updated soon" for them and online booking is not
+   offered there until timings are added in Admin > Doctors. The two new clinics come from the seeder
+   `011-more-clinics.js`; any location can also be added or edited in Admin > Locations.
 5. **Uploads.** `UPLOAD_DIR` has two sub-folders: `public/` (gallery, blog, doctor photos) is served at `/uploads`,
    and `private/` (patient reports) is never served directly and will be streamed only through authenticated routes.
 6. **Patient de-duplication** matches on normalised phone number plus name. The same phone with a different name

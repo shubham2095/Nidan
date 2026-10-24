@@ -20,7 +20,7 @@ export default function DoctorsPage() {
       <PageHeader
         title="Our Doctors"
         crumbs={[{ label: 'Doctors' }]}
-        description="Experienced, compassionate specialists for mothers and children, available at our clinic in Sector 51, Noida."
+        description="Experienced, compassionate specialists for mothers and children, available at our clinics in Noida and Greater Noida."
       />
       <Section>
         {loading && <LoadingState />}

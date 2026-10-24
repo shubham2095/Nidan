@@ -1,6 +1,6 @@
 import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { useSite } from '../../context/SiteContext.jsx';
-import { compactHours, telHref } from '../../utils/format.js';
+import { clinicsLabel, compactHours, telHref } from '../../utils/format.js';
 import Container from './Container.jsx';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './SocialIcons.jsx';
 
@@ -15,8 +15,11 @@ export default function TopBar() {
   const { clinic, social, settings, ownClinics } = useSite();
   const [place] = ownClinics;
   const hours = (settings.hours || []).slice(0, 2);
-  // "Basement B, 170, Block B, Sector 51" -> "Sector 51, Noida"
-  const area = place && `${place.address.split(',').pop().trim()}, ${place.city}`;
+  // "Basement B, 170, Block B, Sector 51" -> "Sector 51"
+  const mainArea = place && place.address.split(',').pop().trim();
+  const many = ownClinics.length > 1;
+  // with several clinics the strip says how many; the hours in Site settings belong to the first one
+  const area = place && (many ? clinicsLabel(ownClinics) : `${mainArea}, ${place.city}`);
   const item = 'flex items-center gap-2 whitespace-nowrap';
 
   return (
@@ -32,7 +35,10 @@ export default function TopBar() {
           {hours.length > 0 && (
             <li className={`${item} min-w-0`}>
               <Clock className="h-4 w-4 shrink-0 text-blush-300" aria-hidden="true" />
-              <span className="truncate">{hours.map((row) => `${compactHours(row.days)} ${compactHours(row.time)}`).join('  ·  ')}</span>
+              <span className="truncate">
+                {many && `${mainArea}: `}
+                {hours.map((row) => `${compactHours(row.days)} ${compactHours(row.time)}`).join('  ·  ')}
+              </span>
             </li>
           )}
         </ul>
