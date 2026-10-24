@@ -1,3 +1,5 @@
+const { replaceTimetable } = require('../utils/seedHelpers');
+
 // weekday: 0 = Sunday ... 6 = Saturday
 const MON_TO_FRI = [1, 2, 3, 4, 5];
 const SAT_SUN = [6, 0];
@@ -16,23 +18,7 @@ const TIMETABLE = {
 };
 
 module.exports = {
-  async up({ models: { Doctor, DoctorSchedule, Location } }) {
-    const doctor = await Doctor.findOne({ where: { slug: 'dr-rajeev-ranjan' } });
-    if (!doctor) return;
-
-    await DoctorSchedule.sequelize.transaction(async (transaction) => {
-      for (const [slug, blocks] of Object.entries(TIMETABLE)) {
-        const location = await Location.findOne({ where: { slug }, transaction });
-        if (!location) continue;
-
-        await DoctorSchedule.destroy({ where: { doctorId: doctor.id, locationId: location.id }, transaction });
-        await DoctorSchedule.bulkCreate(
-          blocks.flatMap(({ days, start, end }) =>
-            days.map((weekday) => ({ doctorId: doctor.id, locationId: location.id, weekday, startTime: start, endTime: end })),
-          ),
-          { transaction },
-        );
-      }
-    });
+  async up({ models }) {
+    await replaceTimetable(models, 'dr-rajeev-ranjan', TIMETABLE);
   },
 };

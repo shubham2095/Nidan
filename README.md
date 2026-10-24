@@ -531,12 +531,16 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
    (S-219, Aarza Square 2, Gaur City 1, Greater Noida 201318) and Cloudnine Hospital – Gaur City (5th Avenue Gaur City,
    Noida Extension 201016) are all marked "our clinic", so they appear in the footer, home page, About page and Contact
    page. The opening hours in Site settings (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) belong to the
-   Sector 51 clinic. Doctor timings are per doctor and per clinic: Dr. Rajeev Ranjan sits at Sector 51 (Monday to
-   Friday 8:30 am-1:30 pm, Saturday and Sunday 10:30 am-1:30 pm, every day 6-9 pm) and at Gaur City (3-5 pm, Tuesday and
-   Thursday off); these come from the seeder `012-rajeev-timings.js`. Dr. Manisha Ranjan still has the starter
-   timetable at Sector 51 and no timings yet at the Gaur City clinic or Cloudnine Hospital, so the website says "timings
-   will be updated soon" there and online booking is not offered until timings are added in Admin > Doctors. The two
-   new clinics come from the seeder `011-more-clinics.js`; any location can also be added or edited in Admin > Locations.
+   Sector 51 clinic. Doctor timings are per doctor and per clinic, and they drive online booking (15-minute slots):
+   - Dr. Rajeev Ranjan: Sector 51 Monday to Friday 8:30 am-1:30 pm, Saturday and Sunday 10:30 am-1:30 pm, every day
+     6-9 pm; Gaur City 3-5 pm with Tuesday and Thursday off (seeder `012-rajeev-timings.js`).
+   - Dr. Manisha Ranjan: Sector 51 every day 6-9 pm plus Sunday 12-2 pm; Gaur City 3-5 pm with Tuesday and Thursday
+     off; Cloudnine Hospital Monday to Saturday 10 am-2 pm (seeder `013-manisha-timings.js`). "Cloud 9" in your message
+     was taken to mean Cloudnine Hospital.
+
+   Dr. Rajeev has no timings at Cloudnine Hospital, so patients cannot book him there. Timings can be changed any time in
+   Admin > Doctors. The two new clinics come from the seeder `011-more-clinics.js`; any location can also be added or
+   edited in Admin > Locations.
 5. **Uploads.** `UPLOAD_DIR` has two sub-folders: `public/` (gallery, blog, doctor photos) is served at `/uploads`,
    and `private/` (patient reports) is never served directly and will be streamed only through authenticated routes.
 6. **Patient de-duplication** matches on normalised phone number plus name. The same phone with a different name
