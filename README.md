@@ -643,6 +643,14 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     updated the saved texts, doctor bios and clinic names. The logo picture itself still reads "NIDAN Mother & Child
     Care", because it is an image; replace `client/public/images/nidan-logo.webp` (and the favicons) if it should match.
     Technical names such as the e-mail address, web address, database and file names keep "nidan" in lower case.
+34. **Google reviews as testimonials.** Nineteen reviews that patients posted on the clinic's Google listing are published
+    as testimonials (seeder `016-google-reviews.js`, labelled "Google review", shown word for word including spelling and
+    the old clinic name). No star ratings are shown because the copied text had none, and the website never invents
+    them. Left out: reviews with no text, one for another hospital, one that names a different doctor, a translation
+    error ("Go") and one that describes a surgery in detail. They are public posts, so there is no separate consent
+    record; staff can hide, reorder or edit any of them in Admin > Testimonials. The three "TODO" placeholders stay
+    hidden. Doctors in India are limited in how they may advertise, so have the clinic confirm that showing patient
+    reviews is acceptable for it.
 33. **Two YouTube channels.** The existing link (`@drmanisharanjannidan`) was taken as Dr. Manisha Ranjan's channel and
     the one you added (`@dr.rajeevranjan-nidanmothe1260`) as Dr. Rajeev Ranjan's. Both icons show in the top bar, footer
     and mobile menu, each with the doctor's name as its tooltip. Change either in Site settings > Social media.

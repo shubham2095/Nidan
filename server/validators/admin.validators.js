@@ -146,14 +146,14 @@ const testimonialList = z.object({ status: z.preprocess(emptyToUndefined, z.enum
 const createTestimonial = z.object({
   name: required(150, 'Enter the name'),
   label: optionalText(150),
-  content: required(1000, 'Write the testimonial'),
+  content: required(2000, 'Write the testimonial'),
   rating: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1).max(5).optional()),
   status: z.enum(TESTIMONIAL_STATUSES).default('approved'),
 });
 const updateTestimonial = z.object({
   name: required(150).optional(),
   label: clearable(text(150)),
-  content: required(1000).optional(),
+  content: required(2000).optional(),
   rating: clearable(z.coerce.number().int().min(1).max(5)),
   status: z.enum(TESTIMONIAL_STATUSES).optional(),
   sortOrder: z.coerce.number().int().min(0).max(100000).optional(),

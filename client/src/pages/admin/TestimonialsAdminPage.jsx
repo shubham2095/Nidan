@@ -129,7 +129,7 @@ export default function TestimonialsAdminPage() {
                 <p className="font-bold text-slate-900">{item.name}{item.label && <span className="font-normal text-slate-500"> · {item.label}</span>}</p>
                 <p className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-slate-500">
                   <StatusBadge status={item.status === 'approved' ? 'completed' : item.status === 'rejected' ? 'cancelled' : 'pending'} label={item.status === 'approved' ? 'Published' : item.status === 'rejected' ? 'Rejected' : 'To review'} />
-                  <span>{formatDate(item.createdAt)} · {item.source === 'website' ? 'from the website' : 'added by staff'}</span>
+                  <span>{formatDate(item.createdAt)} · {{ website: 'from the website', google: 'copied from Google' }[item.source] || 'added by staff'}</span>
                   <StarRating value={item.rating} />
                 </p>
               </div>

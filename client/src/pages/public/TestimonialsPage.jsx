@@ -99,6 +99,11 @@ export default function TestimonialsPage() {
             ))}
           </div>
         )}
+        {data && data.items.some((item) => item.label === 'Google review') && (
+          <p className="mt-6 text-center text-sm text-slate-500">
+            Reviews marked “Google review” were first posted by patients on our Google listing. They are shown here exactly as written.
+          </p>
+        )}
       </Section>
 
       <Section tone="soft" id="share">

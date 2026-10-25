@@ -22,7 +22,7 @@ export default function TestimonialSlider({ testimonials }) {
       >
         {testimonials.map((testimonial) => (
           <div key={testimonial.id} className="w-[85%] shrink-0 snap-start sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.85rem)]">
-            <TestimonialCard testimonial={testimonial} />
+            <TestimonialCard testimonial={testimonial} collapsible />
           </div>
         ))}
       </div>
