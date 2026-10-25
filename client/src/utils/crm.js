@@ -35,7 +35,7 @@ export function ageText(dob) {
 export const phoneDigits = (phone = '') => phone.replace(/\D/g, '');
 
 /** A wa.me link with the appointment confirmation already typed in. */
-export function appointmentWhatsappLink(appointment, clinicName = 'Nidan Mother & Child Care') {
+export function appointmentWhatsappLink(appointment, clinicName = 'NIDAN Mother & Child Clinic') {
   const { patient, doctor, location } = appointment;
   const text =
     `Hello ${patient.name}, this is ${clinicName}. ` +

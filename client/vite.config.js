@@ -19,8 +19,17 @@ const apiPort = () => {
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  resolve: {
+    // 'lucide-react' means src/icons.js, which lists only the icons the site uses. The library's own entry point
+    // pulls in all 1,900 icons (5 MB for the development server on every first load).
+    alias: [{ find: /^lucide-react$/, replacement: path.resolve(import.meta.dirname, 'src/icons.js') }],
+  },
   server: {
     port: 5173,
+    // transform the files of the first screens as soon as the server starts, so the first page load is not slower
+    warmup: {
+      clientFiles: ['./src/main.jsx', './src/App.jsx', './src/layouts/PublicLayout.jsx', './src/pages/public/*.jsx', './src/components/public/*.jsx'],
+    },
     proxy: {
       '/api': `http://localhost:${apiPort()}`,
       '/uploads': `http://localhost:${apiPort()}`,

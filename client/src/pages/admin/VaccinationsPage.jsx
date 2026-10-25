@@ -30,7 +30,7 @@ const dueText = (dueDate) => {
   return `In ${days} day${days === 1 ? '' : 's'}`;
 };
 
-const reminderLink = (item, clinicName = 'Nidan Mother & Child Care') =>
+const reminderLink = (item, clinicName = 'NIDAN Mother & Child Clinic') =>
   whatsappHref(
     phoneDigits(item.patient.phone),
     `Hello ${item.patient.guardianName || 'there'}, this is ${clinicName}. ${item.patient.name}'s ${item.vaccine.name} ${item.dueDate < todayIso() ? 'was due on' : 'is due on'} ${formatDateOnly(item.dueDate)}. Please call us or book online to arrange it.`,

@@ -43,7 +43,7 @@ const env = {
     port: Number(process.env.SMTP_PORT) || 465,
     user: process.env.SMTP_USER || '',
     pass: process.env.SMTP_PASS || '',
-    from: process.env.MAIL_FROM || 'Nidan Mother & Child Care <info@nidanmotherandchildcare.com>',
+    from: process.env.MAIL_FROM || 'NIDAN Mother & Child Clinic <info@nidanmotherandchildcare.com>',
     notifyEmail: process.env.CLINIC_NOTIFY_EMAIL || '',
   },
   uploadDir,

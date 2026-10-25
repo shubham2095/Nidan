@@ -16,6 +16,7 @@ export default function DoctorAvatar({ doctor, size = 'md', className = '' }) {
         src={doctor.photoUrl}
         alt={`Portrait of ${doctor.name}`}
         loading="lazy"
+        decoding="async"
         width="192"
         height="192"
         className={`shrink-0 rounded-full object-cover ring-4 ring-white ${dimensions} ${className}`}

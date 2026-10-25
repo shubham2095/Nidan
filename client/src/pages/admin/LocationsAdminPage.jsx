@@ -8,7 +8,7 @@ const initial = {
 };
 
 const fields = [
-  { name: 'name', label: 'Name', required: true, hint: 'e.g. Nidan – Sector 51' },
+  { name: 'name', label: 'Name', required: true, hint: 'e.g. NIDAN Mother & Child Clinic – Sector 51' },
   { name: 'slug', label: 'Web address', hint: 'Leave empty to create it from the name' },
   { name: 'address', label: 'Address', type: 'textarea', rows: 2, required: true },
   { name: 'city', label: 'City', required: true },

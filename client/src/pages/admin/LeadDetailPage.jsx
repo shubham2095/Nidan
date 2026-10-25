@@ -77,7 +77,7 @@ export default function LeadDetailPage() {
               <Phone className="h-4 w-4" aria-hidden="true" />
               Call
             </Button>
-            <Button href={whatsappHref(phoneDigits(lead.phone), `Hello ${lead.name}, this is Nidan Mother & Child Care. Thank you for getting in touch.`)} target="_blank" rel="noopener noreferrer" variant="whatsapp">
+            <Button href={whatsappHref(phoneDigits(lead.phone), `Hello ${lead.name}, this is NIDAN Mother & Child Clinic. Thank you for getting in touch.`)} target="_blank" rel="noopener noreferrer" variant="whatsapp">
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
               WhatsApp
             </Button>

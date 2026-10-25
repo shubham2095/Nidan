@@ -266,7 +266,7 @@ function ContactForm({ doctors }) {
                 </Field>
               </div>
               <ConsentCheckbox {...register('consent')} error={errors.consent?.message}>
-                I agree that Nidan Mother &amp; Child Care may contact me about this enquiry and store my details for that purpose. See the{' '}
+                I agree that NIDAN Mother &amp; Child Clinic may contact me about this enquiry and store my details for that purpose. See the{' '}
                 <Link to="/privacy-policy" className="font-medium text-brand-700 underline">
                   Privacy Policy
                 </Link>
@@ -363,7 +363,7 @@ function DoctorTimings({ doctor }) {
 export default function ContactPage() {
   const site = useSite();
   const { clinic, ownClinics } = site;
-  const { data } = useFetch((signal) => getDoctors(signal), []);
+  const { data } = useFetch((signal) => getDoctors(signal), [], { preload: '/public/doctors' });
   const doctors = data?.items || [];
 
   return (
@@ -394,7 +394,7 @@ export default function ContactPage() {
       </Section>
 
       {ownClinics.length > 0 && (
-        <Section tone="soft" id="find-us" className="scroll-mt-20">
+        <Section tone="soft" id="find-us" className="scroll-mt-20" lazy="52rem">
           <SectionHeading
             eyebrow="Find us"
             title={ownClinics.length === 1 ? 'Visit our clinic' : 'Visit our clinics'}
@@ -409,7 +409,7 @@ export default function ContactPage() {
       )}
 
       {doctors.length > 0 && (
-        <Section>
+        <Section lazy="36rem">
           <SectionHeading eyebrow="Timings" title="When our doctors are available" />
           <RevealGrid className="grid gap-8 lg:grid-cols-2" columns={2} step={140}>
             {doctors.map((doctor) => (

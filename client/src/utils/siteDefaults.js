@@ -3,7 +3,7 @@
 export const siteDefaults = {
   settings: {
     clinic: {
-      name: 'Nidan Mother & Child Care',
+      name: 'NIDAN Mother & Child Clinic',
       tagline: 'Trusted Healthcare for Mothers and Child in Noida',
       phonePrimary: '+91 97735 07333',
       phoneSecondary: '0120-4545700',

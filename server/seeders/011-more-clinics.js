@@ -8,7 +8,7 @@ const PHONE = '+91 97735 07333, 0120-4545700';
 const locations = [
   {
     slug: 'nidan-gaur-city',
-    name: 'Nidan – Gaur City',
+    name: 'NIDAN Mother & Child Clinic – Gaur City',
     address: 'S-219, Aarza Square 2, Gaur City 1, B, Greater Noida W Rd, Sector 16',
     city: 'Greater Noida',
     postalCode: '201318',

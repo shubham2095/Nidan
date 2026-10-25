@@ -40,7 +40,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <Seo title="Blog" description="Practical, friendly advice on pregnancy, newborn care, vaccinations, fertility and women's health from the doctors at Nidan Mother & Child Care." />
+      <Seo title="Blog" description="Practical, friendly advice on pregnancy, newborn care, vaccinations, fertility and women's health from the doctors at NIDAN Mother & Child Clinic." />
       <PageHeader title="Our Blog" crumbs={[{ label: 'Blog' }]} description="Helpful reading on pregnancy, newborn and child health, and women's wellbeing." />
 
       <Section>

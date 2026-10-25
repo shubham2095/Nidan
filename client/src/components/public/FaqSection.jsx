@@ -10,7 +10,7 @@ export default function FaqSection({ items }) {
   const { clinic } = useSite();
 
   return (
-    <Section id="faq">
+    <Section id="faq" lazy="44rem">
       <div className="grid gap-10 lg:grid-cols-[5fr_7fr] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHeading

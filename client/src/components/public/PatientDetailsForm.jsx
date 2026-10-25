@@ -148,7 +148,7 @@ export default function PatientDetailsForm({ selection, onBooked, onSlotLost }) 
       </Field>
 
       <ConsentCheckbox {...register('consent')} error={errors.consent?.message}>
-        I agree that Nidan Mother &amp; Child Care may store these details to manage my appointment and contact me about it. See the{' '}
+        I agree that NIDAN Mother &amp; Child Clinic may store these details to manage my appointment and contact me about it. See the{' '}
         <Link to="/privacy-policy" target="_blank" className="font-medium text-brand-700 underline">
           Privacy Policy
         </Link>

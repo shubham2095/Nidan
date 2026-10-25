@@ -31,7 +31,7 @@ export default function BookAppointmentPage() {
   const prefilled = useRef(false);
   const card = useRef(null);
 
-  const doctors = useFetch((signal) => getDoctors(signal), []);
+  const doctors = useFetch((signal) => getDoctors(signal), [], { preload: '/public/doctors' });
   const { doctor, location, date } = selection;
 
   const dates = useFetch(
@@ -111,7 +111,7 @@ export default function BookAppointmentPage() {
 
   return (
     <>
-      <Seo title="Book an Appointment" description="Book an appointment online with Dr. Manisha Ranjan or Dr. Rajeev Ranjan at Nidan Mother & Child Care, Noida. Choose a doctor, location, date and time." />
+      <Seo title="Book an Appointment" description="Book an appointment online with Dr. Manisha Ranjan or Dr. Rajeev Ranjan at NIDAN Mother & Child Clinic, Noida. Choose a doctor, location, date and time." />
       <PageHeader title="Book an Appointment" crumbs={[{ label: 'Book Appointment' }]} description="Choose your doctor, a convenient time and share a few details. It takes about a minute." />
 
       <Container size="narrow" className="py-10 sm:py-14">

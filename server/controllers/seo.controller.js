@@ -19,7 +19,9 @@ const page = (template) => async (req, res) => {
   const meta = await seo.metaFor(req.path);
   res.status(meta.status).set('Cache-Control', 'no-cache');
   if (meta.noindex) res.set('X-Robots-Tag', 'noindex, nofollow');
-  return res.type('html').send(seo.renderPage(template, meta));
+  // pages that exist also carry the data they would fetch on start-up, which saves the visitor a round trip
+  const preload = meta.status === 200 && !meta.noindex ? await seo.preloadFor(req.path) : null;
+  return res.type('html').send(seo.renderPage(template, meta, preload));
 };
 
 module.exports = { robots, sitemap, page };

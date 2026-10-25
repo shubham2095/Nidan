@@ -5,14 +5,8 @@ import { useSite } from '../../context/SiteContext.jsx';
 import { compactHours, telHref, whatsappHref } from '../../utils/format.js';
 import Button from './Button.jsx';
 import Logo from './Logo.jsx';
-import { FacebookIcon, InstagramIcon, YoutubeIcon } from './SocialIcons.jsx';
+import { SOCIAL_LINKS as SOCIAL } from './SocialIcons.jsx';
 import { NAV_LINKS } from './navLinks.js';
-
-const SOCIAL = [
-  { key: 'instagram', label: 'Instagram', Icon: InstagramIcon },
-  { key: 'facebook', label: 'Facebook', Icon: FacebookIcon },
-  { key: 'youtube', label: 'YouTube', Icon: YoutubeIcon },
-];
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -154,6 +148,7 @@ export default function MobileMenu({ open, onClose }) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${clinic.name} on ${label}`}
+                  title={label}
                   className="grid h-10 w-10 place-items-center rounded-full bg-white text-brand-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-brand-700 hover:text-white"
                 >
                   <Icon />

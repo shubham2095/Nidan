@@ -2,13 +2,7 @@ import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { useSite } from '../../context/SiteContext.jsx';
 import { clinicsLabel, compactHours, telHref } from '../../utils/format.js';
 import Container from './Container.jsx';
-import { FacebookIcon, InstagramIcon, YoutubeIcon } from './SocialIcons.jsx';
-
-const SOCIAL = [
-  { key: 'instagram', label: 'Instagram', Icon: InstagramIcon },
-  { key: 'facebook', label: 'Facebook', Icon: FacebookIcon },
-  { key: 'youtube', label: 'YouTube', Icon: YoutubeIcon },
-];
+import { SOCIAL_LINKS as SOCIAL } from './SocialIcons.jsx';
 
 /** Slim strip above the header on larger screens: where we are, when we are open, how to reach us. */
 export default function TopBar() {
@@ -67,6 +61,7 @@ export default function TopBar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${clinic.name} on ${label}`}
+                  title={label}
                   className="grid h-7 w-7 place-items-center rounded-full bg-white/10 transition hover:bg-blush-500 hover:text-white"
                 >
                   <Icon />

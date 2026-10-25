@@ -1,4 +1,4 @@
-# Nidan Mother & Child Care - Website + Clinic CRM
+# NIDAN Mother & Child Clinic - Website + Clinic CRM
 
 Full-stack replacement for <https://nidanmotherandchildcare.com/>: a public website with real online appointment
 booking, and a CRM / admin panel for doctors and reception staff. One Node.js app: Express serves the API
@@ -360,6 +360,27 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
 - The website's first JavaScript file is about 190 kB (60 kB compressed); every page, and the whole CRM, loads on demand.
   The rich-text editor (about 130 kB compressed) only downloads when staff open an article or content editor.
 - Pictures below the fold load lazily, fonts use `display=swap`, and the footer map loads only when clicked.
+- **First screen without waiting for the API.** For public pages the server puts the data the page asks for on start-up
+  (site settings, plus home, doctors, services or gallery content) inside `index.html` as a JSON block
+  (`id="nidan-preload"`, see `seo.service.js`). The website uses it for the first draw and fetches fresh data for every
+  later page. It also asks the browser to start downloading the banner picture and the two fonts straight away.
+- **Fonts are served from this site** (`client/public/fonts`, Inter and Nunito, both under the SIL Open Font License),
+  so nothing has to be fetched from Google before text can be drawn.
+- **Development server.** `vite.config.js` points the name `lucide-react` at `client/src/icons.js`, a short list of the
+  icons the site uses, because the library's own entry point is 5 MB in development. If a page needs an icon that is not
+  listed, add one line to `icons.js` (the file name is under `node_modules/lucide-react/dist/esm/icons`); `npm run build`
+  and `npm run dev` both fail with a clear "is not exported" message until you do.
+- Pictures are kept light: the banner is 900 px wide (about 115 kB). Resize any large photo before uploading it.
+- **Lazy loading.** Below-the-fold content is built only when the visitor is about to see it:
+  - pictures use `loading="lazy"` and `decoding="async"` (only the banner and the logo load straight away);
+  - on the home and Contact pages the lower bands (doctors, clinics and map, specialties, testimonials, gallery,
+    blog, FAQ, contact band) are built when they come within about 700 px of the screen, or in idle time four
+    seconds after the page opened (`components/public/LazyMount.jsx`; give a band `lazy="40rem"` on `<Section>`, with
+    a height close to its real one, to use it elsewhere);
+  - the code for the clinic picker and the testimonial slider is fetched at that moment, not with the first page;
+  - the Google Map is only requested when its frame is about to scroll into view (or on a click, in the footer);
+  - every page's own code is loaded on demand, and the admin area and rich-text editor only for signed-in staff.
+  On a modest phone this cut the home page's start-up work by about a third and its page size from 1,528 to 885 elements.
 
 ### Phones and tablets
 
@@ -540,7 +561,7 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 3. **Old site URLs.** The current WordPress site has no per-service or per-doctor pages (`/services/` returns 404 and
    the doctors page has no profile links), so there are no old slugs to preserve for those. New slugs:
    `/doctors/dr-manisha-ranjan`, `/doctors/dr-rajeev-ranjan`, `/services/maternity`, etc.
-4. **Three clinics.** Nidan – Sector 51 (Basement B, 170, Block B, Sector 51, Noida 201303), Nidan – Gaur City
+4. **Three clinics.** NIDAN Mother & Child Clinic – Sector 51 (Basement B, 170, Block B, Sector 51, Noida 201303), NIDAN Mother & Child Clinic – Gaur City
    (S-219, Aarza Square 2, Gaur City 1, Greater Noida 201318) and Cloudnine Hospital – Gaur City (5th Avenue Gaur City,
    Noida Extension 201016) are all marked "our clinic", so they appear in the footer, home page, About page and Contact
    page. The opening hours in Site settings (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) belong to the
@@ -617,3 +638,11 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     **Gallery** if the clinic wants them public. Alt text for each picture was written from the picture itself.
 31. **Patient consent for photos.** Many photos show mothers, babies and families. Confirm that the clinic has
     consent for every one it publishes (DPDP Act), and delete the ones it does not.
+32. **Clinic name.** The website, e-mails and page titles say "NIDAN Mother & Child Clinic" in full and never just
+    "Nidan", as you asked. Its main source is Site settings > Clinic name, and the seeder `014-clinic-full-name.js`
+    updated the saved texts, doctor bios and clinic names. The logo picture itself still reads "NIDAN Mother & Child
+    Care", because it is an image; replace `client/public/images/nidan-logo.webp` (and the favicons) if it should match.
+    Technical names such as the e-mail address, web address, database and file names keep "nidan" in lower case.
+33. **Two YouTube channels.** The existing link (`@drmanisharanjannidan`) was taken as Dr. Manisha Ranjan's channel and
+    the one you added (`@dr.rajeevranjan-nidanmothe1260`) as Dr. Rajeev Ranjan's. Both icons show in the top bar, footer
+    and mobile menu, each with the doctor's name as its tooltip. Change either in Site settings > Social media.

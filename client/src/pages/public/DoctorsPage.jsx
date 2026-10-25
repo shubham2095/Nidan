@@ -9,13 +9,13 @@ import useFetch from '../../hooks/useFetch.js';
 import { getDoctors } from '../../services/publicService.js';
 
 export default function DoctorsPage() {
-  const { data, loading, error, reload } = useFetch((signal) => getDoctors(signal), []);
+  const { data, loading, error, reload } = useFetch((signal) => getDoctors(signal), [], { preload: '/public/doctors' });
 
   return (
     <>
       <Seo
         title="Our Doctors"
-        description="Meet Dr. Manisha Ranjan, Obstetrician & Gynaecologist, and Dr. Rajeev Ranjan, Paediatrician & Neonatologist, at Nidan Mother & Child Care in Noida."
+        description="Meet Dr. Manisha Ranjan, Obstetrician & Gynaecologist, and Dr. Rajeev Ranjan, Paediatrician & Neonatologist, at NIDAN Mother & Child Clinic in Noida."
       />
       <PageHeader
         title="Our Doctors"

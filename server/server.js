@@ -47,8 +47,8 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-        fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        fontSrc: ["'self'", 'data:'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         frameSrc: ["'self'", 'https://www.google.com', 'https://www.youtube.com', 'https://www.youtube-nocookie.com'],
         connectSrc: ["'self'"],
@@ -83,9 +83,12 @@ if (env.isProd) {
     express.static(distDir, {
       index: false,
       setHeaders: (res, filePath) => {
-        // Vite fingerprints everything in /assets, so it can be cached forever.
-        if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+        // Vite fingerprints everything in /assets, so it can be cached forever. The fonts never change under the same
+        // name. Pictures keep their names when they are replaced, so they are cached for a day only.
+        if (filePath.includes(`${path.sep}assets${path.sep}`) || filePath.includes(`${path.sep}fonts${path.sep}`)) {
           res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else if (filePath.includes(`${path.sep}images${path.sep}`)) {
+          res.setHeader('Cache-Control', 'public, max-age=86400');
         }
       },
     }),

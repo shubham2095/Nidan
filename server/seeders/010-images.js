@@ -6,7 +6,7 @@ const { createOnce } = require('../utils/seedHelpers');
 const IMAGE_BASE = '/images/gallery/';
 
 const gallery = [
-  { file: 'clinic-building-front', category: 'clinic', alt: 'The front of the Nidan Mother & Child Care building in Sector 51, Noida' },
+  { file: 'clinic-building-front', category: 'clinic', alt: 'The front of the NIDAN Mother & Child Clinic building in Sector 51, Noida' },
   { file: 'doctor-with-baby-girl', category: 'happy-families', alt: 'A smiling doctor with a baby girl in her arms' },
   { file: 'waiting-area-green-wall', category: 'clinic', alt: 'Spacious waiting area with comfortable seating and green wall panels' },
   { file: 'doctor-holding-baby', category: 'happy-families', alt: 'A doctor holding a baby in the consultation room' },
@@ -73,7 +73,7 @@ const serviceImages = {
   'lactation': '/images/services/lactation.webp',
 };
 
-const HERO = { imageUrl: '/images/hero-clinic.webp', imageAlt: 'The front of the Nidan Mother & Child Care clinic building in Sector 51, Noida' };
+const HERO = { imageUrl: '/images/hero-clinic.webp', imageAlt: 'The front of the NIDAN Mother & Child Clinic building in Sector 51, Noida' };
 
 module.exports = {
   async up({ models: { GalleryCategory, GalleryImage, Service, Setting } }) {

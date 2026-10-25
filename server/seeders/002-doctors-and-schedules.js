@@ -25,7 +25,7 @@ const doctors = [
       "Women's health",
     ],
     bio:
-      '<p>Dr. Manisha Ranjan is a Consultant Obstetrician & Gynaecologist at Nidan Mother & Child Care in Noida. ' +
+      '<p>Dr. Manisha Ranjan is a Consultant Obstetrician & Gynaecologist at NIDAN Mother & Child Clinic in Noida. ' +
       "She cares for women through every stage of life, with a special focus on high-risk pregnancies, infertility treatments such as IUI, vaginal deliveries and women's health.</p>" +
       '<p>She believes every pregnancy deserves attentive, compassionate and personalised care, from the first visit to the day you take your baby home.</p>',
     quote: 'The journey of a thousand miles begins with the heartbeat of a new life, echoing the promise of tomorrow.',
@@ -41,7 +41,7 @@ const doctors = [
     highlights: ['Gold Medalist'],
     specialities: ['Child vaccinations', 'Routine check-ups', 'Paediatric conditions', 'Newborn care'],
     bio:
-      '<p>Dr. Rajeev Ranjan is a Gold Medalist Consultant Paediatrician & Neonatologist at Nidan Mother & Child Care in Noida. ' +
+      '<p>Dr. Rajeev Ranjan is a Gold Medalist Consultant Paediatrician & Neonatologist at NIDAN Mother & Child Clinic in Noida. ' +
       'He looks after children from the day they are born, with a focus on child vaccinations, routine check-ups, paediatric conditions and newborn care.</p>' +
       '<p>He works closely with parents to help every child grow up healthy, happy and well protected.</p>',
     quote: "Each child's potential is a delicate seed; with the right care, it blossoms into a vibrant future.",

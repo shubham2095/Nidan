@@ -2,7 +2,7 @@
   "name": "nidan-mother-child-care",
   "version": "1.0.0",
   "private": true,
-  "description": "Nidan Mother & Child Care - public website and clinic CRM (Express + MySQL + React)",
+  "description": "NIDAN Mother & Child Clinic - public website and clinic CRM (Express + MySQL + React)",
   "main": "server/server.js",
   "engines": {
     "node": ">=20"

@@ -32,7 +32,8 @@ export default function PublicLayout() {
       <main id="main" className="flex-1">
         {/* keyed by address, so every page change starts with a soft fade */}
         <div key={pathname} className="page-in">
-          <Suspense fallback={<LoadingState className="min-h-[50vh]" />}>
+          {/* a full-screen height keeps the footer out of sight while a page loads, so it does not jump when the page appears */}
+          <Suspense fallback={<LoadingState className="min-h-screen" />}>
             <Outlet />
           </Suspense>
         </div>

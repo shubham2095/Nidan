@@ -5,6 +5,7 @@ const { Setting, Doctor, Service, BlogPost } = require('../models');
 const env = require('../config/env');
 const escapeHtml = require('../utils/escapeHtml');
 const { stripHtml } = require('../utils/sanitize');
+const publicContent = require('./publicContent.service');
 
 const SETTINGS_TTL_MS = 60 * 1000;
 const SLUG = /^[a-z0-9-]+$/;
@@ -42,23 +43,23 @@ const STATIC_PAGES = {
   }),
   '/doctors': () => ({
     title: 'Our Doctors',
-    description: 'Meet Dr. Manisha Ranjan, Obstetrician & Gynaecologist, and Dr. Rajeev Ranjan, Paediatrician & Neonatologist, at Nidan Mother & Child Care in Noida.',
+    description: 'Meet Dr. Manisha Ranjan, Obstetrician & Gynaecologist, and Dr. Rajeev Ranjan, Paediatrician & Neonatologist, at NIDAN Mother & Child Clinic in Noida.',
   }),
   '/services': () => ({
     title: 'Our Services',
-    description: 'Maternity, gynaecology, fertility, neonatology, paediatrics, fetal medicine, surgery, lactation support and more, all at Nidan Mother & Child Care in Noida.',
+    description: 'Maternity, gynaecology, fertility, neonatology, paediatrics, fetal medicine, surgery, lactation support and more, all at NIDAN Mother & Child Clinic in Noida.',
   }),
   '/gallery': () => ({
     title: 'Gallery',
-    description: 'Take a look inside Nidan Mother & Child Care: our clinic, our team and our community events in Noida.',
+    description: 'Take a look inside NIDAN Mother & Child Clinic: our clinic, our team and our community events in Noida.',
   }),
   '/testimonials': () => ({
     title: 'Patient Testimonials',
-    description: 'Read what patients and parents say about their experience at Nidan Mother & Child Care in Noida, and share your own.',
+    description: 'Read what patients and parents say about their experience at NIDAN Mother & Child Clinic in Noida, and share your own.',
   }),
   '/blog': () => ({
     title: 'Blog',
-    description: "Practical, friendly advice on pregnancy, newborn care, vaccinations, fertility and women's health from the doctors at Nidan Mother & Child Care.",
+    description: "Practical, friendly advice on pregnancy, newborn care, vaccinations, fertility and women's health from the doctors at NIDAN Mother & Child Clinic.",
   }),
   '/contact-us': (clinic) => ({
     title: 'Contact Us',
@@ -66,7 +67,7 @@ const STATIC_PAGES = {
   }),
   '/book-appointment': () => ({
     title: 'Book an Appointment',
-    description: 'Book an appointment online with Dr. Manisha Ranjan or Dr. Rajeev Ranjan at Nidan Mother & Child Care, Noida. Choose a doctor, location, date and time.',
+    description: 'Book an appointment online with Dr. Manisha Ranjan or Dr. Rajeev Ranjan at NIDAN Mother & Child Clinic, Noida. Choose a doctor, location, date and time.',
   }),
   '/privacy-policy': (clinic) => ({
     title: 'Privacy Policy',
@@ -81,10 +82,10 @@ const isAdminPath = (pathname) => pathname === '/admin' || pathname.startsWith('
  * Unknown addresses and slugs get status 404 so search engines do not index empty pages.
  */
 const metaFor = async (pathname) => {
-  if (isAdminPath(pathname)) return { status: 200, title: 'Nidan CRM', noindex: true };
+  if (isAdminPath(pathname)) return { status: 200, title: 'NIDAN Mother & Child Clinic CRM', noindex: true };
 
   const { clinic, seo, hero } = await siteSettings();
-  const siteName = clinic.name || 'Nidan Mother & Child Care';
+  const siteName = clinic.name || 'NIDAN Mother & Child Clinic';
   const fallbackText = seo.siteDescription || clinic.tagline || '';
 
   const page = ({ title, description, image, type = 'website', status = 200, noindex = false }) => ({
@@ -99,7 +100,8 @@ const metaFor = async (pathname) => {
   });
   const missing = () => page({ title: 'Page not found', status: 404, noindex: true });
 
-  if (pathname === '/') return page({ image: hero.imageUrl }); // the banner picture doubles as the link-preview picture
+  // the banner picture doubles as the link-preview picture, and the browser is told to fetch it straight away
+  if (pathname === '/') return { ...page({ image: hero.imageUrl }), preloadImage: hero.imageUrl || null };
   if (STATIC_PAGES[pathname]) return page(STATIC_PAGES[pathname](clinic));
 
   const detail = pathname.match(/^\/(doctors|services|blog)\/([^/]+)$/);
@@ -137,6 +139,64 @@ const metaFor = async (pathname) => {
   });
 };
 
+/* ---------- data sent along with the page ---------- */
+
+// The API responses a page asks for the moment it starts. They are put inside index.html (see renderPage), so the
+// first screen can be drawn without waiting for a second round trip to the server. Kept for a few seconds so a burst of
+// visitors does not repeat the same database queries.
+const PRELOAD_TTL_MS = 10 * 1000;
+const preloadCache = new Map();
+
+const PRELOAD_LOADERS = {
+  '/public/site': () => publicContent.getSite(),
+  '/public/home': () => publicContent.getHome(),
+  '/public/doctors': async () => ({ items: await publicContent.listDoctors() }),
+  '/public/services': async () => ({ items: await publicContent.listServices() }),
+  '/public/gallery': () => publicContent.getGallery(),
+};
+
+// besides the site settings, which every public page needs
+const PRELOAD_BY_PAGE = {
+  '/': ['/public/home'],
+  '/about-us': ['/public/doctors'],
+  '/doctors': ['/public/doctors'],
+  '/contact-us': ['/public/doctors'],
+  '/book-appointment': ['/public/doctors'],
+  '/services': ['/public/services'],
+  '/gallery': ['/public/gallery'],
+};
+
+const loadPreload = async (key) => {
+  const hit = preloadCache.get(key);
+  if (hit && Date.now() - hit.at < PRELOAD_TTL_MS) return hit.value;
+  const value = await PRELOAD_LOADERS[key]();
+  preloadCache.set(key, { at: Date.now(), value });
+  return value;
+};
+
+/** { '/public/site': {...}, ... } for a public page, or null (the website then simply asks the API itself). */
+const preloadFor = async (pathname) => {
+  if (isAdminPath(pathname)) return null;
+  const keys = ['/public/site', ...(PRELOAD_BY_PAGE[pathname] || [])];
+  try {
+    const values = await Promise.all(keys.map(loadPreload));
+    return Object.fromEntries(keys.map((key, index) => [key, values[index]]));
+  } catch (error) {
+    console.error('[seo] could not prepare page data:', error.message);
+    return null;
+  }
+};
+
+// Safe to place inside a <script> block: no "<" can close it early, and the two line separators are escaped.
+const BACKSLASH = String.fromCharCode(92);
+const LINE_SEPARATOR = String.fromCharCode(0x2028);
+const PARAGRAPH_SEPARATOR = String.fromCharCode(0x2029);
+const jsonForScript = (value) =>
+  JSON.stringify(value)
+    .replace(/</g, `${BACKSLASH}u003c`)
+    .split(LINE_SEPARATOR).join(`${BACKSLASH}u2028`)
+    .split(PARAGRAPH_SEPARATOR).join(`${BACKSLASH}u2029`);
+
 /* ---------- HTML template ---------- */
 
 /** Reads the built index.html once. Returns null when `npm run build` has not run yet. */
@@ -151,8 +211,11 @@ const metaTag = (attributes) =>
   `<meta data-rh="true" ${Object.entries(attributes).map(([key, value]) => `${key}="${escapeHtml(value)}"`).join(' ')} />`;
 
 /** Puts the page's own title, description, canonical URL and Open Graph tags into index.html. */
-const renderPage = (template, meta) => {
+const renderPage = (template, meta, preload = null) => {
   const lines = [];
+  if (meta.preloadImage) lines.push(`<link rel="preload" as="image" href="${escapeHtml(meta.preloadImage)}" fetchpriority="low" />`);
+  // type="application/json" is data, not a script, so the content security policy leaves it alone
+  if (preload) lines.push(`<script type="application/json" id="nidan-preload">${jsonForScript(preload)}</script>`);
   if (meta.noindex) lines.push(metaTag({ name: 'robots', content: 'noindex, nofollow' }));
   if (meta.description !== undefined) {
     lines.push(
@@ -213,4 +276,4 @@ const sitemapXml = async () => {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 };
 
-module.exports = { metaFor, readTemplate, renderPage, robotsTxt, sitemapXml };
+module.exports = { metaFor, preloadFor, readTemplate, renderPage, robotsTxt, sitemapXml };

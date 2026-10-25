@@ -38,7 +38,7 @@ const sendMail = async ({ to, subject, text, html }) => {
 const sendPasswordResetEmail = ({ user, resetUrl }) =>
   sendMail({
     to: user.email,
-    subject: 'Reset your Nidan CRM password',
+    subject: 'Reset your NIDAN Mother & Child Clinic CRM password',
     text:
       `Hello ${user.name},\n\n` +
       `We received a request to reset your password. Use the link below within 1 hour:\n${resetUrl}\n\n` +
@@ -99,14 +99,14 @@ const sendBookingEmails = ({ appointment, patient, doctor, location, clinic }) =
         to: patient.email,
         subject: `Appointment request received (${appointment.bookingRef})`,
         text:
-          `Hello ${patient.name},\n\nThank you for booking with ${clinic.name || 'Nidan Mother & Child Care'}. ` +
+          `Hello ${patient.name},\n\nThank you for booking with ${clinic.name || 'NIDAN Mother & Child Clinic'}. ` +
           'We have received your appointment request. Our team will confirm it shortly.\n\n' +
           `${rows.map(([label, value]) => `${label}: ${value}`).join('\n')}\n` +
           `${location.mapUrl ? `Map: ${location.mapUrl}\n` : ''}\n` +
           `If you need to change or cancel, please quote your booking ID${phoneLine}.`,
         html:
           `<p>Hello ${escapeHtml(patient.name)},</p>` +
-          `<p>Thank you for booking with ${escapeHtml(clinic.name || 'Nidan Mother & Child Care')}. We have received your appointment request and our team will confirm it shortly.</p>` +
+          `<p>Thank you for booking with ${escapeHtml(clinic.name || 'NIDAN Mother & Child Clinic')}. We have received your appointment request and our team will confirm it shortly.</p>` +
           detailsTable(rows) +
           (location.mapUrl ? `<p><a href="${escapeHtml(location.mapUrl)}">Open the location in Google Maps</a></p>` : '') +
           `<p>If you need to change or cancel, please quote your booking ID${escapeHtml(phoneLine)}.</p>`,

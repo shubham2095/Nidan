@@ -34,7 +34,8 @@ const SECTIONS = [
     fields: [
       { name: 'instagram', label: 'Instagram', type: 'url', hint: 'https://www.instagram.com/…' },
       { name: 'facebook', label: 'Facebook', type: 'url', hint: 'https://www.facebook.com/…' },
-      { name: 'youtube', label: 'YouTube', type: 'url', hint: 'https://www.youtube.com/…' },
+      { name: 'youtube', label: 'YouTube – Dr. Manisha Ranjan', type: 'url', hint: 'https://www.youtube.com/…' },
+      { name: 'youtubeRajeev', label: 'YouTube – Dr. Rajeev Ranjan', type: 'url', hint: 'https://www.youtube.com/@…' },
     ],
   },
   {

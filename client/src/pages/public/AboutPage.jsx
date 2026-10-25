@@ -13,7 +13,7 @@ import { getDoctors } from '../../services/publicService.js';
 
 export default function AboutPage() {
   const { clinic, settings, ownClinics } = useSite();
-  const { data } = useFetch((signal) => getDoctors(signal), []);
+  const { data } = useFetch((signal) => getDoctors(signal), [], { preload: '/public/doctors' });
   const about = settings.about || {};
   const whyChooseUs = settings.whyChooseUs || [];
 
@@ -33,7 +33,7 @@ export default function AboutPage() {
 
       {data && data.items.length > 0 && (
         <Section tone="mint">
-          <SectionHeading eyebrow="Our doctors" title="The people behind Nidan" />
+          <SectionHeading eyebrow="Our doctors" title="The people behind NIDAN Mother & Child Clinic" />
           <RevealGrid className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2" columns={2} step={140}>
             {data.items.map((doctor) => (
               <Link

@@ -6,7 +6,7 @@ import { siteDefaults } from '../utils/siteDefaults.js';
 const SiteContext = createContext(siteDefaults);
 
 export function SiteProvider({ children }) {
-  const { data } = useFetch((signal) => getSite(signal), []);
+  const { data } = useFetch((signal) => getSite(signal), [], { preload: '/public/site' });
 
   const value = useMemo(() => {
     const settings = { ...siteDefaults.settings, ...(data?.settings || {}) };

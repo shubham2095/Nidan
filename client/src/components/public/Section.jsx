@@ -1,4 +1,5 @@
 import Container from './Container.jsx';
+import LazyMount from './LazyMount.jsx';
 import Reveal from './Reveal.jsx';
 
 const TONES = {
@@ -7,18 +8,23 @@ const TONES = {
   mint: 'bg-brand-50',
 };
 
-/** Page band with consistent spacing. The content eases in as the band scrolls into view (pass reveal={false} to skip). */
-export default function Section({ tone = 'white', className = '', reveal = true, children, ...rest }) {
+/**
+ * Page band with consistent spacing. The content eases in as the band scrolls into view (pass reveal={false} to skip).
+ * `lazy` (a CSS height such as '40rem', roughly the band's height) builds the content only when the band is about
+ * to be seen; use it for bands well below the first screen.
+ */
+export default function Section({ tone = 'white', className = '', reveal = true, lazy = false, children, ...rest }) {
+  const content = lazy ? <LazyMount minHeight={lazy === true ? undefined : lazy}>{children}</LazyMount> : children;
   return (
     // overflow-x-clip: nothing inside a band, such as a slide-in or a decorative blob, can widen the page
     <section className={`overflow-x-clip py-14 sm:py-20 ${TONES[tone]} ${className}`} {...rest}>
       <Container>
         {reveal ? (
           <Reveal distance={20} variant="up">
-            {children}
+            {content}
           </Reveal>
         ) : (
-          children
+          content
         )}
       </Container>
     </section>

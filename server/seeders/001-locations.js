@@ -6,7 +6,7 @@ const PHONE = '+91 97735 07333, 0120-4545700';
 const locations = [
   {
     slug: 'nidan-sector-51',
-    name: 'Nidan – Sector 51',
+    name: 'NIDAN Mother & Child Clinic – Sector 51',
     address: 'Basement B, 170, Block B, Sector 51',
     postalCode: '201303',
     phone: PHONE,

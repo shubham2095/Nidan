@@ -10,7 +10,7 @@ export default function ServiceCard({ service }) {
       className="group flex h-full items-start gap-4 rounded-3xl border border-slate-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg sm:flex-col sm:items-stretch sm:gap-0 sm:p-6"
     >
       {service.imageUrl ? (
-        <img src={service.imageUrl} alt="" loading="lazy" width="64" height="64" className="h-14 w-14 shrink-0 rounded-full object-cover ring-4 ring-brand-50 transition group-hover:ring-brand-200 sm:h-16 sm:w-16" />
+        <img src={service.imageUrl} alt="" loading="lazy" decoding="async" width="64" height="64" className="h-14 w-14 shrink-0 rounded-full object-cover ring-4 ring-brand-50 transition group-hover:ring-brand-200 sm:h-16 sm:w-16" />
       ) : (
         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-700 transition group-hover:bg-brand-700 group-hover:text-white">
           <Icon name={service.icon} className="h-6 w-6" />

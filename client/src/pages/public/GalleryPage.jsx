@@ -11,7 +11,7 @@ import useFetch from '../../hooks/useFetch.js';
 import { getGallery } from '../../services/publicService.js';
 
 export default function GalleryPage() {
-  const { data, loading, error, reload } = useFetch((signal) => getGallery(signal), []);
+  const { data, loading, error, reload } = useFetch((signal) => getGallery(signal), [], { preload: '/public/gallery' });
   const [category, setCategory] = useState('all');
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -27,7 +27,7 @@ export default function GalleryPage() {
 
   return (
     <>
-      <Seo title="Gallery" description="Take a look inside Nidan Mother & Child Care: our clinic, our team and our community events in Noida." />
+      <Seo title="Gallery" description="Take a look inside NIDAN Mother & Child Clinic: our clinic, our team and our community events in Noida." />
       <PageHeader title="Gallery" crumbs={[{ label: 'Gallery' }]} description="A look at our clinic, team and community." />
 
       <Section>
@@ -64,7 +64,7 @@ export default function GalleryPage() {
                     aria-label={`Enlarge photo: ${image.title || image.altText}`}
                     className="group relative block w-full overflow-hidden rounded-3xl bg-slate-100"
                   >
-                    <img src={image.imageUrl} alt={image.altText} loading="lazy" className="h-auto w-full transition duration-500 group-hover:scale-105" />
+                    <img src={image.imageUrl} alt={image.altText} loading="lazy" decoding="async" className="h-auto w-full transition duration-500 group-hover:scale-105" />
                     <span className="absolute inset-0 grid place-items-center bg-slate-900/0 text-white opacity-0 transition group-hover:bg-slate-900/30 group-hover:opacity-100">
                       <ZoomIn className="h-8 w-8" aria-hidden="true" />
                     </span>

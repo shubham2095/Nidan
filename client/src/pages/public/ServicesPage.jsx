@@ -9,13 +9,13 @@ import useFetch from '../../hooks/useFetch.js';
 import { getServices } from '../../services/publicService.js';
 
 export default function ServicesPage() {
-  const { data, loading, error, reload } = useFetch((signal) => getServices(signal), []);
+  const { data, loading, error, reload } = useFetch((signal) => getServices(signal), [], { preload: '/public/services' });
 
   return (
     <>
       <Seo
         title="Our Services"
-        description="Maternity, gynaecology, fertility, neonatology, paediatrics, fetal medicine, surgery, lactation support and more, all at Nidan Mother & Child Care in Noida."
+        description="Maternity, gynaecology, fertility, neonatology, paediatrics, fetal medicine, surgery, lactation support and more, all at NIDAN Mother & Child Clinic in Noida."
       />
       <PageHeader
         title="Our Services"

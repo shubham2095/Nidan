@@ -65,7 +65,7 @@ function ShareExperienceForm() {
         {(props) => <textarea {...props} {...register('content')} rows={5} className="field-input" />}
       </Field>
       <ConsentCheckbox {...register('consent')} error={errors.consent?.message}>
-        I agree that my name and review may be published on the Nidan Mother &amp; Child Care website after review by the team.
+        I agree that my name and review may be published on the NIDAN Mother &amp; Child Clinic website after review by the team.
       </ConsentCheckbox>
       <FormMessage type={result?.type}>{result?.message}</FormMessage>
       <Button type="submit" size="lg" disabled={isSubmitting}>
@@ -81,7 +81,7 @@ export default function TestimonialsPage() {
 
   return (
     <>
-      <Seo title="Patient Testimonials" description="Read what patients and parents say about their experience at Nidan Mother & Child Care in Noida, and share your own." />
+      <Seo title="Patient Testimonials" description="Read what patients and parents say about their experience at NIDAN Mother & Child Clinic in Noida, and share your own." />
       <PageHeader title="Testimonials" crumbs={[{ label: 'Testimonials' }]} description="Kind words from the families we have had the privilege to care for." />
 
       <Section>

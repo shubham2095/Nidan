@@ -212,7 +212,7 @@ const settingSchemas = {
     whatsappNumber: z.string().trim().regex(/^\d{10,15}$/, 'Digits only, including the country code (e.g. 919773507333)'),
     email: z.string().trim().toLowerCase().pipe(z.email('Enter a valid email address')),
   }),
-  social: z.object({ instagram: url.default(''), facebook: url.default(''), youtube: url.default('') }),
+  social: z.object({ instagram: url.default(''), facebook: url.default(''), youtube: url.default(''), youtubeRajeev: url.default('') }),
   hero: z.object({
     heading: required(200),
     subheading: text(400),

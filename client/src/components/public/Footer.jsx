@@ -7,14 +7,8 @@ import Container from './Container.jsx';
 import Logo from './Logo.jsx';
 import OpeningHours from './OpeningHours.jsx';
 import Reveal from './Reveal.jsx';
-import { FacebookIcon, InstagramIcon, YoutubeIcon } from './SocialIcons.jsx';
+import { SOCIAL_LINKS as SOCIAL } from './SocialIcons.jsx';
 import { NAV_LINKS } from './navLinks.js';
-
-const SOCIAL = [
-  { key: 'instagram', label: 'Instagram', Icon: InstagramIcon },
-  { key: 'facebook', label: 'Facebook', Icon: FacebookIcon },
-  { key: 'youtube', label: 'YouTube', Icon: YoutubeIcon },
-];
 
 const MAX_SERVICE_LINKS = 7;
 // py-1 gives thumbs a taller target on phones without changing how the list looks
@@ -69,6 +63,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${clinic.name} on ${label}`}
+                  title={label}
                   className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition hover:-translate-y-0.5 hover:bg-blush-500"
                 >
                   <Icon />

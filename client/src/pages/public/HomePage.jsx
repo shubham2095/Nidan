@@ -1,7 +1,7 @@
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Baby, CalendarCheck, CheckCircle2, Heart, MapPin, MessageCircle, Phone, Stethoscope, Syringe } from 'lucide-react';
 import Button from '../../components/public/Button.jsx';
-import ClinicLocator from '../../components/public/ClinicLocator.jsx';
 import Container from '../../components/public/Container.jsx';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
 import DoctorCard from '../../components/public/DoctorCard.jsx';
@@ -14,12 +14,15 @@ import Seo from '../../components/public/Seo.jsx';
 import ServiceCard from '../../components/public/ServiceCard.jsx';
 import SpecialtyCard from '../../components/public/SpecialtyCard.jsx';
 import { ErrorState, LoadingState } from '../../components/public/States.jsx';
-import TestimonialSlider from '../../components/public/TestimonialSlider.jsx';
 import { useSite } from '../../context/SiteContext.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getHome } from '../../services/publicService.js';
 import { cityList, clinicsLabel, telHref, whatsappHref } from '../../utils/format.js';
 import { clinicJsonLd } from '../../utils/jsonLd.js';
+
+// Used only far down this page, so their code is fetched when their section is about to be seen.
+const ClinicLocator = lazy(() => import('../../components/public/ClinicLocator.jsx'));
+const TestimonialSlider = lazy(() => import('../../components/public/TestimonialSlider.jsx'));
 
 /** The two facts floating on the hero picture; real counts from the database, never invented numbers. */
 function HeroBadges({ doctorCount }) {
@@ -131,13 +134,15 @@ function VisitSection({ doctors }) {
   if (ownClinics.length === 0) return null;
 
   return (
-    <Section id="visit">
+    <Section id="visit" lazy="58rem">
       <SectionHeading
         eyebrow="Visit us"
         title={ownClinics.length === 1 ? 'Visit our clinic' : 'Find the clinic nearest to you'}
         description={ownClinics.length === 1 ? undefined : `${ownClinics.length} clinics in ${cityList(ownClinics)}. Choose one to see its address, directions and map.`}
       />
-      <ClinicLocator doctors={doctors} />
+      <Suspense fallback={null}>
+        <ClinicLocator doctors={doctors} />
+      </Suspense>
     </Section>
   );
 }
@@ -202,7 +207,7 @@ function QuickActions() {
 
 export default function HomePage() {
   const site = useSite();
-  const { data, loading, error, reload } = useFetch((signal) => getHome(signal), []);
+  const { data, loading, error, reload } = useFetch((signal) => getHome(signal), [], { preload: '/public/home' });
   const whyChooseUs = site.settings.whyChooseUs || [];
   const faq = site.settings.faq || [];
 
@@ -230,7 +235,7 @@ export default function HomePage() {
             </RevealGrid>
           </Section>
 
-          <Section tone="mint" id="doctors">
+          <Section tone="mint" id="doctors" lazy="46rem">
             <SectionHeading
               eyebrow="Our doctors"
               title="Meet the doctors who care for your family"
@@ -246,7 +251,7 @@ export default function HomePage() {
           <VisitSection doctors={data.doctors} />
 
           {data.specialties.length > 0 && (
-            <Section tone="soft">
+            <Section tone="soft" lazy="40rem">
               <SectionHeading eyebrow="Our specialties" title="What we are known for" />
               <RevealGrid className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" columns={3} variant="zoom">
                 {data.specialties.map((specialty) => (
@@ -257,7 +262,7 @@ export default function HomePage() {
           )}
 
           {whyChooseUs.length > 0 && (
-            <Section>
+            <Section lazy="32rem">
               <SectionHeading eyebrow="Why choose us" title="Care that puts you first" />
               <RevealGrid className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4" columns={4} itemClassName="">
                 {whyChooseUs.map((item) => (
@@ -274,9 +279,11 @@ export default function HomePage() {
           )}
 
           {data.testimonials.length > 0 && (
-            <Section tone="mint">
+            <Section tone="mint" lazy="30rem">
               <SectionHeading eyebrow="Testimonials" title="Words from our patients" />
-              <TestimonialSlider testimonials={data.testimonials} />
+              <Suspense fallback={null}>
+                <TestimonialSlider testimonials={data.testimonials} />
+              </Suspense>
               <p className="mt-8 text-center">
                 <Link to="/testimonials" className="inline-flex items-center gap-1 font-semibold text-brand-700 hover:underline">
                   Read more and share your experience <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -286,8 +293,8 @@ export default function HomePage() {
           )}
 
           {data.gallery.images.length > 0 && (
-            <Section>
-              <SectionHeading eyebrow="Gallery" title="A look inside Nidan" />
+            <Section lazy="44rem">
+              <SectionHeading eyebrow="Gallery" title="A look inside NIDAN Mother & Child Clinic" />
               <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                 {data.gallery.images.map((image, index) => (
                   <Reveal as="li" key={image.id} variant="zoom" delay={(index % 4) * 90} className="aspect-square overflow-hidden rounded-3xl bg-slate-100">
@@ -296,6 +303,7 @@ export default function HomePage() {
                         src={image.imageUrl}
                         alt={image.altText}
                         loading="lazy"
+                        decoding="async"
                         width="400"
                         height="400"
                         className="h-full w-full object-cover transition duration-500 hover:scale-105"
@@ -313,7 +321,7 @@ export default function HomePage() {
           )}
 
           {data.posts.length > 0 && (
-            <Section tone="soft">
+            <Section tone="soft" lazy="34rem">
               <SectionHeading eyebrow="From our blog" title="Helpful reading for parents" />
               <RevealGrid className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" columns={3}>
                 {data.posts.map((post) => (

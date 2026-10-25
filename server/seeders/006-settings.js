@@ -2,7 +2,7 @@ const { createOnce } = require('../utils/seedHelpers');
 
 const settings = {
   clinic: {
-    name: 'Nidan Mother & Child Care',
+    name: 'NIDAN Mother & Child Clinic',
     tagline: 'Trusted Healthcare for Mothers and Child in Noida',
     phonePrimary: '+91 97735 07333',
     phoneSecondary: '0120-4545700',
@@ -13,6 +13,7 @@ const settings = {
     instagram: 'https://www.instagram.com/manisharanjan_',
     facebook: 'https://m.facebook.com/DrManishaRanjan/',
     youtube: 'https://youtube.com/@drmanisharanjannidan',
+    youtubeRajeev: 'https://www.youtube.com/@dr.rajeevranjan-nidanmothe1260',
   },
   hero: {
     heading: 'Trusted Healthcare for Mothers and Child in Noida',
@@ -49,14 +50,14 @@ const settings = {
     },
   ],
   about: {
-    heading: 'About Nidan Mother & Child Care',
+    heading: 'About NIDAN Mother & Child Clinic',
     body:
-      '<p>Nidan Mother & Child Care is a mother and child clinic in Noida, run by two doctors who care for families from pregnancy through childhood.</p>' +
+      '<p>NIDAN Mother & Child Clinic is a mother and child clinic in Noida, run by two doctors who care for families from pregnancy through childhood.</p>' +
       '<p>Dr. Manisha Ranjan, Consultant Obstetrician & Gynaecologist, cares for women through pregnancy, childbirth and every stage of life. Dr. Rajeev Ranjan, Consultant Paediatrician & Neonatologist, looks after babies and children from their very first day.</p>' +
       '<p>You can see them both at our clinic in Sector 51, Noida.</p>',
   },
   seo: {
-    siteTitle: 'Nidan Mother & Child Care | Gynaecologist & Paediatrician in Noida',
+    siteTitle: 'NIDAN Mother & Child Clinic | Gynaecologist & Paediatrician in Noida',
     siteDescription:
       'Trusted healthcare for mothers and children in Noida. Book appointments with Dr. Manisha Ranjan (Obstetrician & Gynaecologist) and Dr. Rajeev Ranjan (Paediatrician & Neonatologist).',
   },

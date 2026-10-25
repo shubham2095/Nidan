@@ -11,7 +11,7 @@ export default function AdminRoot() {
     <AuthProvider>
       <ToastProvider>
         <Helmet>
-          <title>Nidan CRM</title>
+          <title>NIDAN Mother & Child Clinic CRM</title>
           <meta name="robots" content="noindex, nofollow" />
         </Helmet>
         <Suspense fallback={<LoadingState className="min-h-screen" />}>
