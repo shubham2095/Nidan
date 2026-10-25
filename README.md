@@ -659,3 +659,9 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 35. **About page picture.** A photo of the clinic building (from the old website's gallery) sits beside the About text. Change
     it, or remove it to centre the text again, in Site settings > About page (the seeder `017-about-picture.js` set the
     first one).
+36. **Exact maps for the two clinics.** The maps on the home and Contact pages, and the "Get directions" links, use the
+    clinics' own Google Maps listings (the embed codes you sent), not a search made from the written address. Sector 51 is
+    the listing "Dr Rajeev Ranjan - Best Pediatrician and Child Specialist in Noida" and Gaur City is "Nidan Mother &
+    Child Care"; they are kept in `server/utils/clinicMaps.js` and applied by `020-clinic-maps.js`. To change one, open
+    Admin > Locations, then in Google Maps choose Share > Embed a map > Copy HTML and paste the whole code into "Map on
+    the website" (it keeps only the link inside it). Only Google Maps addresses starting with https:// are accepted.

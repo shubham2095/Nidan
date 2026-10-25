@@ -1,4 +1,5 @@
 const { createOnce, mapsSearchUrl, mapsEmbedUrl } = require('../utils/seedHelpers');
+const clinicMaps = require('../utils/clinicMaps');
 
 const PHONE = '+91 97735 07333, 0120-4545700';
 
@@ -12,6 +13,8 @@ const locations = [
     postalCode: '201318',
     mapQuery:
       'Nidan Mother and Child Care, S-219 Aarza Square 2, Gaur City 1, B, Greater Noida W Rd, Sector 16, Greater Noida, Uttar Pradesh 201318',
+    mapUrl: clinicMaps['nidan-gaur-city'].mapUrl,
+    mapEmbedUrl: clinicMaps['nidan-gaur-city'].embedUrl,
     sortOrder: 2,
   },
 ];

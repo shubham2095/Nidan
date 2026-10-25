@@ -85,6 +85,23 @@ const leaveParams = z.object({ id, leaveId: id });
 
 /* ---------- locations ---------- */
 
+// Google Maps gives the embed as a whole <iframe ...> snippet (Share > Embed a map). Staff may paste either that
+// snippet or just the address inside its src="..."; only the address is kept.
+const embedSrc = (value) => {
+  if (typeof value !== 'string') return value;
+  const found = value.match(/\bsrc\s*=\s*["']([^"']+)["']/i);
+  return (found ? found[1] : value).trim().replace(/&amp;/g, '&');
+};
+const mapLink = z
+  .string()
+  .trim()
+  .max(1000, 'Please use 1000 characters or fewer')
+  .refine((value) => /^https:\/\//i.test(value), 'Enter a web address that starts with https://');
+const mapEmbedLink = z
+  .string()
+  .max(1000, 'The map address is too long. Paste only the link from the embed code, or the embed code itself.')
+  .refine((value) => /^https:\/\/(www\.google\.com|maps\.google\.com)\/maps/i.test(value), 'Paste the embed code or link from Google Maps (Share > Embed a map)');
+
 const locationFields = {
   name: required(150, 'Enter the name'),
   slug: optionalText(80),
@@ -93,8 +110,8 @@ const locationFields = {
   state: required(100),
   postalCode: optionalText(10),
   phone: optionalText(50),
-  mapUrl: optionalText(1000),
-  mapEmbedUrl: optionalText(1000),
+  mapUrl: z.preprocess(emptyToUndefined, mapLink.optional()),
+  mapEmbedUrl: z.preprocess((value) => embedSrc(emptyToUndefined(value)), mapEmbedLink.optional()),
   isOwnClinic: z.boolean(),
   isActive: z.boolean(),
 };
@@ -103,8 +120,8 @@ const updateLocation = z.object({
   ...locationFields,
   postalCode: clearable(text(10)),
   phone: clearable(text(50)),
-  mapUrl: clearable(text(1000)),
-  mapEmbedUrl: clearable(text(1000)),
+  mapUrl: clearable(mapLink),
+  mapEmbedUrl: z.preprocess((value) => (value === '' ? null : embedSrc(value)), mapEmbedLink.nullable().optional()),
 }).partial();
 
 /* ---------- website content ---------- */

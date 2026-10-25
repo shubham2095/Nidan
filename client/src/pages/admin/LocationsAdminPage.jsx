@@ -15,8 +15,8 @@ const fields = [
   { name: 'state', label: 'State', required: true },
   { name: 'postalCode', label: 'PIN code' },
   { name: 'phone', label: 'Phone (optional)' },
-  { name: 'mapUrl', label: 'Google Maps link (optional)', type: 'url', wide: true, hint: 'Leave empty to create it from the address' },
-  { name: 'mapEmbedUrl', label: 'Map embed link (optional)', type: 'url', wide: true, hint: 'Leave empty to create it from the address' },
+  { name: 'mapUrl', label: 'Google Maps link (optional)', type: 'url', wide: true, hint: 'The link behind "Get directions". Leave empty to create it from the address' },
+  { name: 'mapEmbedUrl', label: 'Map on the website (optional)', wide: true, hint: 'In Google Maps choose Share > Embed a map > Copy HTML, then paste it here (the whole code or just the link inside it). Leave empty to create a map from the address' },
   { name: 'isOwnClinic', type: 'checkbox', checkboxLabel: 'This is one of our own clinics', hint: 'Own clinics are listed in the website footer and contact page. Partner hospitals are not.' },
   { name: 'isActive', type: 'checkbox', checkboxLabel: 'In use', hint: 'Switch off to stop new bookings and hide it from the website. Old appointments are kept.' },
 ];

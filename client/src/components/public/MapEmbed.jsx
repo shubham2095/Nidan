@@ -58,7 +58,7 @@ export default function MapEmbed({ location, instant = false, className = 'h-56'
           title={`Map of ${location.name}`}
           src={location.mapEmbedUrl}
           loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
+          referrerPolicy="strict-origin-when-cross-origin"
           className="relative h-full w-full border-0"
         />
       )}

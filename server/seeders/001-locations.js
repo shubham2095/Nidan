@@ -1,4 +1,5 @@
 const { createOnce, mapsSearchUrl, mapsEmbedUrl } = require('../utils/seedHelpers');
+const clinicMaps = require('../utils/clinicMaps');
 
 const PHONE = '+91 97735 07333, 0120-4545700';
 
@@ -11,6 +12,8 @@ const locations = [
     postalCode: '201303',
     phone: PHONE,
     isOwnClinic: true,
+    mapUrl: clinicMaps['nidan-sector-51'].mapUrl,
+    mapEmbedUrl: clinicMaps['nidan-sector-51'].embedUrl,
     sortOrder: 1,
   },
 ];
