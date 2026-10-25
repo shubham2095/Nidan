@@ -17,9 +17,9 @@ const update = async (actor, key, value, req) => {
   const next = key === 'about' ? { ...value, body: sanitizeRichText(value.body) } : value;
 
   const [row, created] = await Setting.findOrCreate({ where: { settingKey: key }, defaults: { settingKey: key, settingValue: next, updatedBy: actor.id } });
-  const previousImage = !created && key === 'hero' ? row.settingValue?.imageUrl : null;
+  const previousImage = !created && (key === 'hero' || key === 'about') ? row.settingValue?.imageUrl : null;
   if (!created) await row.update({ settingValue: next, updatedBy: actor.id });
-  // a replaced or removed banner picture is deleted from disk
+  // a replaced or removed banner or About picture is deleted from disk
   if (previousImage && previousImage !== next.imageUrl) await mediaService.removeByUrl(previousImage);
 
   await activityLog.record({ user: actor, entityType: 'setting', action: 'update', summary: `Updated site settings: ${key}`, req });

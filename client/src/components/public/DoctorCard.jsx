@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Award } from 'lucide-react';
 import Button from './Button.jsx';
 import DoctorAvatar from './DoctorAvatar.jsx';
+import { ownSchedules } from '../../utils/schedule.js';
 import ScheduleTabs from './ScheduleTabs.jsx';
 
 export default function DoctorCard({ doctor }) {
@@ -36,8 +37,8 @@ export default function DoctorCard({ doctor }) {
       )}
 
       <div className="mt-6 flex-1">
-        <h4 className="mb-3 font-heading text-base font-bold">{doctor.schedules.length > 1 ? 'Locations & timings' : 'Timings'}</h4>
-        <ScheduleTabs schedules={doctor.schedules} showAddress={false} />
+        <h4 className="mb-3 font-heading text-base font-bold">{ownSchedules(doctor).length > 1 ? 'Locations & timings' : 'Timings'}</h4>
+        <ScheduleTabs schedules={ownSchedules(doctor)} showAddress={false} />
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">

@@ -68,6 +68,8 @@ const SECTIONS = [
     fields: [
       { name: 'heading', label: 'Heading', required: true, wide: true },
       { name: 'body', label: 'Text', type: 'richtext', minHeight: '14rem' },
+      { name: 'imageUrl', label: 'Picture beside the text (optional)', type: 'image', upload: (file) => uploadImage(file, 'content'), hint: 'A photo of the clinic works well (landscape or square). Without one, the text is centred.' },
+      { name: 'imageAlt', label: 'Describe the picture', wide: true, hint: 'For people using screen readers, e.g. "The front of our clinic in Sector 51"' },
     ],
   },
   {

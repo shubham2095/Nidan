@@ -13,7 +13,7 @@ import useFetch from '../../hooks/useFetch.js';
 import { getDoctor } from '../../services/publicService.js';
 import { telHref } from '../../utils/format.js';
 import { physicianJsonLd } from '../../utils/jsonLd.js';
-import { groupSchedule } from '../../utils/schedule.js';
+import { groupSchedule, ownSchedules } from '../../utils/schedule.js';
 import NotFoundPage from './NotFoundPage.jsx';
 
 export default function DoctorDetailPage() {
@@ -96,12 +96,12 @@ export default function DoctorDetailPage() {
             )}
 
             <div>
-              <h2 className="mb-4 text-2xl font-extrabold">{doctor.schedules.length > 1 ? 'Locations & timings' : 'Clinic timings'}</h2>
-              {doctor.schedules.length === 0 && (
+              <h2 className="mb-4 text-2xl font-extrabold">{ownSchedules(doctor).length > 1 ? 'Locations & timings' : 'Clinic timings'}</h2>
+              {ownSchedules(doctor).length === 0 && (
                 <p className="text-slate-600">Timings will be updated soon. Please call us to confirm.</p>
               )}
               <RevealGrid className="grid gap-5 md:grid-cols-2" columns={2}>
-                {doctor.schedules.map(({ location, slots }) => (
+                {ownSchedules(doctor).map(({ location, slots }) => (
                   <section key={location.id} className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
                     <h3 className="text-lg font-bold">{location.name}</h3>
                     <p className="mt-1 flex items-start gap-2 text-sm text-slate-600">

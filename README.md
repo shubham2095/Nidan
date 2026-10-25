@@ -561,20 +561,22 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
 3. **Old site URLs.** The current WordPress site has no per-service or per-doctor pages (`/services/` returns 404 and
    the doctors page has no profile links), so there are no old slugs to preserve for those. New slugs:
    `/doctors/dr-manisha-ranjan`, `/doctors/dr-rajeev-ranjan`, `/services/maternity`, etc.
-4. **Three clinics.** NIDAN Mother & Child Clinic – Sector 51 (Basement B, 170, Block B, Sector 51, Noida 201303), NIDAN Mother & Child Clinic – Gaur City
-   (S-219, Aarza Square 2, Gaur City 1, Greater Noida 201318) and Cloudnine Hospital – Gaur City (5th Avenue Gaur City,
-   Noida Extension 201016) are all marked "our clinic", so they appear in the footer, home page, About page and Contact
-   page. The opening hours in Site settings (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) belong to the
-   Sector 51 clinic. Doctor timings are per doctor and per clinic, and they drive online booking (15-minute slots):
+4. **Two clinics.** NIDAN Mother & Child Clinic has two clinics: Sector 51 (Basement B, 170, Block B, Sector 51, Noida
+   201303) and Gaur City (S-219, Aarza Square 2, Gaur City 1, Greater Noida 201318). They appear on the home page,
+   Contact page, About page, footer and top bar. Cloudnine Hospital (where Dr. Manisha Ranjan had been listed) is not a
+   Nidan clinic and has been removed completely; the seeder `019-remove-cloudnine.js` deletes it from an existing
+   database. If a partner hospital is ever needed again, add it in Admin > Locations with "This is one of our own
+   clinics" switched off: it then appears only in the booking steps, not in the clinic lists or the doctors' timing lists.
+
+   The opening hours in Site settings (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) belong to the Sector
+   51 clinic. Doctor timings are per doctor and per clinic, and they drive online booking (15-minute slots):
    - Dr. Rajeev Ranjan: Sector 51 Monday to Friday 8:30 am-1:30 pm, Saturday and Sunday 10:30 am-1:30 pm, every day
      6-9 pm; Gaur City 3-5 pm with Tuesday and Thursday off (seeder `012-rajeev-timings.js`).
-   - Dr. Manisha Ranjan: Sector 51 every day 6-9 pm plus Sunday 12-2 pm; Gaur City 3-5 pm with Tuesday and Thursday
-     off; Cloudnine Hospital Monday to Saturday 10 am-2 pm (seeder `013-manisha-timings.js`). "Cloud 9" in your message
-     was taken to mean Cloudnine Hospital.
+   - Dr. Manisha Ranjan: Sector 51 every day 6-9 pm plus Sunday 12-2 pm; Gaur City 3-5 pm with Tuesday and Thursday off
+     (seeder `013-manisha-timings.js`).
 
-   Dr. Rajeev has no timings at Cloudnine Hospital, so patients cannot book him there. Timings can be changed any time in
-   Admin > Doctors. The two new clinics come from the seeder `011-more-clinics.js`; any location can also be added or
-   edited in Admin > Locations.
+   Timings can be changed any time in Admin > Doctors. The Gaur City clinic comes from the seeder `011-more-clinics.js`;
+   any location can also be added or edited in Admin > Locations.
 5. **Uploads.** `UPLOAD_DIR` has two sub-folders: `public/` (gallery, blog, doctor photos) is served at `/uploads`,
    and `private/` (patient reports) is never served directly and will be streamed only through authenticated routes.
 6. **Patient de-duplication** matches on normalised phone number plus name. The same phone with a different name
@@ -643,6 +645,9 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     updated the saved texts, doctor bios and clinic names. The logo picture itself still reads "NIDAN Mother & Child
     Care", because it is an image; replace `client/public/images/nidan-logo.webp` (and the favicons) if it should match.
     Technical names such as the e-mail address, web address, database and file names keep "nidan" in lower case.
+33. **Two YouTube channels.** The existing link (`@drmanisharanjannidan`) was taken as Dr. Manisha Ranjan's channel and
+    the one you added (`@dr.rajeevranjan-nidanmothe1260`) as Dr. Rajeev Ranjan's. Both icons show in the top bar, footer
+    and mobile menu, each with the doctor's name as its tooltip. Change either in Site settings > Social media.
 34. **Google reviews as testimonials.** Nineteen reviews that patients posted on the clinic's Google listing are published
     as testimonials (seeder `016-google-reviews.js`, labelled "Google review", shown word for word including spelling and
     the old clinic name). No star ratings are shown because the copied text had none, and the website never invents
@@ -651,6 +656,6 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     record; staff can hide, reorder or edit any of them in Admin > Testimonials. The three "TODO" placeholders stay
     hidden. Doctors in India are limited in how they may advertise, so have the clinic confirm that showing patient
     reviews is acceptable for it.
-33. **Two YouTube channels.** The existing link (`@drmanisharanjannidan`) was taken as Dr. Manisha Ranjan's channel and
-    the one you added (`@dr.rajeevranjan-nidanmothe1260`) as Dr. Rajeev Ranjan's. Both icons show in the top bar, footer
-    and mobile menu, each with the doctor's name as its tooltip. Change either in Site settings > Social media.
+35. **About page picture.** A photo of the clinic building (from the old website's gallery) sits beside the About text. Change
+    it, or remove it to centre the text again, in Site settings > About page (the seeder `017-about-picture.js` set the
+    first one).

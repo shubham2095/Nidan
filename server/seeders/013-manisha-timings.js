@@ -11,8 +11,6 @@ const TIMETABLE = {
   ],
   // Tuesday and Thursday off
   'nidan-gaur-city': [{ days: [1, 3, 5, 6, 0], start: '15:00:00', end: '17:00:00' }],
-  // Monday to Saturday
-  'cloudnine-gaur-city': [{ days: [1, 2, 3, 4, 5, 6], start: '10:00:00', end: '14:00:00' }],
 };
 
 module.exports = {

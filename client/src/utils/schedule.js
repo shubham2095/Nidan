@@ -45,3 +45,10 @@ export function groupSchedule(slots = []) {
       time: `${formatTime(group.startTime)} – ${formatTime(group.endTime)}`,
     }));
 }
+
+/**
+ * The locations of a doctor that the website lists: our own clinics only. A partner hospital (a location whose "own
+ * clinic" switch is off in Admin > Locations) is left out of these lists on purpose; the booking steps still offer it,
+ * because they read `doctor.schedules` directly.
+ */
+export const ownSchedules = (doctor) => doctor.schedules.filter(({ location }) => location.isOwnClinic);

@@ -3,7 +3,7 @@ import { MapPin } from 'lucide-react';
 import ContactStrip from '../../components/public/ContactStrip.jsx';
 import DoctorAvatar from '../../components/public/DoctorAvatar.jsx';
 import Icon from '../../components/public/Icon.jsx';
-import { RevealGrid } from '../../components/public/Reveal.jsx';
+import Reveal, { RevealGrid } from '../../components/public/Reveal.jsx';
 import PageHeader from '../../components/public/PageHeader.jsx';
 import Section, { SectionHeading } from '../../components/public/Section.jsx';
 import Seo from '../../components/public/Seo.jsx';
@@ -26,8 +26,26 @@ export default function AboutPage() {
       <PageHeader title={about.heading || `About ${clinic.name}`} crumbs={[{ label: 'About Us' }]} description={clinic.tagline} />
 
       <Section>
-        <div className="mx-auto max-w-3xl">
-          <div className="rich-text text-lg" dangerouslySetInnerHTML={{ __html: about.body || '' }} />
+        {/* with a picture the text and the picture sit side by side (picture below the text on phones); without one, the text is centred */}
+        <div className={about.imageUrl ? 'grid items-center gap-12 lg:grid-cols-2 lg:gap-16' : 'mx-auto max-w-3xl'}>
+          <Reveal variant="left">
+            <div className="rich-text text-lg" dangerouslySetInnerHTML={{ __html: about.body || '' }} />
+          </Reveal>
+          {about.imageUrl && (
+            <Reveal variant="right" delay={120}>
+              <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
+                <div aria-hidden="true" className="absolute -inset-3 rounded-[2.5rem] bg-gradient-to-br from-blush-200 via-blush-100 to-brand-100" />
+                <img
+                  src={about.imageUrl}
+                  alt={about.imageAlt || ''}
+                  width="1000"
+                  height="800"
+                  decoding="async"
+                  className="relative aspect-[5/4] w-full rounded-[2rem] object-cover object-[50%_62%] shadow-xl"
+                />
+              </div>
+            </Reveal>
+          )}
         </div>
       </Section>
 
@@ -75,7 +93,7 @@ export default function AboutPage() {
       {ownClinics.length > 0 && (
         <Section tone="soft">
           <SectionHeading eyebrow="Visit us" title={ownClinics.length === 1 ? 'Our clinic' : 'Our clinics'} />
-          <RevealGrid className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-3" columns={3}>
+          <RevealGrid className={`mx-auto grid gap-6 md:grid-cols-2 ${ownClinics.length >= 3 ? 'max-w-6xl lg:grid-cols-3' : 'max-w-4xl'}`} columns={ownClinics.length >= 3 ? 3 : 2}>
             {ownClinics.map((location) => (
               <div key={location.id} className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-sm">
                 <h3 className="text-lg font-bold">{location.name}</h3>

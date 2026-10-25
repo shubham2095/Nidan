@@ -225,7 +225,12 @@ const settingSchemas = {
   whyChooseUs: z.array(z.object({ title: required(100), description: text(300), icon: z.enum(ICON_NAMES).default('sparkles') })).min(1).max(8),
   faq: z.array(z.object({ question: required(200), answer: required(1500) })).max(12),
   hours: z.array(z.object({ days: required(60), time: required(60) })).max(10),
-  about: z.object({ heading: required(150), body: text(50000) }),
+  about: z.object({
+    heading: required(150),
+    body: text(50000),
+    imageUrl: z.union([z.literal(''), imageUrl]).default(''),
+    imageAlt: text(200).default(''),
+  }),
   seo: z.object({ siteTitle: required(70), siteDescription: text(200) }),
 };
 const settingKey = z.object({ key: z.enum(SETTING_KEYS) });

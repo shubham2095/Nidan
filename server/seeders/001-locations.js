@@ -2,7 +2,7 @@ const { createOnce, mapsSearchUrl, mapsEmbedUrl } = require('../utils/seedHelper
 
 const PHONE = '+91 97735 07333, 0120-4545700';
 
-// The first clinic. The Gaur City clinic and Cloudnine Hospital are added by 011-more-clinics.js.
+// The first clinic. The Gaur City clinic is added by 011-more-clinics.js.
 const locations = [
   {
     slug: 'nidan-sector-51',

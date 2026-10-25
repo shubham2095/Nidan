@@ -32,6 +32,7 @@ import { useSite } from '../../context/SiteContext.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getDoctors, submitContact } from '../../services/publicService.js';
 import { cityList, telHref, whatsappHref } from '../../utils/format.js';
+import { ownSchedules } from '../../utils/schedule.js';
 import { applyServerErrors, contactSchema } from '../../utils/forms.js';
 import { clinicJsonLd } from '../../utils/jsonLd.js';
 
@@ -355,7 +356,7 @@ function DoctorTimings({ doctor }) {
           {doctor.designation && <p className="text-sm font-semibold text-brand-700">{doctor.designation}</p>}
         </div>
       </div>
-      <ScheduleTabs schedules={doctor.schedules} />
+      <ScheduleTabs schedules={ownSchedules(doctor)} />
     </div>
   );
 }

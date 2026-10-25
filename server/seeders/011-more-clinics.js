@@ -2,9 +2,7 @@ const { createOnce, mapsSearchUrl, mapsEmbedUrl } = require('../utils/seedHelper
 
 const PHONE = '+91 97735 07333, 0120-4545700';
 
-// Two more clinics, shown with the Sector 51 clinic on the Contact page, home page and footer.
-// Doctor timings for them are set in Admin > Doctors. Until then the website says "timings will be updated soon"
-// and online booking is not offered for these two.
+// The second clinic (Gaur City). It is listed with Sector 51 on the Contact page, home page and footer.
 const locations = [
   {
     slug: 'nidan-gaur-city',
@@ -15,15 +13,6 @@ const locations = [
     mapQuery:
       'Nidan Mother and Child Care, S-219 Aarza Square 2, Gaur City 1, B, Greater Noida W Rd, Sector 16, Greater Noida, Uttar Pradesh 201318',
     sortOrder: 2,
-  },
-  {
-    slug: 'cloudnine-gaur-city',
-    name: 'Cloudnine Hospital – Gaur City',
-    address: '5th Avenue Gaur City, Noida Extension, Gaur City 1, Sector 4',
-    city: 'Noida',
-    postalCode: '201016',
-    mapQuery: 'Cloudnine Hospital, 5th Avenue Gaur City, Noida Extension, Gaur City 1, Sector 4, Noida, Uttar Pradesh 201016',
-    sortOrder: 3,
   },
 ];
 
@@ -37,7 +26,7 @@ const TEXT_UPDATES = {
   },
   faq: {
     from: 'Both see patients at our clinic in Sector 51, Noida. Our opening hours and address are on this page and on the Contact page, and you can pick a day and time in the booking steps.',
-    to: 'Both see patients at our clinics in Sector 51, Noida and in Gaur City, Greater Noida (including Cloudnine Hospital). Our addresses and timings are on the Contact page, and you can pick a clinic, a day and a time in the booking steps.',
+    to: 'Both see patients at our two clinics, in Sector 51, Noida and in Gaur City, Greater Noida. Our addresses and timings are on the Contact page, and you can pick a clinic, a day and a time in the booking steps.',
     apply: (value, from, to) => value.map((item) => ({ ...item, answer: item.answer.replace(from, to) })),
   },
 };
