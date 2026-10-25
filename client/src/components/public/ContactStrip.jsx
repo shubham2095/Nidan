@@ -43,7 +43,7 @@ export default function ContactStrip() {
             <ul className="space-y-4 text-brand-50">
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 shrink-0 text-blush-200" aria-hidden="true" />
-                <span>
+                <span className="min-w-0 break-words">
                   <a href={telHref(clinic.phonePrimary)} className="font-semibold text-white hover:underline">
                     {clinic.phonePrimary}
                   </a>
@@ -59,14 +59,14 @@ export default function ContactStrip() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 shrink-0 text-blush-200" aria-hidden="true" />
-                <a href={`mailto:${clinic.email}`} className="font-semibold text-white hover:underline">
+                <a href={`mailto:${clinic.email}`} className="min-w-0 font-semibold break-words text-white hover:underline">
                   {clinic.email}
                 </a>
               </li>
               {ownClinics.map((location) => (
                 <li key={location.id} className="flex items-start gap-3">
                   <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-blush-200" aria-hidden="true" />
-                  <span>
+                  <span className="min-w-0">
                     <strong className="block text-white">{location.name}</strong>
                     {location.address}
                   </span>

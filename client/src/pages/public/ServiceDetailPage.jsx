@@ -47,7 +47,7 @@ export default function ServiceDetailPage() {
                 alt={service.name}
                 width="320"
                 height="320"
-                className="mb-8 max-h-72 w-auto max-w-full rounded-3xl object-contain"
+                className="mb-8 h-56 w-full rounded-3xl bg-brand-50 object-contain sm:h-auto sm:max-h-72 sm:w-auto sm:max-w-full sm:bg-transparent"
               />
             ) : (
               <span className="mb-6 grid h-16 w-16 place-items-center rounded-3xl bg-brand-50 text-brand-700">

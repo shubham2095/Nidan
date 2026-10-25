@@ -35,11 +35,20 @@
   body {
     @apply bg-white font-sans text-slate-700 antialiased;
     /* things sliding in from the side must never make the page scroll sideways (clip, unlike hidden, keeps sticky working) */
+    overflow-x: hidden;
     overflow-x: clip;
   }
 
   h1, h2, h3, h4 {
     @apply font-heading text-slate-900;
+  }
+
+  /*
+   * A grid item will not shrink below its longest unbreakable word by default, so one long email address or
+   * word could stretch a column, and then the whole page, wider than a small phone. Let items shrink instead.
+   */
+  .grid > * {
+    min-width: 0;
   }
 
   :focus-visible {
@@ -115,11 +124,15 @@
       opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
       transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
   }
-  .reveal[data-reveal='left'] {
-    transform: translate3d(-40px, 0, 0);
-  }
-  .reveal[data-reveal='right'] {
-    transform: translate3d(40px, 0, 0);
+  /* Sideways slides only where columns sit side by side; on phones and tablets they rise like the rest, because
+     an element waiting off to the right would make the page wider than the screen until it is revealed. */
+  @media (min-width: 1024px) {
+    .reveal[data-reveal='left'] {
+      transform: translate3d(-40px, 0, 0);
+    }
+    .reveal[data-reveal='right'] {
+      transform: translate3d(40px, 0, 0);
+    }
   }
   .reveal[data-reveal='zoom'] {
     transform: scale(0.92);
@@ -234,8 +247,13 @@
     animation-delay: var(--d, 0ms);
   }
   .hero-in-right {
-    animation: fade-in-right 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: var(--d, 0ms);
+  }
+  @media (min-width: 1024px) {
+    .hero-in-right {
+      animation-name: fade-in-right;
+    }
   }
   .anim-float {
     animation: float 6s ease-in-out infinite;

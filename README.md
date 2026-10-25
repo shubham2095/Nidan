@@ -361,6 +361,19 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
   The rich-text editor (about 130 kB compressed) only downloads when staff open an article or content editor.
 - Pictures below the fold load lazily, fonts use `display=swap`, and the footer map loads only when clicked.
 
+### Phones and tablets
+
+- The public site and the CRM were checked at 320, 360, 390, 412, 568, 768, 820 and 1024 px wide. On every page the
+  content is exactly as wide as the screen, with no sideways scrolling or zooming out.
+- Sideways slide-in animations only run from 1024 px up. On smaller screens they rise instead, because an element waiting
+  off to the right would make the page wider than a phone until it is revealed. Each page band also clips anything
+  that sticks out sideways, and grid columns may shrink below their longest word, so one long email address cannot
+  stretch a page.
+- Service cards are compact rows on phones, links and tabs have larger tap areas, and the floating contact button is a
+  little smaller on phones.
+- After changing a layout, check it at 360 px: open the page in the browser's device mode, reload it without
+  scrolling, and confirm the page does not move sideways.
+
 ---
 
 ## Deploying to Hostinger

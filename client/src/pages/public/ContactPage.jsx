@@ -61,7 +61,7 @@ function QuickCard({ icon: Icon, tone = 'brand', label, href, external = false, 
         <a
           href={href}
           {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
-          className="mt-1 block text-[15px] font-bold break-words text-slate-900 transition-colors after:absolute after:inset-0 after:rounded-3xl group-hover:text-brand-700"
+          className="mt-1 block text-[15px] font-bold [overflow-wrap:anywhere] text-slate-900 transition-colors after:absolute after:inset-0 after:rounded-3xl group-hover:text-brand-700"
         >
           {children}
         </a>

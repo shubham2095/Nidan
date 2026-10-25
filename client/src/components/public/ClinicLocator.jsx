@@ -46,7 +46,7 @@ export default function ClinicLocator({ doctors }) {
                   if (event.key === 'ArrowRight') setActive((tabIndex + 1) % ownClinics.length);
                   if (event.key === 'ArrowLeft') setActive((tabIndex - 1 + ownClinics.length) % ownClinics.length);
                 }}
-                className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-200 ${
+                className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold sm:py-2.5 transition duration-200 ${
                   selected
                     ? 'bg-brand-700 text-white shadow-md shadow-brand-700/25'
                     : 'bg-white text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-brand-50 hover:text-brand-800'

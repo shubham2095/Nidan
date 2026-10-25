@@ -10,7 +10,8 @@ const TONES = {
 /** Page band with consistent spacing. The content eases in as the band scrolls into view (pass reveal={false} to skip). */
 export default function Section({ tone = 'white', className = '', reveal = true, children, ...rest }) {
   return (
-    <section className={`py-14 sm:py-20 ${TONES[tone]} ${className}`} {...rest}>
+    // overflow-x-clip: nothing inside a band, such as a slide-in or a decorative blob, can widen the page
+    <section className={`overflow-x-clip py-14 sm:py-20 ${TONES[tone]} ${className}`} {...rest}>
       <Container>
         {reveal ? (
           <Reveal distance={20} variant="up">

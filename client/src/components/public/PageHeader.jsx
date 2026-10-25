@@ -12,7 +12,7 @@ export default function PageHeader({ title, description, crumbs = [], className 
         <nav aria-label="Breadcrumb" className="hero-in mb-4 text-sm text-slate-500">
           <ol className="flex flex-wrap items-center gap-1">
             <li>
-              <Link to="/" className="hover:text-brand-700 hover:underline">
+              <Link to="/" className="inline-block py-1.5 hover:text-brand-700 hover:underline">
                 Home
               </Link>
             </li>

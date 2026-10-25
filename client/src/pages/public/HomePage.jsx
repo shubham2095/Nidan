@@ -180,7 +180,7 @@ function QuickActions() {
                 </span>
                 <span className="min-w-0">
                   <span className="block font-heading text-base font-extrabold text-slate-900">{title}</span>
-                  <span className="block truncate text-sm text-slate-600">{text}</span>
+                  <span className="block text-sm leading-snug text-slate-600">{text}</span>
                 </span>
               </>
             );

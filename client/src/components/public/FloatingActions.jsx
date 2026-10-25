@@ -71,7 +71,7 @@ export default function FloatingActions() {
         aria-expanded={open}
         aria-controls={menuId}
         aria-label={open ? 'Close contact options' : 'Contact us: call or WhatsApp'}
-        className="group relative grid h-[3.75rem] w-[3.75rem] place-items-center rounded-full bg-gradient-to-br from-brand-700 to-brand-500 text-white shadow-xl ring-4 shadow-brand-700/40 ring-white/90 transition duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 focus-visible:outline-offset-4"
+        className="group relative grid h-14 w-14 place-items-center sm:h-[3.75rem] sm:w-[3.75rem] rounded-full bg-gradient-to-br from-brand-700 to-brand-500 text-white shadow-xl ring-4 shadow-brand-700/40 ring-white/90 transition duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 focus-visible:outline-offset-4"
       >
         {/* a slow ring draws the eye while the menu is closed, without being noisy */}
         {!open && <span aria-hidden="true" className="anim-ping absolute inset-0 rounded-full bg-brand-500/50" />}

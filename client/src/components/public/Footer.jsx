@@ -17,7 +17,8 @@ const SOCIAL = [
 ];
 
 const MAX_SERVICE_LINKS = 7;
-const link = 'inline-flex items-center gap-1.5 text-brand-100 transition hover:text-white hover:underline hover:underline-offset-4';
+// py-1 gives thumbs a taller target on phones without changing how the list looks
+const link = 'inline-flex items-center gap-1.5 py-2 sm:py-1 text-brand-100 transition hover:text-white hover:underline hover:underline-offset-4';
 
 function ColumnTitle({ children }) {
   return (
@@ -79,7 +80,7 @@ export default function Footer() {
 
         <nav aria-label="Footer" className="lg:col-span-2">
           <ColumnTitle>Explore</ColumnTitle>
-          <ul className="space-y-2.5">
+          <ul className="space-y-1">
             {[...NAV_LINKS.slice(1), { to: '/book-appointment', label: 'Book Appointment' }].map((item) => (
               <li key={item.to}>
                 <Link to={item.to} className={link}>
@@ -93,7 +94,7 @@ export default function Footer() {
         {shownServices.length > 0 && (
           <nav aria-label="Services" className="lg:col-span-3">
             <ColumnTitle>Our services</ColumnTitle>
-            <ul className="space-y-2.5">
+            <ul className="space-y-1">
               {shownServices.map((service) => (
                 <li key={service.slug}>
                   <Link to={`/services/${service.slug}`} className={link}>
@@ -126,7 +127,7 @@ export default function Footer() {
                   {location.mapUrl && (
                     <>
                       <br />
-                      <a href={location.mapUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blush-200 hover:text-white hover:underline">
+                      <a href={location.mapUrl} target="_blank" rel="noopener noreferrer" className="inline-block py-1 font-semibold text-blush-200 hover:text-white hover:underline">
                         Get directions
                       </a>
                     </>
@@ -139,13 +140,13 @@ export default function Footer() {
                 <Phone className="h-4 w-4" aria-hidden="true" />
               </IconTile>
               <span className="leading-relaxed">
-                <a href={telHref(clinic.phonePrimary)} className="font-semibold text-white hover:underline">
+                <a href={telHref(clinic.phonePrimary)} className="inline-block py-1 font-semibold text-white hover:underline">
                   {clinic.phonePrimary}
                 </a>
                 {clinic.phoneSecondary && (
                   <>
                     <br />
-                    <a href={telHref(clinic.phoneSecondary)} className="text-brand-100 hover:text-white hover:underline">
+                    <a href={telHref(clinic.phoneSecondary)} className="inline-block py-1 text-brand-100 hover:text-white hover:underline">
                       {clinic.phoneSecondary}
                     </a>
                   </>
@@ -156,7 +157,7 @@ export default function Footer() {
               <IconTile>
                 <Mail className="h-4 w-4" aria-hidden="true" />
               </IconTile>
-              <a href={`mailto:${clinic.email}`} className="min-w-0 self-center break-words text-brand-100 hover:text-white hover:underline">
+              <a href={`mailto:${clinic.email}`} className="min-w-0 self-center py-1 break-words text-brand-100 hover:text-white hover:underline">
                 {clinic.email}
               </a>
             </li>
@@ -180,7 +181,7 @@ export default function Footer() {
             © {new Date().getFullYear()} {clinic.name}. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
-            <Link to="/privacy-policy" className="hover:text-white hover:underline">
+            <Link to="/privacy-policy" className="inline-block py-2 hover:text-white hover:underline">
               Privacy Policy
             </Link>
             <button
