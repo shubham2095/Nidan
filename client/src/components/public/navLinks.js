@@ -5,6 +5,5 @@ export const NAV_LINKS = [
   { to: '/services', label: 'Services' },
   { to: '/gallery', label: 'Gallery' },
   { to: '/testimonials', label: 'Testimonials' },
-  { to: '/blog', label: 'Blog' },
   { to: '/contact-us', label: 'Contact' },
 ];

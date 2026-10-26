@@ -674,3 +674,27 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     you change a timetable; doctors with the same timings at a clinic are listed together ("Dr. A & Dr. B"). The
     `GET /site` response carries them in `locations[].doctors`. The Google rating (3.9, 66 reviews) is not shown
     because Google can change it; add it by hand in `Footer.jsx` if you want it.
+39. **Services pages.** Everything on them comes from Admin > Services (name, short text, picture, long text), so nothing
+    needs editing in the code.
+    - The list page (`/services`) has Book Appointment and Call buttons, a search box that filters by name and short
+      text (the number on each card stays fixed while you search), numbered cards, and a "Booking is simple" band.
+      The three steps in that band are written in `ServicesPage.jsx`.
+    - Each service page has a large picture beside the title (tablet and up), the long text, a "Visit us" card with both
+      clinics (directions and call buttons; it points to the Contact page for doctor timings, because a service is not
+      tied to one doctor or clinic), previous / next links, a booking card with WhatsApp, and the list of all services.
+    - The home page keeps its smaller service cards; the larger card is `ServiceCard` with a `number`.
+40. **No "Blog" link in the menus (for now).** The blog is still empty, so "Blog" is not in the top menu, the phone
+    menu or the footer's Explore list. The blog itself still works: `/blog` opens, the Admin > Blog screen is
+    unchanged, and the home page shows "From our blog" as soon as one article is published. When you publish articles,
+    put the link back by adding `{ to: '/blog', label: 'Blog' },` before the Contact line in
+    `client/src/components/public/navLinks.js` (one list feeds all three menus).
+41. **About page.** The heading, the text and the picture still come from Site settings > About page; the first paragraph is
+    shown a little larger as the opening line. Around them the page builds itself from live data, so nothing here needs
+    editing in the code:
+    - a band with the number of doctors, clinics and services;
+    - "Care that grows with your family" (Pregnancy, Birth, Newborn, Childhood), whose four cards link to the Maternity,
+      Neonatology and Paediatrics service pages, or to the Services list if one of those has been removed (the wording is
+      in `AboutPage.jsx`);
+    - a card for each doctor (photo, achievement, quote, focus areas, Book and View profile buttons) from Admin > Doctors;
+    - "What you can expect" from Site settings > Why choose us;
+    - the own clinics with directions, a Call button and the doctors who sit there.
