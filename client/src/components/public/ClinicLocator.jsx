@@ -1,26 +1,24 @@
 import { useId, useState } from 'react';
-import { Clock, MapPin, Navigation, Phone, Stethoscope } from 'lucide-react';
+import { MapPin, Navigation, Phone, Stethoscope } from 'lucide-react';
 import { useSite } from '../../context/SiteContext.jsx';
 import { telHref } from '../../utils/format.js';
 import Button from './Button.jsx';
 import MapEmbed from './MapEmbed.jsx';
-import OpeningHours from './OpeningHours.jsx';
 import ScheduleTabs from './ScheduleTabs.jsx';
 
 /**
  * Our clinics, one at a time: a tab for each clinic (hidden when there is only one), then its address,
- * directions, opening hours, doctor timings and map. The opening hours in Site settings belong to the first clinic.
+ * directions, doctor timings and map.
  * `doctors` (with their schedules) fills in the doctor timings; each clinic lists the doctors who sit there.
  */
 export default function ClinicLocator({ doctors }) {
-  const { clinic, ownClinics, settings } = useSite();
+  const { clinic, ownClinics } = useSite();
   const [active, setActive] = useState(0);
   const baseId = useId();
   if (ownClinics.length === 0) return null;
 
   const index = Math.min(active, ownClinics.length - 1);
   const location = ownClinics[index];
-  const showHours = index === 0 && (settings.hours || []).length > 0;
   const many = ownClinics.length > 1;
   const timings = (doctors || [])
     .map((doctor) => ({ doctor, entry: doctor.schedules.find((schedule) => schedule.location.id === location.id) }))
@@ -94,16 +92,6 @@ export default function ClinicLocator({ doctors }) {
                 Call the clinic
               </Button>
             </div>
-
-            {showHours && (
-              <div className="mt-8 border-t border-slate-100 pt-6">
-                <h4 className="mb-2 flex items-center gap-2 text-sm font-bold tracking-wide text-slate-500 uppercase">
-                  <Clock className="h-4 w-4 text-brand-600" aria-hidden="true" />
-                  Opening hours
-                </h4>
-                <OpeningHours variant="card" />
-              </div>
-            )}
 
             {doctors && (
               <div className="mt-8 border-t border-slate-100 pt-6">

@@ -46,7 +46,7 @@ export function formatDateOnly(value, { short = false } = {}) {
 
 const DAY_NAMES = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat', Sunday: 'Sun' };
 
-/** "Monday – Friday" -> "Mon–Fri", "7:00 am – 10:00 pm" -> "7 am – 10 pm" (for tight spaces such as the top bar). */
+/** "Monday – Friday" -> "Mon–Fri", "7:00 am – 10:00 pm" -> "7 am – 10 pm" (for tight spaces such as the footer). */
 export const compactHours = (text = '') =>
   text
     .replace(/Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/g, (day) => DAY_NAMES[day])

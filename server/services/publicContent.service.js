@@ -7,7 +7,7 @@ const ApiError = require('../utils/ApiError');
 const { sanitizeRichText, stripHtml } = require('../utils/sanitize');
 
 // Only these settings are visible to visitors; anything else stays private.
-const PUBLIC_SETTING_KEYS = ['clinic', 'social', 'hero', 'announcement', 'whyChooseUs', 'faq', 'hours', 'about', 'seo'];
+const PUBLIC_SETTING_KEYS = ['clinic', 'social', 'hero', 'announcement', 'whyChooseUs', 'faq', 'about', 'seo'];
 const BLOG_PAGE_SIZE = 9;
 const WORDS_PER_MINUTE = 200;
 
@@ -104,6 +104,28 @@ const serializePost = (post, { withContent = false } = {}) => {
 
 const activeLocations = () => Location.findAll({ where: { isActive: true }, order: [['sortOrder', 'ASC'], ['id', 'ASC']] });
 
+/** Which doctors sit at each location and when, for the footer: Map of locationId -> [{ name, slug, slots }]. */
+const loadTimingsByLocation = async (locations) => {
+  const [doctors, rows] = await Promise.all([
+    Doctor.findAll({ where: { isActive: true }, attributes: ['id', 'name', 'slug'], order: [['sortOrder', 'ASC'], ['id', 'ASC']] }),
+    DoctorSchedule.findAll({
+      where: { locationId: locations.map((location) => location.id), isActive: true },
+      order: [['startTime', 'ASC'], ['weekday', 'ASC']],
+    }),
+  ]);
+
+  const byLocation = new Map(locations.map((location) => [location.id, []]));
+  for (const location of locations) {
+    for (const doctor of doctors) {
+      const slots = rows
+        .filter((row) => row.doctorId === doctor.id && row.locationId === location.id)
+        .map(({ weekday, startTime, endTime }) => ({ weekday, startTime, endTime }));
+      if (slots.length) byLocation.get(location.id).push({ name: doctor.name, slug: doctor.slug, slots });
+    }
+  }
+  return byLocation;
+};
+
 const getSite = async () => {
   const [settingRows, locations, services] = await Promise.all([
     Setting.findAll({ where: { settingKey: PUBLIC_SETTING_KEYS } }),
@@ -111,9 +133,10 @@ const getSite = async () => {
     // names and addresses only: the footer links to each service page
     Service.findAll({ where: { isActive: true }, attributes: ['name', 'slug'], order: [['sortOrder', 'ASC'], ['id', 'ASC']] }),
   ]);
+  const timings = await loadTimingsByLocation(locations);
   return {
     settings: Object.fromEntries(settingRows.map((row) => [row.settingKey, row.settingValue])),
-    locations: locations.map(serializeLocation),
+    locations: locations.map((location) => ({ ...serializeLocation(location), doctors: timings.get(location.id) })),
     services: services.map((service) => ({ name: service.name, slug: service.slug })),
   };
 };

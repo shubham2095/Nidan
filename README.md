@@ -295,7 +295,7 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
   address). Pictures must be JPEG, PNG or WebP up to 5 MB and are identified from the file's first bytes. Everything
   rich-text is sanitised on the server before it is stored.
 - **Site settings** (`/admin/settings`): clinic name, phone numbers, WhatsApp number and email; social links; home page
-  banner text and picture; the announcement bar; the clinic's opening hours (shown on the home page, Contact page and footer); the "Why choose us" list; the home page FAQ (add, remove and reorder
+  banner text and picture; the announcement bar; the "Why choose us" list; the home page FAQ (add, remove and reorder
   questions; seven starter questions are included, so read and adjust them); the About page text; default search title and
   description. Each section is saved on its own and shows on the website within a minute.
 - **Users** (`/admin/users`): add a login with a starting password (8+ characters, a letter and a number), choose the
@@ -357,9 +357,9 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
 
 - Public pages and settings are cached for 60 seconds; built files in `/assets` are cached for a year (they are
   fingerprinted); uploads for a week; responses are gzip-compressed.
-- The website's first JavaScript file is about 190 kB (60 kB compressed); every page, and the whole CRM, loads on demand.
+- The website's first JavaScript file is about 210 kB (65 kB compressed); every page, and the whole CRM, loads on demand.
   The rich-text editor (about 130 kB compressed) only downloads when staff open an article or content editor.
-- Pictures below the fold load lazily, fonts use `display=swap`, and the footer map loads only when clicked.
+- Pictures below the fold load lazily, fonts use `display=swap`, and the footer has no embedded map (only "Get directions" links).
 - **First screen without waiting for the API.** For public pages the server puts the data the page asks for on start-up
   (site settings, plus home, doctors, services or gallery content) inside `index.html` as a JSON block
   (`id="nidan-preload"`, see `seo.service.js`). The website uses it for the first draw and fetches fresh data for every
@@ -378,7 +378,7 @@ formulas (a patient named `=HYPERLINK(...)` cannot run code in Excel).
     seconds after the page opened (`components/public/LazyMount.jsx`; give a band `lazy="40rem"` on `<Section>`, with
     a height close to its real one, to use it elsewhere);
   - the code for the clinic picker and the testimonial slider is fetched at that moment, not with the first page;
-  - the Google Map is only requested when its frame is about to scroll into view (or on a click, in the footer);
+  - the Google Map is only requested when its frame is about to scroll into view;
   - every page's own code is loaded on demand, and the admin area and rich-text editor only for signed-in staff.
   On a modest phone this cut the home page's start-up work by about a third and its page size from 1,528 to 885 elements.
 
@@ -535,9 +535,8 @@ minute.
 - [ ] `RUN_MIGRATIONS` / `RUN_SEEDS` back to `false` after the first start; `UPLOAD_DIR` outside the app folder.
 - [ ] Signed in as the super admin and changed the password from the sidebar.
 - [ ] Replaced the three `TODO` placeholder testimonials (they never show until approved) with real ones, with consent.
-- [ ] Checked both doctors' photos and "About" text, and each doctor's timetable (both are seeded with the clinic's full
-      opening hours, so shorten them if a doctor does not sit all day; assumption 4).
-- [ ] Opening hours checked (**Site settings → Opening hours**) and the map on the Contact page points at the clinic
+- [ ] Checked both doctors' photos and "About" text, and each doctor's timetable (assumption 4).
+- [ ] The map on the Contact page points at the clinic
       (**Locations**: paste the exact Google Maps embed link if the automatic one is off).
 - [ ] Dr. Rajeev Ranjan reviewed the vaccination schedule (**Vaccinations → Schedule**).
 - [ ] Privacy policy reviewed (it has a `TODO` for the record-retention period).
@@ -568,8 +567,9 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
    database. If a partner hospital is ever needed again, add it in Admin > Locations with "This is one of our own
    clinics" switched off: it then appears only in the booking steps, not in the clinic lists or the doctors' timing lists.
 
-   The opening hours in Site settings (Monday to Friday 7 am-10 pm, Saturday and Sunday 12 pm-6 pm) belong to the Sector
-   51 clinic. Doctor timings are per doctor and per clinic, and they drive online booking (15-minute slots):
+   The site shows no general "opening hours", only each doctor's own timings (the old Site settings row was removed by
+   the seeder `022-remove-opening-hours.js`). Doctor timings are per doctor and per clinic, and they drive online
+   booking (15-minute slots):
    - Dr. Rajeev Ranjan: Sector 51 Monday to Friday 8:30 am-1:30 pm, Saturday and Sunday 10:30 am-1:30 pm, every day
      6-9 pm; Gaur City 3-5 pm with Tuesday and Thursday off (seeder `012-rajeev-timings.js`).
    - Dr. Manisha Ranjan: Sector 51 every day 6-9 pm plus Sunday 12-2 pm; Gaur City 3-5 pm with Tuesday and Thursday off
@@ -596,8 +596,8 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     retention period. Have it reviewed before launch.
 14. **No default share image.** Pages only emit an Open Graph image when a doctor photo, blog cover or service image
     exists. Add a branded image later if you want link previews on pages without one.
-15. **Maps in the footer** load on click (a placeholder button swaps in the Google Maps iframe), so third-party map
-    code does not slow down every page. The Contact page loads its maps directly.
+15. **No map in the footer.** Each clinic card in the footer has a "Get directions" link instead, so third-party map
+    code does not slow down every page. The home and Contact pages load their maps only when scrolled into view.
 16. **Bookings are not auto-confirmed.** They start as `pending` (the brief's workflow is pending → confirmed) and the
     confirmation screen says so. There is no lookup-by-booking-ID page for patients, so booking details are never
     exposed publicly; changes and cancellations go through the clinic by phone or WhatsApp.
@@ -645,9 +645,9 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     updated the saved texts, doctor bios and clinic names. The logo picture itself still reads "NIDAN Mother & Child
     Care", because it is an image; replace `client/public/images/nidan-logo.webp` (and the favicons) if it should match.
     Technical names such as the e-mail address, web address, database and file names keep "nidan" in lower case.
-33. **Two YouTube channels.** The existing link (`@drmanisharanjannidan`) was taken as Dr. Manisha Ranjan's channel and
-    the one you added (`@dr.rajeevranjan-nidanmothe1260`) as Dr. Rajeev Ranjan's. Both icons show in the top bar, footer
-    and mobile menu, each with the doctor's name as its tooltip. Change either in Site settings > Social media.
+33. **One YouTube link.** The site links to one YouTube channel, Dr. Rajeev Ranjan's (`@dr.rajeevranjan-nidanmothe1260`),
+    in the top bar, footer and mobile menu. Dr. Manisha Ranjan's link was removed (seeder `021-single-youtube.js`). Change
+    it in Site settings > Social media; leave it empty to hide the icon.
 34. **Google reviews as testimonials.** Nineteen reviews that patients posted on the clinic's Google listing are published
     as testimonials (seeder `016-google-reviews.js`, labelled "Google review", shown word for word including spelling and
     the old clinic name). No star ratings are shown because the copied text had none, and the website never invents
@@ -665,3 +665,12 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     Child Care"; they are kept in `server/utils/clinicMaps.js` and applied by `020-clinic-maps.js`. To change one, open
     Admin > Locations, then in Google Maps choose Share > Embed a map > Copy HTML and paste the whole code into "Map on
     the website" (it keeps only the link inside it). Only Google Maps addresses starting with https:// are accepted.
+37. **"Powered by" credit.** The bottom right of the footer says "Powered by Heltog Technologies Pvt. LTD." with the company
+    name in gold, linking to https://heltog.com (opens in a new tab). It is written in `Footer.jsx` (the gold shades are
+    `gold-300` to `gold-500` in `index.css`), not in Site settings.
+38. **Footer.** There is no "Back to top" button any more. Under the logo, links and phone/email, the footer shows one
+    card for each of your own clinics (partner hospitals are left out): the full address, "Get directions" and "Call"
+    buttons, and which doctor sits there and when. The doctor timings are read live from the doctors' weekly timetables (Admin > Doctors), so they stay correct when
+    you change a timetable; doctors with the same timings at a clinic are listed together ("Dr. A & Dr. B"). The
+    `GET /site` response carries them in `locations[].doctors`. The Google rating (3.9, 66 reviews) is not shown
+    because Google can change it; add it by hand in `Footer.jsx` if you want it.

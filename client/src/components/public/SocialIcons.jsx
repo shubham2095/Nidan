@@ -39,10 +39,9 @@ export function YoutubeIcon(props) {
 }
 
 // Every social link the website can show, in display order. The keys are the fields of Site settings > Social media.
-// The two YouTube links are the doctors' own channels; the label also becomes the icon's tooltip.
+// The label also becomes the icon's tooltip.
 export const SOCIAL_LINKS = [
   { key: 'instagram', label: 'Instagram', Icon: InstagramIcon },
   { key: 'facebook', label: 'Facebook', Icon: FacebookIcon },
-  { key: 'youtube', label: 'YouTube (Dr. Manisha Ranjan)', Icon: YoutubeIcon },
-  { key: 'youtubeRajeev', label: 'YouTube (Dr. Rajeev Ranjan)', Icon: YoutubeIcon },
+  { key: 'youtube', label: 'YouTube', Icon: YoutubeIcon },
 ];

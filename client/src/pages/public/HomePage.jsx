@@ -128,7 +128,7 @@ function Hero({ doctorCount }) {
   );
 }
 
-/** Our clinics: pick one to see its address, directions, opening hours and map. */
+/** Our clinics: pick one to see its address, directions, doctor timings and map. */
 function VisitSection({ doctors }) {
   const { ownClinics } = useSite();
   if (ownClinics.length === 0) return null;
@@ -167,7 +167,7 @@ function QuickActions() {
       to: '/contact-us',
       Icon: MapPin,
       title: ownClinics.length === 1 ? 'Find our clinic' : 'Find a clinic',
-      text: ownClinics.length > 1 ? `${ownClinics.length} locations` : 'Address and hours',
+      text: ownClinics.length > 1 ? `${ownClinics.length} locations` : 'Address and directions',
       accent: 'bg-blush-100 text-blush-700',
     },
   ];

@@ -15,7 +15,6 @@ export const siteDefaults = {
     announcement: { enabled: false },
     whyChooseUs: [],
     faq: [],
-    hours: [],
     about: {},
     seo: {},
   },

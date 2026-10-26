@@ -63,7 +63,7 @@ const STATIC_PAGES = {
   }),
   '/contact-us': (clinic) => ({
     title: 'Contact Us',
-    description: `Call, WhatsApp or write to ${clinic.name}. Find our clinics in Noida and Greater Noida, with maps, opening hours and doctor timings.`,
+    description: `Call, WhatsApp or write to ${clinic.name}. Find our clinics in Noida and Greater Noida, with maps and doctor timings.`,
   }),
   '/book-appointment': () => ({
     title: 'Book an Appointment',

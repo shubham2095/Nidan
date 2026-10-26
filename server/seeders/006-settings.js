@@ -12,8 +12,7 @@ const settings = {
   social: {
     instagram: 'https://www.instagram.com/manisharanjan_',
     facebook: 'https://m.facebook.com/DrManishaRanjan/',
-    youtube: 'https://youtube.com/@drmanisharanjannidan',
-    youtubeRajeev: 'https://www.youtube.com/@dr.rajeevranjan-nidanmothe1260',
+    youtube: 'https://www.youtube.com/@dr.rajeevranjan-nidanmothe1260',
   },
   hero: {
     heading: 'Trusted Healthcare for Mothers and Child in Noida',

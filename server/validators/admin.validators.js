@@ -229,7 +229,7 @@ const settingSchemas = {
     whatsappNumber: z.string().trim().regex(/^\d{10,15}$/, 'Digits only, including the country code (e.g. 919773507333)'),
     email: z.string().trim().toLowerCase().pipe(z.email('Enter a valid email address')),
   }),
-  social: z.object({ instagram: url.default(''), facebook: url.default(''), youtube: url.default(''), youtubeRajeev: url.default('') }),
+  social: z.object({ instagram: url.default(''), facebook: url.default(''), youtube: url.default('') }),
   hero: z.object({
     heading: required(200),
     subheading: text(400),
@@ -241,7 +241,6 @@ const settingSchemas = {
   announcement: z.object({ enabled: z.boolean(), text: text(200), link: text(300).default('') }),
   whyChooseUs: z.array(z.object({ title: required(100), description: text(300), icon: z.enum(ICON_NAMES).default('sparkles') })).min(1).max(8),
   faq: z.array(z.object({ question: required(200), answer: required(1500) })).max(12),
-  hours: z.array(z.object({ days: required(60), time: required(60) })).max(10),
   about: z.object({
     heading: required(150),
     body: text(50000),

@@ -37,6 +37,11 @@
   --color-brand-800: #115e59;
   --color-brand-900: #134e4a;
 
+  /* Gold: the "Powered by" credit in the footer */
+  --color-gold-300: #f6dc9b;
+  --color-gold-400: #e9b949;
+  --color-gold-500: #d4a017;
+
   /* Soft blush pink: warmth, care */
   --color-blush-50: #fff6f8;
   --color-blush-100: #ffe9ef;

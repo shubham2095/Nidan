@@ -1,19 +1,15 @@
-import { Clock, Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 import { useSite } from '../../context/SiteContext.jsx';
-import { clinicsLabel, compactHours, telHref } from '../../utils/format.js';
+import { clinicsLabel, telHref } from '../../utils/format.js';
 import Container from './Container.jsx';
 import { SOCIAL_LINKS as SOCIAL } from './SocialIcons.jsx';
 
-/** Slim strip above the header on larger screens: where we are, when we are open, how to reach us. */
+/** Slim strip above the header on larger screens: where we are and how to reach us. */
 export default function TopBar() {
-  const { clinic, social, settings, ownClinics } = useSite();
+  const { clinic, social, ownClinics } = useSite();
   const [place] = ownClinics;
-  const hours = (settings.hours || []).slice(0, 2);
-  // "Basement B, 170, Block B, Sector 51" -> "Sector 51"
-  const mainArea = place && place.address.split(',').pop().trim();
-  const many = ownClinics.length > 1;
-  // with several clinics the strip says how many; the hours in Site settings belong to the first one
-  const area = place && (many ? clinicsLabel(ownClinics) : `${mainArea}, ${place.city}`);
+  // with several clinics the strip says how many; with one it names the area ("Basement B, 170, Block B, Sector 51" -> "Sector 51")
+  const area = place && (ownClinics.length > 1 ? clinicsLabel(ownClinics) : `${place.address.split(',').pop().trim()}, ${place.city}`);
   const item = 'flex items-center gap-2 whitespace-nowrap';
 
   return (
@@ -21,18 +17,9 @@ export default function TopBar() {
       <Container className="flex h-10 items-center justify-between gap-6">
         <ul className="flex min-w-0 items-center gap-6">
           {area && (
-            <li className={`${item} hidden xl:flex`}>
+            <li className={item}>
               <MapPin className="h-4 w-4 text-blush-300" aria-hidden="true" />
               {area}
-            </li>
-          )}
-          {hours.length > 0 && (
-            <li className={`${item} min-w-0`}>
-              <Clock className="h-4 w-4 shrink-0 text-blush-300" aria-hidden="true" />
-              <span className="truncate">
-                {many && `${mainArea}: `}
-                {hours.map((row) => `${compactHours(row.days)} ${compactHours(row.time)}`).join('  ·  ')}
-              </span>
             </li>
           )}
         </ul>

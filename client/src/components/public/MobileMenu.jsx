@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { CalendarCheck, ChevronRight, Clock, MapPin, MessageCircle, Phone, X } from 'lucide-react';
+import { CalendarCheck, ChevronRight, MapPin, MessageCircle, Phone, X } from 'lucide-react';
 import { useSite } from '../../context/SiteContext.jsx';
-import { compactHours, telHref, whatsappHref } from '../../utils/format.js';
+import { telHref, whatsappHref } from '../../utils/format.js';
 import Button from './Button.jsx';
 import Logo from './Logo.jsx';
 import { SOCIAL_LINKS as SOCIAL } from './SocialIcons.jsx';
@@ -15,11 +15,9 @@ const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1
  * and keyboard focus stays inside while it is open and returns to the menu button afterwards.
  */
 export default function MobileMenu({ open, onClose }) {
-  const { clinic, social, settings, ownClinics } = useSite();
+  const { clinic, social, ownClinics } = useSite();
   const panel = useRef(null);
   const closeButton = useRef(null);
-  const [place] = ownClinics;
-  const hours = settings.hours || [];
 
   useEffect(() => {
     if (!open) return undefined;
@@ -122,18 +120,6 @@ export default function MobileMenu({ open, onClose }) {
                 <span>
                   {ownClinics.length > 1 && <strong className="block font-semibold text-slate-800">{location.name}</strong>}
                   {location.address}, {location.city} {location.postalCode}
-                </span>
-              </li>
-            ))}
-            {/* the hours in Site settings belong to the first clinic, so say so when there are several */}
-            {ownClinics.length > 1 && place && hours.length > 0 && (
-              <li className="pt-1 text-xs font-semibold tracking-wide text-slate-500 uppercase">Opening hours · {place.name}</li>
-            )}
-            {hours.slice(0, 3).map((row) => (
-              <li key={`${row.days}-${row.time}`} className="flex items-start gap-2">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blush-500" aria-hidden="true" />
-                <span>
-                  <strong className="font-semibold text-slate-800">{compactHours(row.days)}</strong> {compactHours(row.time)}
                 </span>
               </li>
             ))}
