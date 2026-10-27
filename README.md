@@ -454,6 +454,14 @@ New database changes ship as new files in `server/migrations`; set `RUN_MIGRATIO
 
 - *"The website has not been built yet"*: the build did not run. Check the build log; the build command must be `npm run build`.
 - *Server stops at start with "Invalid environment configuration"*: read the message; usually `JWT_SECRET`.
+- *Every page says "Something went wrong" and the log shows `TypeError: Invalid URL`*: `CLIENT_URL` was typed without
+  `https://`. Set it to the full address, e.g. `https://your-domain.com`, and redeploy.
+- *The page shows "504 Gateway Time-out" (nginx)*: the app started but the request got no answer. Open
+  `https://your-domain/api/health` first: if that answers `"status":"ok"` the app is fine and only the page route is slow
+  or stuck (database); if it also times out, the app is not reachable (check the app status and the port in hPanel).
+- *No admin account or no content after the first deploy*: the log must show both "RUN_MIGRATIONS=true - applying
+  pending migrations" and "RUN_SEEDS=true - applying pending seeders". If the seeders line is missing, `RUN_SEEDS` is
+  not set to `true` (exactly that word, in lower case); fix it and redeploy once.
 - *`ECONNREFUSED` / "Access denied" for the database*: re-check `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
   against hPanel (names include the prefix).
 - *Staff cannot stay signed in*: the site must be served over HTTPS while `COOKIE_SECURE=true`.
@@ -698,3 +706,8 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     - a card for each doctor (photo, achievement, quote, focus areas, Book and View profile buttons) from Admin > Doctors;
     - "What you can expect" from Site settings > Why choose us;
     - the own clinics with directions, a Call button and the doctors who sit there.
+42. **Dependency security scan (hPanel > Security > Vulnerabilities).** Hostinger scans the deployed app. Two findings were
+    patched: `body-parser` (comes with Express) is now 2.4.0 through a normal `npm update`, and `uuid` (comes with
+    Sequelize, which still asks for 8.x) is forced to 11.1.1 by the `"overrides"` block in `package.json`. Keep that block,
+    and the committed `package-lock.json`, so a fresh install on Hostinger gets the patched versions. Run `npm audit
+    --omit=dev` to check; it should say "found 0 vulnerabilities".
