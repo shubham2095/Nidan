@@ -8,11 +8,11 @@ const locations = [
   {
     slug: 'nidan-gaur-city',
     name: 'NIDAN Mother & Child Clinic – Gaur City',
-    address: 'S-219, Aarza Square 2, Gaur City 1, B, Greater Noida W Rd, Sector 16',
+    address: 'Aarza Square 2, Second floor, Shop No. 219, Gaur City 1',
     city: 'Greater Noida',
     postalCode: '201318',
     mapQuery:
-      'Nidan Mother and Child Care, S-219 Aarza Square 2, Gaur City 1, B, Greater Noida W Rd, Sector 16, Greater Noida, Uttar Pradesh 201318',
+      'Nidan Mother and Child Care, Aarza Square 2, Second floor, Shop No. 219, Gaur City 1, Greater Noida, Uttar Pradesh 201318',
     mapUrl: clinicMaps['nidan-gaur-city'].mapUrl,
     mapEmbedUrl: clinicMaps['nidan-gaur-city'].embedUrl,
     sortOrder: 2,

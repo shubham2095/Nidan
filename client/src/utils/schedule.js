@@ -3,6 +3,7 @@ import { formatTime } from './format.js';
 // Display order starts on Monday; weekday numbers follow JavaScript (0 = Sunday).
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
 const DAY_NAMES = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
+const EVENING_FROM = '16:00:00';
 
 /** [1,2,3,4,5] -> "Mon–Fri", [1,3,5] -> "Mon, Wed, Fri", [6,0] -> "Sat & Sun", all seven -> "Every day" */
 export function formatDays(weekdays) {
@@ -27,7 +28,8 @@ export function formatDays(weekdays) {
 
 /**
  * Turns raw schedule rows into display lines, earliest first:
- * [{ days: "Mon–Fri", time: "9 am – 1 pm" }, { days: "Every day", time: "6 pm – 9 pm" }]
+ * [{ days: "Mon–Fri", time: "9 am – 1 pm" }, { days: "Every day (Evening)", time: "6 pm – 9 pm" }]
+ * An "Every day" range that starts at 4 pm or later says "(Evening)", so it is not read as the whole day.
  */
 export function groupSchedule(slots = []) {
   const groups = new Map();
@@ -40,10 +42,13 @@ export function groupSchedule(slots = []) {
 
   return [...groups.values()]
     .sort((a, b) => a.startTime.localeCompare(b.startTime) || a.endTime.localeCompare(b.endTime))
-    .map((group) => ({
-      days: formatDays(group.weekdays),
-      time: `${formatTime(group.startTime)} – ${formatTime(group.endTime)}`,
-    }));
+    .map((group) => {
+      const days = formatDays(group.weekdays);
+      return {
+        days: days === 'Every day' && group.startTime >= EVENING_FROM ? `${days} (Evening)` : days,
+        time: `${formatTime(group.startTime)} – ${formatTime(group.endTime)}`,
+      };
+    });
 }
 
 /**

@@ -9,8 +9,8 @@ const EVERY_DAY = [...MON_TO_FRI, ...SAT_SUN];
 // Morning and evening are separate rows, so patients can book 15-minute slots in each.
 const TIMETABLE = {
   'nidan-sector-51': [
-    { days: MON_TO_FRI, start: '08:30:00', end: '13:30:00' },
-    { days: SAT_SUN, start: '10:30:00', end: '13:30:00' },
+    { days: MON_TO_FRI, start: '08:30:00', end: '14:00:00' },
+    { days: SAT_SUN, start: '10:00:00', end: '14:00:00' },
     { days: EVERY_DAY, start: '18:00:00', end: '21:00:00' },
   ],
   // Tuesday and Thursday off

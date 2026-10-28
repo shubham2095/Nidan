@@ -569,7 +569,7 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
    the doctors page has no profile links), so there are no old slugs to preserve for those. New slugs:
    `/doctors/dr-manisha-ranjan`, `/doctors/dr-rajeev-ranjan`, `/services/maternity`, etc.
 4. **Two clinics.** NIDAN Mother & Child Clinic has two clinics: Sector 51 (Basement B, 170, Block B, Sector 51, Noida
-   201303) and Gaur City (S-219, Aarza Square 2, Gaur City 1, Greater Noida 201318). They appear on the home page,
+   201303) and Gaur City (Aarza Square 2, Second floor, Shop No. 219, Gaur City 1, Greater Noida 201318). They appear on the home page,
    Contact page, About page, footer and top bar. Cloudnine Hospital (where Dr. Manisha Ranjan had been listed) is not a
    Nidan clinic and has been removed completely; the seeder `019-remove-cloudnine.js` deletes it from an existing
    database. If a partner hospital is ever needed again, add it in Admin > Locations with "This is one of our own
@@ -578,8 +578,10 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
    The site shows no general "opening hours", only each doctor's own timings (the old Site settings row was removed by
    the seeder `022-remove-opening-hours.js`). Doctor timings are per doctor and per clinic, and they drive online
    booking (15-minute slots):
-   - Dr. Rajeev Ranjan: Sector 51 Monday to Friday 8:30 am-1:30 pm, Saturday and Sunday 10:30 am-1:30 pm, every day
-     6-9 pm; Gaur City 3-5 pm with Tuesday and Thursday off (seeder `012-rajeev-timings.js`).
+   - Dr. Rajeev Ranjan: Sector 51 Monday to Friday 8:30 am-2 pm, Saturday and Sunday 10 am-2 pm, every day
+     6-9 pm; Gaur City 3-5 pm with Tuesday and Thursday off (seeder `012-rajeev-timings.js`, which only affects a new
+     database; on an existing one change the timetable in Admin > Doctors). On the website an "Every day" range that
+     starts at 4 pm or later is shown as "Every day (Evening)" (`client/src/utils/schedule.js`).
    - Dr. Manisha Ranjan: Sector 51 every day 6-9 pm plus Sunday 12-2 pm; Gaur City 3-5 pm with Tuesday and Thursday off
      (seeder `013-manisha-timings.js`).
 
