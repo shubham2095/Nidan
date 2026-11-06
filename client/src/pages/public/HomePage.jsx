@@ -17,7 +17,7 @@ import { ErrorState, LoadingState } from '../../components/public/States.jsx';
 import { useSite } from '../../context/SiteContext.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { getHome } from '../../services/publicService.js';
-import { cityList, clinicsLabel, telHref, whatsappHref } from '../../utils/format.js';
+import { cityList, clinicsLabel, initials, telHref, whatsappHref } from '../../utils/format.js';
 import { clinicJsonLd } from '../../utils/jsonLd.js';
 
 // Used only far down this page, so their code is fetched when their section is about to be seen.
@@ -87,16 +87,55 @@ function HeroVisual({ doctorCount }) {
   );
 }
 
-function Hero({ doctorCount }) {
+/** One doctor in a top corner of the hero: round photo (or initials) with the name; links to the profile. `right` mirrors it. */
+function CornerDoctor({ doctor, right = false }) {
+  return (
+    <Link
+      to={`/doctors/${doctor.slug}`}
+      className={`hero-in group flex min-w-0 items-center gap-2.5 rounded-full bg-white/90 p-1.5 shadow-md ring-1 ring-brand-100 backdrop-blur transition hover:shadow-lg sm:gap-3 sm:p-2 ${right ? 'flex-row-reverse pl-3 text-right sm:pl-5' : 'pr-3 sm:pr-5'}`}
+      style={{ '--d': right ? '180ms' : '60ms' }}
+    >
+      {doctor.photoUrl ? (
+        <img
+          src={doctor.photoUrl}
+          alt={`Portrait of ${doctor.name}`}
+          width="80"
+          height="80"
+          className="h-11 w-11 shrink-0 rounded-full object-cover ring-2 ring-white sm:h-14 sm:w-14 lg:h-16 lg:w-16"
+        />
+      ) : (
+        <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blush-200 to-brand-200 font-heading text-sm font-extrabold text-brand-900 sm:h-14 sm:w-14 lg:h-16 lg:w-16">
+          {initials(doctor.name)}
+        </span>
+      )}
+      <span className="min-w-0">
+        <span className="block text-[13px] leading-tight font-extrabold text-slate-900 transition group-hover:text-brand-700 sm:text-base">{doctor.name}</span>
+        <span className="hidden max-w-[15rem] text-xs leading-snug text-slate-600 md:block">{doctor.designation}</span>
+      </span>
+    </Link>
+  );
+}
+
+function Hero({ doctors }) {
   const { clinic, settings } = useSite();
   const hero = settings.hero || {};
+  const [first, second] = doctors;
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blush-50 via-white to-white">
       <div aria-hidden="true" className="anim-drift absolute -top-32 -left-24 h-96 w-96 rounded-full bg-blush-100 blur-3xl" />
       <div aria-hidden="true" className="anim-drift-reverse absolute top-20 -right-24 h-96 w-96 rounded-full bg-brand-100/70 blur-3xl" />
 
-      <Container className="relative grid items-center gap-12 pt-14 pb-20 sm:pt-20 sm:pb-24 lg:grid-cols-2 lg:pt-24 lg:pb-28">
+      <Container className="relative pt-5 sm:pt-7">
+        {first && (
+          <div className="flex items-start justify-between gap-3">
+            <CornerDoctor doctor={first} />
+            {second && <CornerDoctor doctor={second} right />}
+          </div>
+        )}
+      </Container>
+
+      <Container className={`relative grid items-center gap-12 pb-20 sm:pb-24 lg:grid-cols-2 lg:pb-28 ${first ? 'pt-10 sm:pt-12 lg:pt-8' : 'pt-14 sm:pt-20 lg:pt-24'}`}>
         <div>
           <p className="hero-in inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-brand-800 shadow-sm ring-1 ring-brand-100">
             <Heart className="h-4 w-4 fill-blush-400 text-blush-400" aria-hidden="true" />
@@ -122,7 +161,7 @@ function Hero({ doctorCount }) {
           </div>
         </div>
 
-        <HeroVisual doctorCount={doctorCount} />
+        <HeroVisual doctorCount={doctors.length} />
       </Container>
     </section>
   );
@@ -214,7 +253,7 @@ export default function HomePage() {
   return (
     <>
       <Seo image={site.settings.hero?.imageUrl} jsonLd={clinicJsonLd(site, window.location.origin)} />
-      <Hero doctorCount={data?.doctors.length || 0} />
+      <Hero doctors={data?.doctors || []} />
       <QuickActions />
 
       {loading && <LoadingState className="py-24" />}

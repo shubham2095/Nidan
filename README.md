@@ -713,3 +713,9 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     Sequelize, which still asks for 8.x) is forced to 11.1.1 by the `"overrides"` block in `package.json`. Keep that block,
     and the committed `package-lock.json`, so a fresh install on Hostinger gets the patched versions. Run `npm audit
     --omit=dev` to check; it should say "found 0 vulnerabilities".
+43. **Hostinger's 3-second start rule.** Hostinger logs "App did not call listen() within 3 seconds" and may restart the app
+    when it has not started listening in 3 seconds. On a brand-new empty database the first start (with `RUN_MIGRATIONS=true`
+    and `RUN_SEEDS=true`) takes about 4 seconds because it creates the tables and content first, so you will see that
+    message and one or two extra starts in the log. That is harmless: every migration and seeder is recorded as it
+    finishes, so the next start continues where the last one stopped and the log ends with "production server listening".
+    Once it does, set both flags back to `false`. Later starts do no database work and are well inside the 3 seconds.
