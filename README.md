@@ -712,7 +712,10 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     patched: `body-parser` (comes with Express) is now 2.4.0 through a normal `npm update`, and `uuid` (comes with
     Sequelize, which still asks for 8.x) is forced to 11.1.1 by the `"overrides"` block in `package.json`. Keep that block,
     and the committed `package-lock.json`, so a fresh install on Hostinger gets the patched versions. Run `npm audit
-    --omit=dev` to check; it should say "found 0 vulnerabilities".
+    --omit=dev` to check; it should say "found 0 vulnerabilities". The `minimatch` that comes with `nodemon` (a development
+    tool, but Hostinger scans it too) is likewise forced to 11.0.5 in the same `"overrides"` block, and the client's
+    `follow-redirects` was updated with `npm audit fix` inside `client/`. Run `npm audit` in both the project folder and
+    `client/`; both should say "found 0 vulnerabilities".
 43. **Hostinger's 3-second start rule.** Hostinger logs "App did not call listen() within 3 seconds" and may restart the app
     when it has not started listening in 3 seconds. On a brand-new empty database the first start (with `RUN_MIGRATIONS=true`
     and `RUN_SEEDS=true`) takes about 4 seconds because it creates the tables and content first, so you will see that
