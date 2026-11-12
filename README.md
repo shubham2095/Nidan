@@ -578,7 +578,7 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
    The site shows no general "opening hours", only each doctor's own timings (the old Site settings row was removed by
    the seeder `022-remove-opening-hours.js`). Doctor timings are per doctor and per clinic, and they drive online
    booking (15-minute slots):
-   - Dr. Rajeev Ranjan: Sector 51 Monday to Friday 8:30 am-2 pm, Saturday and Sunday 10 am-2 pm, every day
+   - Dr. Rajeev Ranjan: Sector 51 Monday to Friday 8:30 am-1 pm, Saturday and Sunday 10 am-1 pm, every day
      6-9 pm; Gaur City 3-5 pm with Tuesday and Thursday off (seeder `012-rajeev-timings.js`, which only affects a new
      database; on an existing one change the timetable in Admin > Doctors). On the website an "Every day" range that
      starts at 4 pm or later is shown as "Every day (Evening)" (`client/src/utils/schedule.js`).
@@ -722,3 +722,9 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     message and one or two extra starts in the log. That is harmless: every migration and seeder is recorded as it
     finishes, so the next start continues where the last one stopped and the log ends with "production server listening".
     Once it does, set both flags back to `false`. Later starts do no database work and are well inside the 3 seconds.
+44. **Services list.** There are 14 services. "Internal Medicine" was replaced by "PCOD & Lifestyle Management" (it keeps the
+    old picture file `internal-medicine.webp`), and "Menopause Clinic" and "Endometriosis Care" were added at the end
+    (their round pictures are small illustrations drawn in the site's colours, `menopause-clinic.webp` and
+    `endometriosis-care.webp` in `client/public/images/services`; replace them with photos in Admin > Services whenever
+    you like). The wording is in `server/seeders/004-services-and-specialties.js`
+    for a new database; on an existing one change services in Admin > Services.

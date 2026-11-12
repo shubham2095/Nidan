@@ -8,7 +8,7 @@ export const siteDefaults = {
       phonePrimary: '+91 97735 07333',
       phoneSecondary: '0120-4545700',
       whatsappNumber: '919773507333',
-      email: 'info@nidanmotherandchildcare.com',
+      email: 'rajeevnidan@gmail.com',
     },
     social: {},
     hero: {},

@@ -80,12 +80,12 @@ const services = [
       '<p>Physiotherapy helps you recover strength and movement. Sessions are planned around your needs and comfort.</p>',
   },
   {
-    slug: 'internal-medicine',
-    name: 'Internal Medicine',
+    slug: 'pcod-lifestyle-management',
+    name: 'PCOD & Lifestyle Management',
     icon: 'pill',
-    shortDescription: 'Diagnosis and ongoing care for common adult medical conditions.',
+    shortDescription: 'Personalized care for PCOD, combining medical treatment with diet, exercise and lifestyle guidance.',
     description:
-      '<p>Our internal medicine services cover the diagnosis and management of common adult health conditions, so your family can find the care it needs in one place.</p>',
+      '<p>PCOD is a common hormonal condition that can cause irregular periods, weight gain, acne and difficulty getting pregnant. Simple lifestyle changes, such as balanced eating, regular exercise, good sleep and stress control, can greatly improve symptoms. Our gynaecologist creates a personalised plan for you, combining lifestyle guidance with medical treatment when needed. Book a consultation today for caring, confidential PCOD support.</p>',
   },
   {
     slug: 'antenatal-classes',
@@ -102,6 +102,22 @@ const services = [
     shortDescription: 'Support and guidance for mothers with breastfeeding.',
     description:
       '<p>Breastfeeding can take time and practice. Our lactation support helps mothers and babies get started and gives practical help with common feeding concerns.</p>',
+  },
+  {
+    slug: 'menopause-clinic',
+    name: 'Menopause Clinic',
+    icon: 'scan-heart',
+    shortDescription: 'Expert care and support to help women manage menopause symptoms and stay healthy.',
+    description:
+      "<p>Menopause is a natural stage in a woman's life, but symptoms like hot flushes, night sweats, mood changes, poor sleep and irregular periods can affect daily life. Our menopause clinic offers personalised care, including symptom relief, lifestyle guidance and screening for bone health and heart health. Our gynaecologist helps you understand your options and feel your best through this transition. Book a consultation today for caring, confidential support.</p>",
+  },
+  {
+    slug: 'endometriosis-care',
+    name: 'Endometriosis Care',
+    icon: 'heart-pulse',
+    shortDescription: 'Diagnosis and personalised treatment to relieve endometriosis pain and protect fertility.',
+    description:
+      '<p>Endometriosis is a condition where tissue similar to the lining of the uterus grows outside it, often causing painful periods, pelvic pain, pain during intercourse and difficulty getting pregnant. Early diagnosis through a detailed consultation, examination and ultrasound helps us plan the right care for you. Treatment may include pain relief, hormonal therapy, fertility support or surgery when needed, based on your symptoms and goals. Book a consultation today for caring, confidential endometriosis support.</p>',
   },
 ];
 

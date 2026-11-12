@@ -68,9 +68,13 @@ const serviceImages = {
   'general-and-laparoscopic-surgery': '/images/services/general-and-laparoscopic-surgery.webp',
   'paediatrics': '/images/services/paediatrics.webp',
   'physiotherapy': '/images/services/physiotherapy.webp',
-  'internal-medicine': '/images/services/internal-medicine.webp',
   'antenatal-classes': '/images/services/antenatal-classes.webp',
   'lactation': '/images/services/lactation.webp',
+  // the PCOD page keeps the picture that was first used for "Internal Medicine"
+  'pcod-lifestyle-management': '/images/services/internal-medicine.webp',
+  // drawn for the site in its own colours (no stock photo), replaceable in Admin > Services
+  'menopause-clinic': '/images/services/menopause-clinic.webp',
+  'endometriosis-care': '/images/services/endometriosis-care.webp',
 };
 
 const HERO = { imageUrl: '/images/hero-clinic.webp', imageAlt: 'The front of the NIDAN Mother & Child Clinic building in Sector 51, Noida' };
