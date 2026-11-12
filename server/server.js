@@ -101,18 +101,10 @@ if (env.isProd) {
 app.use(errorHandler);
 
 const start = async () => {
-  await sequelize.authenticate();
-  if (env.runMigrations) {
-    console.log('[server] RUN_MIGRATIONS=true - applying pending migrations');
-    await runMigrations();
-  }
-  if (env.runSeeds) {
-    console.log('[server] RUN_SEEDS=true - applying pending seeders');
-    await runSeeders();
-  }
   fs.mkdirSync(env.publicUploadDir, { recursive: true });
   fs.mkdirSync(env.privateUploadDir, { recursive: true });
 
+  // Listen first: Hostinger expects listen() within 3 seconds of boot.
   const server = app.listen(env.port, () => {
     console.log(`[server] ${env.nodeEnv} server listening on port ${env.port}`);
   });
@@ -125,6 +117,18 @@ const start = async () => {
   };
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);
+
+  // Database work runs after the port is open.
+  await sequelize.authenticate();
+  if (env.runMigrations) {
+    console.log('[server] RUN_MIGRATIONS=true - applying pending migrations');
+    await runMigrations();
+  }
+  if (env.runSeeds) {
+    console.log('[server] RUN_SEEDS=true - applying pending seeders');
+    await runSeeders();
+  }
+  console.log('[server] database ready');
 };
 
 start().catch((error) => {
