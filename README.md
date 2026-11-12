@@ -728,3 +728,12 @@ Decisions I made where the brief was open or ambiguous. Tell me if any should ch
     `endometriosis-care.webp` in `client/public/images/services`; replace them with photos in Admin > Services whenever
     you like). The wording is in `server/seeders/004-services-and-specialties.js`
     for a new database; on an existing one change services in Admin > Services.
+45. **One-time update for an existing database (seeder `023-services-timing-email-update.js`).** Seeders only run once, so
+    a database that was seeded before the services, Dr. Rajeev's timing and the clinic email changed would keep the old
+    content. This seeder brings it in line: "Internal Medicine" becomes "PCOD & Lifestyle Management" (only while the old
+    service is still there), "Menopause Clinic" and "Endometriosis Care" are added with their pictures (an existing one
+    keeps its text), Dr. Rajeev's Sector 51 timetable is set to Mon-Fri 8:30 am-1 pm, Sat-Sun 10 am-1 pm and every day
+    6-9 pm (Gaur City is untouched), and the clinic email becomes `rajeevnidan@gmail.com` unless staff already changed it.
+    On a new database it does nothing. To apply it on Hostinger: take a database backup, set `RUN_SEEDS=true`, redeploy,
+    look for `[seed] migrated: 023-services-timing-email-update.js` in the runtime log, then set `RUN_SEEDS` back to
+    `false` and redeploy. `CLINIC_NOTIFY_EMAIL` is an environment variable and is not touched by it.
